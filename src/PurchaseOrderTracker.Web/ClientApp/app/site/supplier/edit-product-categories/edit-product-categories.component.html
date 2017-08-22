@@ -1,0 +1,28 @@
+﻿<h1>Edit Product Categories ({{supplierName}})</h1>
+<messages></messages>
+<span *ngIf="!hasCategories()" class="bg-warning text-white d-block">Supplier has no product categories</span>
+<ng-container *ngIf="hasCategories()">
+    <div class="row no-gutters font-weight-bold">
+        <div class="col-12">
+            Name
+        </div>
+    </div>
+    <form *ngFor="let category of model.items; let i=index" (ngSubmit)="onSubmitEditCategory(i)" method="POST">
+        <div class="row no-gutters mb-1">
+            <div class="col-5 pr-1">
+                <input [(ngModel)]="category.name" name="Name" class="form-control"/>
+            </div>
+            <div class="col-7 text-right">
+                <button type="submit" class="btn btn-primary cursor-pointer">Update</button>
+                <button type="button" (click)="onDeleteCategory(i)" class="btn btn-danger cursor-pointer">Delete</button>
+            </div>
+        </div>
+    </form>
+</ng-container>
+<div class="d-flex justify-content-between mt-2">
+    <div>
+        <button class="btn btn-primary" (click)="showAddProductCategoryModal()">Create New Product Category</button>
+        <a routerLink="/main-site/suppliers/{{supplierId}}" class="btn btn-secondary">Back</a>
+    </div>
+    <pagination [paginatedList]="model"></pagination>
+</div>

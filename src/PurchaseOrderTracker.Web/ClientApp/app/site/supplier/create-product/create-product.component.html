@@ -1,0 +1,43 @@
+﻿<div class="modal-header">
+        <h5 class="modal-title">Create Product</h5>
+        <button type="button" class="close" (click)="activeModal.dismiss()">
+            <span>&times;</span>
+        </button>
+    </div>
+<div class="modal-body">
+    <messages></messages>
+    <form (ngSubmit)="onSubmit()">
+        <div class="form-group row">
+            <label for="prodCode" class="col-4 col-form-label">Product Code</label>
+            <div class="col-8">
+                <input id="prodCode" type="text" [(ngModel)]="model.prodCode" name="prodCode" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="name" class="col-4 col-form-label">Name</label>
+            <div class="col-8">
+                <input id="name" [(ngModel)]="model.name" name="name" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="categoryId" class="col-4 col-form-label">Category</label>
+            <div class="col-8">
+                <select id="categoryId" [(ngModel)]="model.categoryId" name="categoryId" class="form-control">
+                    <!-- Default blank -->
+                    <option></option>
+                    <option *ngFor="let key of objectKeys(categoryOptions)" [value]="key">{{categoryOptions[key]}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="price" class="col-4 col-form-label">Price</label>
+            <div class="col-8">
+                <input id="price" [(ngModel)]="model.price" name="price" class="form-control" />
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSubmit()">Create</button>
+    <button type="button" class="btn btn-secondary" (click)="activeModal.close()">Close</button>
+</div>

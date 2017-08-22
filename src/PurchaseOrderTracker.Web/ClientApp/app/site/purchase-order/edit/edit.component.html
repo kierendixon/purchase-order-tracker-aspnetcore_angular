@@ -1,0 +1,65 @@
+﻿<h1>Edit Purchase Order</h1>
+<messages></messages>
+<form *ngIf="model !== undefined" (ngSubmit)="onSubmit()" #form="ngForm">
+    <div class="form-group row">
+        <label name="id" for="id" class="col-2 col-form-label">Id</label>
+        <div class="col-10">
+            <input id="id" class="form-control" value="{{model.id}}" readonly />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label name="createdDate" for="createdDate" class="col-2 col-form-label">Created</label>
+        <div class="col-10">
+            <input id="createdDate" class="form-control" value="{{model.createdDate | date:'short'}}" readonly />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label name="orderNo" for="orderNo" class="col-2 col-form-label">Order Number</label>
+        <div class="col-10">
+            <input id="orderNo" [(ngModel)]="model.orderNo" name="orderNo" class="form-control" required [readonly]="model.isCancelled"/>
+        </div>
+    </div>
+    <div class="form-group row" *ngIf="model.supplierOptions">
+        <label for="supplierId" class="col-2 col-form-label">Supplier</label>
+        <div class="col-10">
+            <select id="supplierId" [(ngModel)]="model.supplierId" name="supplierId" class="form-control" [disabled]="model.isCancelled">
+                <!-- Default blank -->
+                <option></option>
+                <option *ngFor="let key of objectKeys(model.supplierOptions)" [value]="key">{{model.supplierOptions[key]}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group row" *ngIf="model.shipmentOptions">
+        <label for="shipmentId" class="col-2 col-form-label">Shipment</label>
+        <div class="col-10">
+            <select *ngIf="objectKeys(model.shipmentOptions).length > 0 || model.shipmentId"
+                    id="shipmentId" [(ngModel)]="model.shipmentId" name="shipmentId" class="form-control" [disabled]="!model.isApprovedOrLaterStatus">
+                <!-- Default blank -->
+                <option></option>
+                <option *ngFor="let key of objectKeys(model.shipmentOptions)" [value]="key">{{model.shipmentOptions[key]}}</option>
+            </select>
+            <span *ngIf="model.isApprovedOrLaterStatus && !model.isCancelled && objectKeys(model.shipmentOptions).length == 0 && !model.shipmentId">No shipments available to select</span>
+            <span class="text-danger" *ngIf="!model.isApprovedOrLaterStatus && !model.isCancelled">Purchase Order must be approved before it can be assigned to a shipment</span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label name="currentState" for="currentState" class="col-2 col-form-label">Status</label>
+        <div class="col-10">
+            <input id="currentState" [(ngModel)]="model.currentState" name="currentState" class="form-control" readonly />
+        </div>
+    </div>
+    <div *ngIf="!model.isDelivered" class="form-group row">
+        <label class="col-2 col-form-label">Update Status</label>
+        <div class="col-10">
+            <button *ngIf="model.canTransitionToPendingApproval" type="button" (click)="onUpdateStatus('PendingApproval')" class="btn btn-outline-dark cursor-pointer">Pending Approval</button>
+            <button *ngIf="model.canTransitionToApproved" type="button" (click)="onUpdateStatus('Approved')" class="btn btn-outline-dark cursor-pointer">Approved</button>
+            <button *ngIf="model.canTransitionToCancelled" type="button" (click)="onUpdateStatus('Cancelled')" class="btn btn-outline-dark cursor-pointer">Cancelled</button>
+        </div>
+    </div>
+
+    <button class="btn btn-primary" type="submit" [disabled]="!form.form.valid">Save</button>
+    <a routerLink="edit-line-items" class="btn btn-primary">Edit Line Items</a>
+    <button class="btn btn-danger cursor-pointer" (click)="onDelete()" type="button">Delete</button>
+    <a class="btn btn-secondary" role="button" routerLink="/main-site/purchase-orders">Back</a>
+</form>
+{{shipmentOptions}}

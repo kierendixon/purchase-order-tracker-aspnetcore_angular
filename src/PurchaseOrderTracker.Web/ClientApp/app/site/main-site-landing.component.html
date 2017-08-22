@@ -1,0 +1,6 @@
+<h1>Summary</h1>
+<messages></messages>
+<span>Total open orders: <a routerLink="/main-site/purchase-orders/inquiry" [queryParams]="{queryType: 'Open'}" class="font-weight-bold">{{model?.totalOpenOrders}}</a></span><br/>
+<span>Shipments scheduled for delivered today: <a  routerLink="/main-site/shipments/inquiry" [queryParams]="{queryType: 'ScheduledForDeliveryToday'}" class="font-weight-bold">{{model?.shipmentsSchedForDeliveryToday}}</a></span><br/>
+<span>Shipments past delivery due date: <a routerLink="/main-site/shipments/inquiry" [queryParams]="{queryType: 'Delayed'}" class="font-weight-bold">{{model?.shipmentsDelayed}}</a></span><br/>
+<span>Shipments past delivery due date more than 7 days: <a routerLink="/main-site/shipments/inquiry" [queryParams]="{queryType: 'DelayedMoreThan7Days'}" class="font-weight-bold">{{model?.shipmentsDelayedMoreThan7Days}}</a></span>

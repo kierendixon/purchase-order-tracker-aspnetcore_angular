@@ -1,0 +1,40 @@
+﻿<h1>Shipments Inquiry</h1>
+<messages></messages>
+<span *ngIf="!hasRecords()" class="bg-warning text-white d-block">No records found</span>
+<div *ngIf="hasRecords()">
+    <table class="table table-striped text-left">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Tracking Id</th>
+            <th>Company</th>
+            <th>ETA</th>
+            <th>Shipping Cost</th>
+            <th>Status</th>
+            <th>Dest. Address</th>
+            <th>Comments</th>
+            <th title="Shipment delayed">D</th>
+            <th title="Shipment delayed more than 7 days">D7</th>
+            <th title="Shipment scheduled for delivery today">T</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let shipment of model.pagedList.items">
+            <td><a routerLink="../{{shipment.id}}">{{shipment.id}}</a></td>
+            <td>{{shipment.trackingId}}</td>
+            <td>{{shipment.company}}</td>
+            <td>{{shipment.estimatedArrivalDate | date:'short'}}</td>
+            <td>{{shipment.shippingCost | currency:'AUD':true:'4.2-2' }}</td>
+            <td>{{shipment.currentState}}</td>
+            <td>{{shipment.destinationAddress}}</td>
+            <td>{{shipment.comments}}</td>
+            <td title="Shipment delayed"><input type="checkbox" [checked]="shipment.isDelayed" disabled></td>
+            <td title="Shipment delayed more than 7 days"><input type="checkbox" [checked]="shipment.isDelayedMoreThan7Days" disabled></td>
+            <td title="Shipment scheduled for delivery today"><input type="checkbox" [checked]="shipment.isScheduledForDeliveryToday" disabled></td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-end">
+        <pagination [paginatedList]="model.pagedList"></pagination>
+    </div>
+</div>
