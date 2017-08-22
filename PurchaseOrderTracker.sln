@@ -23,6 +23,48 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.Domain
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.Web.Tests", "test\PurchaseOrderTracker.Web.Tests\PurchaseOrderTracker.Web.Tests.csproj", "{677994CD-F436-4C39-A4DC-7B50289771A8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{AC729062-9A12-4114-80EE-0062C743DD83}"
+	ProjectSection(SolutionItems) = preProject
+		docs\User Guide\account-login.png = docs\User Guide\account-login.png
+		docs\User Guide\main-site-landing-page.png = docs\User Guide\main-site-landing-page.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "User Guide", "User Guide", "{7A38BB36-04BC-49E1-93FF-5B1A4FA0D222}"
+	ProjectSection(SolutionItems) = preProject
+		docs\User Guide\account-login.png = docs\User Guide\account-login.png
+		docs\User Guide\main-site-landing-page.png = docs\User Guide\main-site-landing-page.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Purchase Orders", "Purchase Orders", "{57333EDD-EA65-435D-A559-5DB899B6B42B}"
+	ProjectSection(SolutionItems) = preProject
+		docs\User Guide\Purchase Orders\create-line-item.png = docs\User Guide\Purchase Orders\create-line-item.png
+		docs\User Guide\Purchase Orders\create-purchase-order.png = docs\User Guide\Purchase Orders\create-purchase-order.png
+		docs\User Guide\Purchase Orders\edit-purchase-order.png = docs\User Guide\Purchase Orders\edit-purchase-order.png
+		docs\User Guide\Purchase Orders\inquiry.png = docs\User Guide\Purchase Orders\inquiry.png
+		docs\User Guide\Purchase Orders\message-notification.png = docs\User Guide\Purchase Orders\message-notification.png
+		docs\User Guide\Purchase Orders\PurchaseOrderStatus - State Machine.png = docs\User Guide\Purchase Orders\PurchaseOrderStatus - State Machine.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shipments", "Shipments", "{98395513-C2D8-49ED-A1F8-EE5DA6116223}"
+	ProjectSection(SolutionItems) = preProject
+		docs\User Guide\Shipments\create-shipment.png = docs\User Guide\Shipments\create-shipment.png
+		docs\User Guide\Shipments\edit-shipment.png = docs\User Guide\Shipments\edit-shipment.png
+		docs\User Guide\Shipments\inquiry.png = docs\User Guide\Shipments\inquiry.png
+		docs\User Guide\Shipments\ShipmentStatus - State Machine.png = docs\User Guide\Shipments\ShipmentStatus - State Machine.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Suppliers", "Suppliers", "{489C2294-08BB-49F6-90E9-A0B09FA9D20E}"
+	ProjectSection(SolutionItems) = preProject
+		docs\User Guide\Suppliers\create-category-modal.png = docs\User Guide\Suppliers\create-category-modal.png
+		docs\User Guide\Suppliers\create-product-modal.png = docs\User Guide\Suppliers\create-product-modal.png
+		docs\User Guide\Suppliers\create.png = docs\User Guide\Suppliers\create.png
+		docs\User Guide\Suppliers\edit-categories.png = docs\User Guide\Suppliers\edit-categories.png
+		docs\User Guide\Suppliers\edit-products-search.png = docs\User Guide\Suppliers\edit-products-search.png
+		docs\User Guide\Suppliers\edit-products.png = docs\User Guide\Suppliers\edit-products.png
+		docs\User Guide\Suppliers\edit.png = docs\User Guide\Suppliers\edit.png
+		docs\User Guide\Suppliers\inquiry.png = docs\User Guide\Suppliers\inquiry.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +101,10 @@ Global
 		{AA9F2CBF-E535-461D-A3E2-D6A2809A79A4} = {37D7D12E-DB01-4972-B41D-9CE9B8224C17}
 		{9F3BDA19-7F19-4F9D-81DA-22EA0EF19D8B} = {C13C7971-DB1F-472E-BE96-1BB3B504DB2F}
 		{677994CD-F436-4C39-A4DC-7B50289771A8} = {C13C7971-DB1F-472E-BE96-1BB3B504DB2F}
+		{7A38BB36-04BC-49E1-93FF-5B1A4FA0D222} = {AC729062-9A12-4114-80EE-0062C743DD83}
+		{57333EDD-EA65-435D-A559-5DB899B6B42B} = {7A38BB36-04BC-49E1-93FF-5B1A4FA0D222}
+		{98395513-C2D8-49ED-A1F8-EE5DA6116223} = {7A38BB36-04BC-49E1-93FF-5B1A4FA0D222}
+		{489C2294-08BB-49F6-90E9-A0B09FA9D20E} = {7A38BB36-04BC-49E1-93FF-5B1A4FA0D222}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B6E7C413-6700-4DF6-AD36-160A45525FE8}
