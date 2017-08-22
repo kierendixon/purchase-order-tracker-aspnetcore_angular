@@ -63,4 +63,8 @@ export class EditComponent implements OnInit {
             err => this.messagesService.addHttpResponseError(err)
         );
     }
+
+    hasShipmentOptions(): boolean {
+        return this.model !== undefined && Object.keys(this.model.shipmentOptions).length > 0;
+    }
 }

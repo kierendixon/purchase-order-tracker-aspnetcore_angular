@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using PurchaseOrderTracker.Domain.Exceptions;
 using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate;
+using PurchaseOrderTracker.Domain.Models.ShipmentAggregate;
 using PurchaseOrderTracker.Domain.Tests.Builders;
 
 namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
@@ -216,6 +217,44 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
                 purchaseOrder.UpdateStatus(PurchaseOrderStatus.Trigger.Cancelled);
 
                 Assert.That(purchaseOrder.Shipment, Is.Null);
+            }
+        }
+
+        [TestFixture]
+        public class CanShipmentBeUpdatedMethod
+        {
+            [Test]
+            public void ShipmentIsNull_ReturnsTrue()
+            {
+                var purchaseOrder = new PurchaseOrderBuilder().Build();
+
+                Assert.That(purchaseOrder.Shipment, Is.Null);
+                Assert.That(purchaseOrder.CanShipmentBeUpdated, Is.True);
+            }
+
+            [Test]
+            public void ShipmentStatusIsShipped_ReturnsFalse()
+            {
+                var shipment = new ShipmentBuilder().Build();
+                var purchaseOrder = new PurchaseOrderBuilder().Shipment(shipment).Build();
+                purchaseOrder.UpdateStatus(PurchaseOrderStatus.Trigger.Approved);
+                shipment.UpdateStatus(ShipmentStatus.Trigger.Shipped);
+
+                Assert.That(shipment.Status.CurrentState, Is.EqualTo(ShipmentStatus.State.Shipped));
+                Assert.That(purchaseOrder.CanShipmentBeUpdated, Is.False);
+            }
+
+            [Test]
+            public void ShipmentIsDelivered_ReturnsFalse()
+            {
+                var shipment = new ShipmentBuilder().Build();
+                var purchaseOrder = new PurchaseOrderBuilder().Shipment(shipment).Build();
+                purchaseOrder.UpdateStatus(PurchaseOrderStatus.Trigger.Approved);
+                shipment.UpdateStatus(ShipmentStatus.Trigger.Shipped);
+                shipment.UpdateStatus(ShipmentStatus.Trigger.Delivered);
+
+                Assert.That(shipment.Status.CurrentState, Is.EqualTo(ShipmentStatus.State.Delivered));
+                Assert.That(purchaseOrder.CanShipmentBeUpdated, Is.False);
             }
         }
     }

@@ -19,7 +19,7 @@
             <input id="orderNo" [(ngModel)]="model.orderNo" name="orderNo" class="form-control" required [readonly]="model.isCancelled"/>
         </div>
     </div>
-    <div class="form-group row" *ngIf="model.supplierOptions">
+    <div class="form-group row">
         <label for="supplierId" class="col-2 col-form-label">Supplier</label>
         <div class="col-10">
             <select id="supplierId" [(ngModel)]="model.supplierId" name="supplierId" class="form-control" [disabled]="model.isCancelled">
@@ -29,17 +29,18 @@
             </select>
         </div>
     </div>
-    <div class="form-group row" *ngIf="model.shipmentOptions">
+    <div class="form-group row">
         <label for="shipmentId" class="col-2 col-form-label">Shipment</label>
         <div class="col-10">
-            <select *ngIf="objectKeys(model.shipmentOptions).length > 0 || model.shipmentId"
+            <input *ngIf="!model.canShipmentBeUpdated" class="form-control" value="{{model.shipmentTrackingId}}" readonly/>
+            <span class="text-danger" *ngIf="!model.isApprovedOrLaterStatus && !model.isCancelled">Purchase Order must be approved before it can be assigned to a shipment</span>
+            <select *ngIf="model.isApprovedOrLaterStatus && model.canShipmentBeUpdated && hasShipmentOptions()"
                     id="shipmentId" [(ngModel)]="model.shipmentId" name="shipmentId" class="form-control" [disabled]="!model.isApprovedOrLaterStatus">
                 <!-- Default blank -->
                 <option></option>
                 <option *ngFor="let key of objectKeys(model.shipmentOptions)" [value]="key">{{model.shipmentOptions[key]}}</option>
             </select>
-            <span *ngIf="model.isApprovedOrLaterStatus && !model.isCancelled && objectKeys(model.shipmentOptions).length == 0 && !model.shipmentId">No shipments available to select</span>
-            <span class="text-danger" *ngIf="!model.isApprovedOrLaterStatus && !model.isCancelled">Purchase Order must be approved before it can be assigned to a shipment</span>
+            <span *ngIf="model.isApprovedOrLaterStatus && model.canShipmentBeUpdated && !hasShipmentOptions()">No shipments available</span>
         </div>
     </div>
     <div class="form-group row">

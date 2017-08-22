@@ -28,6 +28,7 @@ export interface EditQueryResult {
     createdDate: Date;
     supplierId: number;
     shipmentId: number;
+    shipmentTrackingId: number;
     currentState: string;
     orderNo: string;
 
@@ -37,6 +38,7 @@ export interface EditQueryResult {
     canTransitionToPendingApproval: boolean;
     canTransitionToApproved: boolean;
     canTransitionToCancelled: boolean;
+    canShipmentBeUpdated: boolean;
 
     supplierOptions: SelectOption[];
     shipmentOptions: SelectOption[];

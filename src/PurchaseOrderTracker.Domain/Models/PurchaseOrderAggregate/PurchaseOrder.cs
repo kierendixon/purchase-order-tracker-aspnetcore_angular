@@ -45,6 +45,10 @@ namespace PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate
         public bool IsCancelled => Status.CurrentState == PurchaseOrderStatus.State.Cancelled;
         public bool IsOpen => !IsCancelled && !IsDelivered;
 
+        public bool CanShipmentBeUpdated => Shipment == null ||
+                                            (Shipment.Status.CurrentState != ShipmentStatus.State.Shipped &&
+                                             Shipment.Status.CurrentState != ShipmentStatus.State.Delivered);
+
         public bool CanTransitionToPendingApproval => Status.PermittedTriggers.Contains(PurchaseOrderStatus.Trigger
             .PendingApproval);
 

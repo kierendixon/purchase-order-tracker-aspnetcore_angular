@@ -25,6 +25,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
             public DateTime CreatedDate { get; private set; }
             public int SupplierId { get; private set; }
             public int? ShipmentId { get; private set; }
+            public string ShipmentTrackingId { get; private set; }
             public string CurrentState { get; private set; }
             public string OrderNo { get; private set; }
 
@@ -35,6 +36,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
             public bool CanTransitionToPendingApproval { get; private set; }
             public bool CanTransitionToApproved { get; private set; }
             public bool CanTransitionToCancelled { get; private set; }
+            public bool CanShipmentBeUpdated { get; private set; }
 
             public Dictionary<int, string> SupplierOptions { get; set; }
             public Dictionary<int, string> ShipmentOptions { get; set; }
@@ -52,16 +54,21 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
             public async Task<QueryResult> Handle(Query query)
             {
                 var suppliers = await _context.Supplier.ToListAsync();
-                var shipments = (await _context.Shipment.Include(s => s.Status).ToListAsync()).Where(s => s.CanBeAssignedToPurchaseOrder).ToList();
                 var purchaseOrder = await _context.PurchaseOrder
                     .Include(p => p.Supplier)
                     .Include(p => p.Status)
                     .Include(p => p.Shipment)
+                    .ThenInclude(s => s.Status)
                     .SingleAsync(p => p.Id == query.Id);
 
-                var result = Mapper.Map<Domain.Models.PurchaseOrderAggregate.PurchaseOrder, QueryResult>(purchaseOrder);
+            var result = Mapper.Map<Domain.Models.PurchaseOrderAggregate.PurchaseOrder, QueryResult>(purchaseOrder);
                 result.SupplierOptions = suppliers.ToDictionary(s => s.Id, c => c.Name);
-                result.ShipmentOptions = shipments.ToDictionary(s => s.Id, c => c.TrackingId);
+                if (purchaseOrder.CanShipmentBeUpdated)
+                {
+                    var shipments = (await _context.Shipment.Include(s => s.Status).ToListAsync())
+                        .Where(s => s.CanBeAssignedToPurchaseOrder).ToList();
+                    result.ShipmentOptions = shipments.ToDictionary(s => s.Id, c => c.TrackingId);
+                }
 
                 return result;
             }
@@ -97,6 +104,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
                     .Include(p => p.Supplier)
                     .Include(p => p.Status)
                     .Include(p => p.Shipment)
+                    .ThenInclude(s => s.Status)
                     .SingleAsync(p => p.Id == command.Id);
 
                 order.OrderNo = command.OrderNo;
@@ -129,7 +137,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
                 }
                 else if (order.Shipment == null && command.ShipmentId != null)
                 {
-                    var shipment = await _context.Shipment.FindAsync(command.ShipmentId);
+                    var shipment = await _context.Shipment.Include(s => s.Status).SingleAsync(s => s.Id == command.ShipmentId);
                     order.Shipment = shipment;
                 }
             }
