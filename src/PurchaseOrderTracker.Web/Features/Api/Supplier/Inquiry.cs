@@ -63,9 +63,6 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
                 var paginatedSuppliers = await
                     suppliers.ProjectToPagedList<Result.SupplierViewModel>(query.PageNumber, query.PageSize);
 
-                if (paginatedSuppliers.Count == 0)
-                    throw new PurchaseOrderTrackerException("No suppliers found");
-
                 return new Result(paginatedSuppliers.ToWebApiObject());
             }
         }

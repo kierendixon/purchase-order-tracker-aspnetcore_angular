@@ -110,9 +110,6 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
                         Mapper.Map<IQueryable<Domain.Models.PurchaseOrderAggregate.PurchaseOrder>, IList<Result.PurchaseOrderViewModel>>(orders),
                         query.PageNumber, query.PageSize);
 
-                if (paginatedOrders.Count == 0)
-                    throw new PurchaseOrderTrackerException("No Purchase Orders found");
-
                 return new Result(paginatedOrders.ToWebApiObject());
             }
         }
