@@ -54,8 +54,7 @@ namespace PurchaseOrderTracker.DAL
             var oscissorsCategory = new ProductCategory("Scissors, Rulers and Trimmers");
             var ostorageCategory = new ProductCategory("Storage & Organization");
 
-            var tzSupplier =
-                new Supplier("Techzon");
+            var tzSupplier = new Supplier("Techzon");
             tzSupplier.AddCategorys(
                 new List<ProductCategory>
                 {
@@ -420,25 +419,24 @@ namespace PurchaseOrderTracker.DAL
                     new Product("13527", "Xerox 214", opaperCategory, 6.48D),
                     new Product("13956", "Bravo II™ Megaboss® 12-Amp Hard Body Upright, Replacement Belts, 2 Belts per Pack", oappCategory, 3.25D)
                 });
-
-            //foreach (var s in new[] {tzSupplier, fmSupplier, oSupplier})
-            //    context.Supplier.Add(s);
+            
             context.SaveChanges();
 
-            var openPo1 = new PurchaseOrder("POGH3261", fmSupplier);
-            openPo1.AddLineItems(new List<PurchaseOrderLine>
+            var draftPo1 = new PurchaseOrder("POGH3261", fmSupplier);
+            draftPo1.AddLineItems(new List<PurchaseOrderLine>
             {
                 new PurchaseOrderLine(fmSupplier.Products.Single(p => p.ProdCode == "67016"), 20, 15),
                 new PurchaseOrderLine(fmSupplier.Products.Single(p => p.ProdCode == "1837"), 21, 15)
             });
-            var openPo2 = new PurchaseOrder("PO961711", oSupplier);
-            openPo2.AddLineItems(new List<PurchaseOrderLine>
+            draftPo1.UpdateStatus(PurchaseOrderStatus.Trigger.Approved);
+            var draftPo2 = new PurchaseOrder("PO961711", oSupplier);
+            draftPo2.AddLineItems(new List<PurchaseOrderLine>
             {
                 new PurchaseOrderLine(oSupplier.Products.Single(p => p.ProdCode == "269"), 20, 15),
                 new PurchaseOrderLine(oSupplier.Products.Single(p => p.ProdCode == "11660"), 21, 15)
             });
-
-            var openPurchaseOrders = new[] {openPo1, openPo2};
+            draftPo2.UpdateStatus(PurchaseOrderStatus.Trigger.Approved);
+            var draftPurchaseOrders = new[] { draftPo1, draftPo2 };
 
             var shipment1Po1 = new PurchaseOrder("PO2346751", tzSupplier);
             shipment1Po1.AddLineItems(new List<PurchaseOrderLine>
@@ -500,14 +498,11 @@ namespace PurchaseOrderTracker.DAL
                 context.PurchaseOrder.Add(p);
             context.SaveChanges();
 
-            var shipment1 = new Shipment("TRK#61683", "MSC", new DateTime(2017, 08, 07, 9, 0, 0), 3500,
-                "1 George St, Sydney, 2000", null);
-            shipment1.AddPurchaseOrders(new List<PurchaseOrder>(new[]
-                {shipment1Po1, shipment1Po2, shipment1Po3, shipment1Po4, shipment1Po5}));
+            var shipment1 = new Shipment("TRK#61683", "MSC", new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 9, 0, 0), 3500, "1 George St, Sydney, 2000", null);
+            shipment1.AddPurchaseOrders(new List<PurchaseOrder>(new[] {shipment1Po1, shipment1Po2, shipment1Po3, shipment1Po4, shipment1Po5}));
             shipment1.UpdateStatus(ShipmentStatus.Trigger.Shipped);
 
-            var shipment2 = new Shipment("BRZ#71361", "HTL", DateTime.Now, 17000, "1 Collins St, Melbourne, 3000",
-                null);
+            var shipment2 = new Shipment("BRZ#71361", "HTL", new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 9, 0, 0).AddDays(7), 17000, "1 Collins St, Melbourne, 3000", null);
             shipment2.AddPurchaseOrders(new List<PurchaseOrder>(new[] {shipment2Po1, shipment2Po2}));
             shipment2.UpdateStatus(ShipmentStatus.Trigger.Shipped);
 
