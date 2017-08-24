@@ -30,12 +30,8 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
         [HttpGet("{id?}")]
         public async Task<IActionResult> Get(Edit.Query query)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _mediator.Send(query);
-                return new ObjectResult(result);
-            }
-            return BadRequest(ModelState);
+            var result = await _mediator.Send(query);
+            return new ObjectResult(result);
         }
 
         [HttpPost("{id}")]
