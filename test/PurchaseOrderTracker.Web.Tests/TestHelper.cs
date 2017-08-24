@@ -53,7 +53,7 @@ namespace PurchaseOrderTracker.Web.Tests
             var directoryInfo = new DirectoryInfo(applicationBasePath);
             do
             {
-                var solutionFileInfo = new FileInfo(Path.Combine(directoryInfo.FullName, "PurchaseOrderTracker.Web.sln"));
+                var solutionFileInfo = new FileInfo(Path.Combine(directoryInfo.FullName, "PurchaseOrderTracker.sln"));
                 if (solutionFileInfo.Exists)
                 {
                     return Path.GetFullPath(Path.Combine(directoryInfo.FullName, solutionRelativePath, projectName));

@@ -1,27 +1,37 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
 using NUnit.Framework;
 
 namespace PurchaseOrderTracker.Web.Tests.Features.Api.Supplier
 {
-    public class SupplierControllerTests
+    public class SupplierControllerTests: BaseTestHostTest
     {
         [TestFixture]
-        public class CreateMethod : SupplierControllerTests
+        public class GetMethod : SupplierControllerTests
         {
             [Test]
-            [Ignore("TODO: Build using webpack before executing this test")]
-            public async Task ResultWithMultipleRecords_SerialisesListObjectToJson()
+            public async Task ResultWithSingleRecord_SerialisesToJson()
             {
-                var server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
-                var client = server.CreateClient();
+                var expectedResult =
+                    "{\"suppliers\":[{\"id\":1,\"name\":\"Techzon\"}]}";
 
-                var response = await client.GetAsync("/api/supplier");
+                var response = await _client.GetAsync("/api/supplier/1");
                 var responseString = await response.Content.ReadAsStringAsync();
 
                 response.EnsureSuccessStatusCode();
-                Assert.That(responseString, Contains.Value("TODO"));
+                Assert.That(responseString, Is.EqualTo(expectedResult));
+            }
+
+            [Test]
+            public async Task ResultWithMultipleRecords_SerialisesToJson()
+            {
+                var expectedResult =
+                    "{\"suppliers\":[{\"id\":2,\"name\":\"Furniture Max\"},{\"id\":501,\"name\":\"ghf\"},{\"id\":3,\"name\":\"Office Supplies A+\"},{\"id\":1,\"name\":\"Techzon\"}]}";
+
+                var response = await _client.GetAsync("/api/supplier");
+                var responseString = await response.Content.ReadAsStringAsync();
+
+                response.EnsureSuccessStatusCode();
+                Assert.That(responseString, Is.EqualTo(expectedResult));
             }
         }
     }
