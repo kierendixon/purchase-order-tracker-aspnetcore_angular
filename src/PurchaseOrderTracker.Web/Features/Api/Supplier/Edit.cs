@@ -17,8 +17,6 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
             public int? Id { get; set; }
         }
 
-        public enum ViewType { IdName }
-
         public class QueryResult
         {
             public QueryResult(SupplierViewModel supplier)
