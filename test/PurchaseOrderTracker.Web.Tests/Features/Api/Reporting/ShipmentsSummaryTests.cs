@@ -20,8 +20,8 @@ namespace PurchaseOrderTracker.Web.Tests.Features.Api.Reporting
 
                     var result = await GetResult_HappyPath_CorrectResultsReturned(query);
 
-                    Assert.That(result.ShipmentsDelayed, Is.EqualTo(1));
-                    Assert.That(result.ShipmentsDelayedMoreThan7Days, Is.EqualTo(1));
+                    Assert.That(result.ShipmentsDelayed, Is.EqualTo(0));
+                    Assert.That(result.ShipmentsDelayedMoreThan7Days, Is.EqualTo(0));
                     Assert.That(result.ShipmentsSchedForDeliveryToday, Is.EqualTo(1));
                     Assert.That(result.TotalOpenOrders, Is.EqualTo(7));
                 }
