@@ -65,6 +65,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Suppliers", "Suppliers", "{
 		docs\User Guide\Suppliers\inquiry.png = docs\User Guide\Suppliers\inquiry.png
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Design", "Design", "{37119DA9-8739-4CF6-B882-003D8FE4D89C}"
+	ProjectSection(SolutionItems) = preProject
+		docs\Design\Architecture View - Three Tiers.png = docs\Design\Architecture View - Three Tiers.png
+		docs\Design\Architecture Views.vsdx = docs\Design\Architecture Views.vsdx
+		docs\Design\UML Class Diagram - Purchase Order Bound Context.png = docs\Design\UML Class Diagram - Purchase Order Bound Context.png
+		docs\Design\UML Class Diagram - Shipment Bounded Context.png = docs\Design\UML Class Diagram - Shipment Bounded Context.png
+		docs\Design\UML Class Diagram - Supplier Bounded Context.png = docs\Design\UML Class Diagram - Supplier Bounded Context.png
+		docs\Design\UML Class Diagrams.vsdx = docs\Design\UML Class Diagrams.vsdx
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +115,7 @@ Global
 		{57333EDD-EA65-435D-A559-5DB899B6B42B} = {7A38BB36-04BC-49E1-93FF-5B1A4FA0D222}
 		{98395513-C2D8-49ED-A1F8-EE5DA6116223} = {7A38BB36-04BC-49E1-93FF-5B1A4FA0D222}
 		{489C2294-08BB-49F6-90E9-A0B09FA9D20E} = {7A38BB36-04BC-49E1-93FF-5B1A4FA0D222}
+		{37119DA9-8739-4CF6-B882-003D8FE4D89C} = {AC729062-9A12-4114-80EE-0062C743DD83}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B6E7C413-6700-4DF6-AD36-160A45525FE8}
