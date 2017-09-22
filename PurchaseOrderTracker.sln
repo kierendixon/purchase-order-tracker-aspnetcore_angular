@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.3
+VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{37D7D12E-DB01-4972-B41D-9CE9B8224C17}"
 EndProject
@@ -24,10 +24,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.Web.Tests", "test\PurchaseOrderTracker.Web.Tests\PurchaseOrderTracker.Web.Tests.csproj", "{677994CD-F436-4C39-A4DC-7B50289771A8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{AC729062-9A12-4114-80EE-0062C743DD83}"
-	ProjectSection(SolutionItems) = preProject
-		docs\User Guide\account-login.png = docs\User Guide\account-login.png
-		docs\User Guide\main-site-landing-page.png = docs\User Guide\main-site-landing-page.png
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "User Guide", "User Guide", "{7A38BB36-04BC-49E1-93FF-5B1A4FA0D222}"
 	ProjectSection(SolutionItems) = preProject
