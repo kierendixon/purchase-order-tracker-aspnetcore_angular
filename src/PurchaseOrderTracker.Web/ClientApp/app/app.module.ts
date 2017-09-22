@@ -6,7 +6,7 @@ import { HttpModule } from '@angular/http';
 import { MainSiteModule } from './site/main-site.module';
 import { AppRoutingModule } from './app-routing.module';
 
-import { AppComponent } from './app.component';
+import { AppComponent } from './app/app.component';
 import { AccountComponent } from './account/account.component';
 
 @NgModule({

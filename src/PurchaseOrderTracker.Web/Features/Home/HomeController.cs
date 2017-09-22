@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PurchaseOrderTracker.Web.Features.Home
@@ -11,6 +12,7 @@ namespace PurchaseOrderTracker.Web.Features.Home
 
         public IActionResult Error()
         {
+            ViewData["RequestId"] = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
             return View();
         }
     }

@@ -25,7 +25,7 @@ export class CreateComponent {
     }
 
     private buildCommand(): CreateCommand {
-        let etaAsDate = this.model.eta == undefined
+        let etaAsDate: Date | undefined = this.model.eta == undefined
             ? undefined
             : new Date(this.model.eta.year, this.model.eta.month, this.model.eta.day);
         return new CreateCommand(this.model.trackingId, this.model.company, etaAsDate, this.model.shippingCost,

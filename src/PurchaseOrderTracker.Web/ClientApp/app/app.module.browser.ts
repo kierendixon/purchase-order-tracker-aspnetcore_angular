@@ -2,21 +2,24 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { sharedConfig } from './app.module.shared';
+import { AppModuleShared } from './app.module.shared';
+import { AppComponent } from './app/app.component';
 
 @NgModule({
+    bootstrap: [AppComponent],
     imports: [
         BrowserModule,
         FormsModule,
         HttpModule,
-        ...sharedConfig.imports
+        AppModuleShared
     ],
-    declarations: sharedConfig.declarations,
     providers: [
-        sharedConfig.providers,
-        { provide: 'ORIGIN_URL', useValue: location.origin }
-    ],
-    bootstrap: sharedConfig.bootstrap
+        { provide: 'BASE_URL', useFactory: getBaseUrl }
+    ]
 })
 export class AppModule {
+}
+
+export function getBaseUrl() {
+    return document.getElementsByTagName('base')[0].href;
 }

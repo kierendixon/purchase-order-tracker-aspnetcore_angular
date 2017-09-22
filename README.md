@@ -10,7 +10,7 @@ The purpose of building this system is to teach myself more about the technologi
 
 ### Technology Stack
 
-This project is built using ASP.NET Core MVC (v1.1) and Angular (v4). Some of the key libraries used are listed below - refer to each project file and package.json for a full list of dependencies.
+This project is built using ASP.NET Core MVC (v2) and Angular (v4). Some of the key libraries used are listed below - refer to each project file and package.json for a full list of dependencies.
 
 C# libraries:
 

@@ -8,8 +8,8 @@ export class StubbedAuthService implements AuthService {
     private superUserRole = 'super_role';
     private authFailedErrorMsg = 'Authentication Failed!';
 
-    public user: string = undefined;
-    public token: string = undefined;
+    public user: string | undefined = undefined;
+    public token: string | undefined  = undefined;
     private roles: string[] = [];
 
     public authenticate(username: string, password: string): Observable<string> {
