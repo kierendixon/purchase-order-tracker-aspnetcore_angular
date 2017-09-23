@@ -6,6 +6,7 @@ namespace PurchaseOrderTracker.Web.Tests.Features.Api.Supplier
     public class SupplierControllerTests: BaseTestHostTest
     {
         [TestFixture]
+        [Category("DatabaseIntegration")]
         public class GetMethod : SupplierControllerTests
         {
             [Test]
