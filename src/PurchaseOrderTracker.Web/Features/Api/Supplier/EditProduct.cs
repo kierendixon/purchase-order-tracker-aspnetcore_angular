@@ -27,6 +27,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
 
             public int? CategoryId { get; set; }
 
+            [Required]
             public double? Price { get; set; }
         }
 
@@ -58,7 +59,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
 
                 product.ProdCode = command.ProdCode;
                 product.Name = command.Name;
-                product.Price = command.Price;
+                product.Price = command.Price.Value;
                 product.Category = await DetermineNewCategory(_context, supplier, product.Category, command.CategoryId);
                 await _context.SaveChangesAsync();
 

@@ -21,7 +21,7 @@ namespace PurchaseOrderTracker.Domain.Models.SupplierAggregate
         public string ProdCode { get; set; }
         public string Name { get; set; }
         public ProductCategory Category { get; set; }
-        public double? Price { get; set; }
+        public double Price { get; set; }
 
         public override string ToString()
         {

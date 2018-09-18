@@ -29,51 +29,79 @@ namespace PurchaseOrderTracker.DAL
             modelBuilder.Entity<PurchaseOrderStatus>(ConfigurePurchaseOrderStatus);
             modelBuilder.Entity<ShipmentStatus>(ConfigureShipmentStatus);
 
-            modelBuilder.Entity<PurchaseOrder>(ConfigurePurchaseOrder);
-            modelBuilder.Entity<Supplier>(ConfigureSupplier);
             modelBuilder.Entity<Product>(ConfigureProduct);
             modelBuilder.Entity<ProductCategory>(ConfigureProductCategory);
+            modelBuilder.Entity<PurchaseOrder>(ConfigurePurchaseOrder);
+            modelBuilder.Entity<PurchaseOrderLine>(ConfigurePurchaseOrderLine);
+            modelBuilder.Entity<Shipment>(ConfigureShipment);
+            modelBuilder.Entity<Supplier>(ConfigureSupplier);
         }
 
         private void ConfigurePurchaseOrderStatus(EntityTypeBuilder<PurchaseOrderStatus> entity)
         {
-            entity.Property<int>("Id")
-                .IsRequired();
+            entity.Property<int>("Id").IsRequired();
             entity.HasKey("Id");
         }
 
         private void ConfigureShipmentStatus(EntityTypeBuilder<ShipmentStatus> entity)
         {
-            entity.Property<int>("Id")
-                .IsRequired();
+            entity.Property<int>("Id").IsRequired();
             entity.HasKey("Id");
-
         }
 
         private void ConfigureProductCategory(EntityTypeBuilder<ProductCategory> entity)
         {
-            entity.HasIndex(c => new {c.SupplierId, c.Name})
-                .IsUnique();
+            entity.Property(c => c.Name).IsRequired();
+
+            entity.HasIndex(c => new {c.SupplierId, c.Name}).IsUnique();
         }
 
         private void ConfigurePurchaseOrder(EntityTypeBuilder<PurchaseOrder> entity)
         {
+            entity.Property(p => p.OrderNo).IsRequired();
+            entity.Property<int>("SupplierId").IsRequired();
+            entity.Property<int>("StatusId").IsRequired();
+
+            entity.HasIndex(p => p.OrderNo).IsUnique();
+        }
+
+
+        private void ConfigurePurchaseOrderLine(EntityTypeBuilder<PurchaseOrderLine> entity)
+        {
+            entity.Property(p => p.PurchasePrice).IsRequired();
+            entity.Property(p => p.PurchaseQty).IsRequired();
+            entity.Property<int>("ProductId").IsRequired();
+            entity.Property<int>("PurchaseOrderId").IsRequired();
+        }
+
+        private void ConfigureShipment(EntityTypeBuilder<Shipment> entity)
+        {
+            entity.Property(s => s.DestinationAddress).IsRequired();
+            entity.Property(s => s.EstimatedArrivalDate).IsRequired();
+            entity.Property<int>("StatusId").IsRequired();
+
+            entity.HasIndex(s => s.TrackingId).IsUnique();
+            entity.HasIndex(s => s.EstimatedArrivalDate);
         }
 
         private void ConfigureSupplier(EntityTypeBuilder<Supplier> entity)
         {
-            entity.Property(b => b.Id)
-                .ForSqlServerUseSequenceHiLo();
-
+            entity.Property(s => s.Id).ForSqlServerUseSequenceHiLo();
             entity.Property(s => s.Name).IsRequired();
-            entity.HasIndex(s => s.Name)
-                .IsUnique();
+
+            entity.HasIndex(s => s.Name).IsUnique();
         }
 
         private void ConfigureProduct(EntityTypeBuilder<Product> entity)
         {
-            entity.Property(b => b.Id)
-                .ForSqlServerUseSequenceHiLo();
+            entity.Property(b => b.Id).ForSqlServerUseSequenceHiLo();
+            entity.Property(p => p.Name).IsRequired();
+            entity.Property(p => p.ProdCode).IsRequired();
+            entity.Property(p => p.Price).IsRequired();
+            entity.Property<int>("CategoryId").IsRequired();
+
+            entity.HasIndex(p => new { p.SupplierId, p.ProdCode }).IsUnique();
+            entity.HasIndex(p => new { p.SupplierId, p.Name }).IsUnique();
         }
     }
 }
