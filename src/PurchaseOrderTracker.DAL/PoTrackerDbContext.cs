@@ -51,14 +51,14 @@ namespace PurchaseOrderTracker.DAL
 
         private void ConfigureProductCategory(EntityTypeBuilder<ProductCategory> entity)
         {
-            entity.Property(c => c.Name).IsRequired();
+            entity.Property(c => c.Name).IsRequired().HasMaxLength(50);
 
             entity.HasIndex(c => new {c.SupplierId, c.Name}).IsUnique();
         }
 
         private void ConfigurePurchaseOrder(EntityTypeBuilder<PurchaseOrder> entity)
         {
-            entity.Property(p => p.OrderNo).IsRequired();
+            entity.Property(p => p.OrderNo).IsRequired().HasMaxLength(20);
             entity.Property<int>("SupplierId").IsRequired();
             entity.Property<int>("StatusId").IsRequired();
 
@@ -95,8 +95,8 @@ namespace PurchaseOrderTracker.DAL
         private void ConfigureProduct(EntityTypeBuilder<Product> entity)
         {
             entity.Property(b => b.Id).ForSqlServerUseSequenceHiLo();
-            entity.Property(p => p.Name).IsRequired();
-            entity.Property(p => p.ProdCode).IsRequired();
+            entity.Property(p => p.Name).IsRequired().HasMaxLength(150);
+            entity.Property(p => p.ProdCode).IsRequired().HasMaxLength(20);
             entity.Property(p => p.Price).IsRequired();
             entity.Property<int>("CategoryId").IsRequired();
 

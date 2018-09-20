@@ -6,7 +6,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Builders
     {
         private ProductCategory _category = new ProductCategoryBuilder().Build();
         private string _name = "productName";
-        private double _price = 20;
+        private decimal _price = 20;
         private string _prodCode = "productCode";
         private int? _supplierId;
 
@@ -28,7 +28,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Builders
             return this;
         }
 
-        public ProductBuilder Price(double price)
+        public ProductBuilder Price(decimal price)
         {
             _price = price;
             return this;

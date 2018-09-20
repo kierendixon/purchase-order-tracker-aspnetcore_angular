@@ -28,7 +28,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
             public int? CategoryId { get; set; }
 
             [Required]
-            public double? Price { get; set; }
+            public decimal? Price { get; set; }
         }
 
         public class Result
