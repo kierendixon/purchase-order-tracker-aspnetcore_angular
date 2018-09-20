@@ -21,12 +21,12 @@ namespace PurchaseOrderTracker.Web.Tests.Features.Api.Supplier
                 response.EnsureSuccessStatusCode();
                 Assert.That(responseString, Is.EqualTo(expectedResult));
             }
-
+            
             [Test]
             public async Task ResultWithMultipleRecords_SerialisesToJson()
             {
                 var expectedResult =
-                    "{\"suppliers\":[{\"id\":2,\"name\":\"Furniture Max\"},{\"id\":501,\"name\":\"ghf\"},{\"id\":3,\"name\":\"Office Supplies A+\"},{\"id\":1,\"name\":\"Techzon\"}]}";
+                    "{\"suppliers\":[{\"id\":2,\"name\":\"Furniture Max\"},{\"id\":3,\"name\":\"Office Supplies A+\"},{\"id\":1,\"name\":\"Techzon\"}]}";
 
                 var response = await _client.GetAsync("/api/supplier");
                 var responseString = await response.Content.ReadAsStringAsync();
