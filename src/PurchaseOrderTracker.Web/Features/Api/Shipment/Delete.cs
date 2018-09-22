@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
             public int? Id { get; set; }
         }
 
-        public class Handler : IAsyncRequestHandler<Command>
+        public class Handler : AsyncRequestHandler<Command>
         {
             private readonly PoTrackerDbContext _context;
 
@@ -24,7 +25,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
                 _context = context;
             }
 
-            public async Task Handle(Command command)
+            protected override async Task Handle(Command command, CancellationToken cancellationToken)
             {
                 _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
                 var shipment = await _context.Shipment.Include(s => s.Status).SingleAsync(s => s.Id == command.Id);

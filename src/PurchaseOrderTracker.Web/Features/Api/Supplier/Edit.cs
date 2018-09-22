@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -46,16 +47,18 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
             }
         }
 
-        public class QueryHandler : IAsyncRequestHandler<Query, QueryResult>
+        public class QueryHandler : IRequestHandler<Query, QueryResult>
         {
             private readonly PoTrackerDbContext _context;
+            private readonly IConfigurationProvider _configuration;
 
-            public QueryHandler(PoTrackerDbContext context)
+            public QueryHandler(PoTrackerDbContext context, IConfigurationProvider configuration)
             {
                 _context = context;
+                _configuration = configuration;
             }
 
-            public async Task<QueryResult> Handle(Query query)
+            public async Task<QueryResult> Handle(Query query, CancellationToken cancellationToken)
             {
                 IQueryable<Domain.Models.SupplierAggregate.Supplier> suppliersQueryable = _context.Supplier;
                 if (query.Id != null)
@@ -63,7 +66,10 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
                     suppliersQueryable = suppliersQueryable.Where(s => s.Id == query.Id);
                 }
 
-                var suppliers = await suppliersQueryable.ProjectTo<QueryResult.SupplierViewModel>().ToListAsync();
+                var suppliers = await suppliersQueryable
+                    .ProjectTo<QueryResult.SupplierViewModel>(_configuration)
+                    .ToListAsync();
+
                 return new QueryResult(suppliers);
             }
         }
@@ -73,28 +79,30 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
             public int? Id { get; set; }
 
             [Required]
-            [StringLength(50, MinimumLength = 3)]
+            [StringLength(50, MinimumLength = 3)] // TODO: keep consistent with database
             public string Name { get; set; }
         }
 
-        public class CommandHandler : IAsyncRequestHandler<Command, QueryResult>
+        public class CommandHandler : IRequestHandler<Command, QueryResult>
         {
             private readonly PoTrackerDbContext _context;
+            private readonly IMapper _mapper;
 
-            public CommandHandler(PoTrackerDbContext context)
+            public CommandHandler(PoTrackerDbContext context, IMapper mapper)
             {
                 _context = context;
+                _mapper = mapper;
             }
 
-            public async Task<QueryResult> Handle(Command command)
+            public async Task<QueryResult> Handle(Command command, CancellationToken cancellationToken)
             {
                 _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
                 var supplier = await _context.Supplier.FindAsync(command.Id);
 
-                Mapper.Map(command, supplier);
+                _mapper.Map(command, supplier);
                 await _context.SaveChangesAsync();
 
-                return new QueryResult(Mapper.Map<QueryResult.SupplierViewModel>(supplier));
+                return new QueryResult(_mapper.Map<QueryResult.SupplierViewModel>(supplier));
             }
         }
     }

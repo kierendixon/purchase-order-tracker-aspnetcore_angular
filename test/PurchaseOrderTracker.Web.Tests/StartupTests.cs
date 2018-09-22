@@ -1,8 +1,4 @@
-﻿using System.Reflection;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
+﻿using AutoMapper;
 using NUnit.Framework;
 
 namespace PurchaseOrderTracker.Web.Tests
@@ -13,7 +9,6 @@ namespace PurchaseOrderTracker.Web.Tests
         [Test]
         public void AutoMapperConfigurationAssertion_DoesNotThrowException()
         {
-            TestHelper.InitAutoMapper();
             Mapper.AssertConfigurationIsValid();
         }
     }

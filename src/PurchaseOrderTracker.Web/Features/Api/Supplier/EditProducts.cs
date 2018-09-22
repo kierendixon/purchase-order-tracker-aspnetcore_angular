@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -73,16 +74,18 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
             }
         }
 
-        public class Handler : IAsyncRequestHandler<Query, Result>
+        public class Handler : IRequestHandler<Query, Result>
         {
             private readonly PoTrackerDbContext _context;
+            private readonly IMapper _mapper;
 
-            public Handler(PoTrackerDbContext context)
+            public Handler(PoTrackerDbContext context, IMapper mapper)
             {
                 _context = context;
+                _mapper = mapper;
             }
 
-            public async Task<Result> Handle(Query query)
+            public async Task<Result> Handle(Query query, CancellationToken cancellationToken)
             {
                 var supplier = await _context.Supplier.Include(s => s.ProductCategories).SingleAsync(s => s.Id == query.SupplierId);
                 if (supplier == null)
@@ -105,7 +108,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
 
                 var paginatedProducts =
                     new PagedList<Result.ProductViewModel>(
-                        Mapper.Map<IQueryable<Product>, IList<Result.ProductViewModel>>(products),
+                        _mapper.Map<IQueryable<Product>, IList<Result.ProductViewModel>>(products),
                         query.PageNumber, query.PageSize);
 
                 // TODO: Can't resolve to Queryable? What happens in MVC project?

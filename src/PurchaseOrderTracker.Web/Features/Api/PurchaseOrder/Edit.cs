@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -42,16 +43,18 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
             public Dictionary<int, string> ShipmentOptions { get; set; }
         }
 
-        public class QueryHandler : IAsyncRequestHandler<Query, QueryResult>
+        public class QueryHandler : IRequestHandler<Query, QueryResult>
         {
             private readonly PoTrackerDbContext _context;
+            private readonly IMapper _mapper;
 
-            public QueryHandler(PoTrackerDbContext context)
+            public QueryHandler(PoTrackerDbContext context, IMapper mapper)
             {
                 _context = context;
+                _mapper = mapper;
             }
 
-            public async Task<QueryResult> Handle(Query query)
+            public async Task<QueryResult> Handle(Query query, CancellationToken cancellationToken)
             {
                 var suppliers = await _context.Supplier.ToListAsync();
                 var purchaseOrder = await _context.PurchaseOrder
@@ -61,7 +64,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
                     .ThenInclude(s => s.Status)
                     .SingleAsync(p => p.Id == query.Id);
 
-            var result = Mapper.Map<Domain.Models.PurchaseOrderAggregate.PurchaseOrder, QueryResult>(purchaseOrder);
+            var result = _mapper.Map<Domain.Models.PurchaseOrderAggregate.PurchaseOrder, QueryResult>(purchaseOrder);
                 result.SupplierOptions = suppliers.ToDictionary(s => s.Id, c => c.Name);
                 if (purchaseOrder.CanShipmentBeUpdated)
                 {
@@ -88,16 +91,18 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
             public int? ShipmentId { get; set; }
         }
 
-        public class CommandHandler : IAsyncRequestHandler<Command, QueryResult>
+        public class CommandHandler : IRequestHandler<Command, QueryResult>
         {
             private readonly PoTrackerDbContext _context;
+            private readonly IMapper _mapper;
 
-            public CommandHandler(PoTrackerDbContext context)
+            public CommandHandler(PoTrackerDbContext context, IMapper mapper)
             {
                 _context = context;
+                _mapper = mapper;
             }
 
-            public async Task<QueryResult> Handle(Command command)
+            public async Task<QueryResult> Handle(Command command, CancellationToken cancellationToken)
             {
                 _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
                 var order = await _context.PurchaseOrder
@@ -112,7 +117,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
                 await UpdateSupplierIfChanged(command, order);
                 await _context.SaveChangesAsync();
 
-                var result = Mapper.Map<Domain.Models.PurchaseOrderAggregate.PurchaseOrder, QueryResult>(order);
+                var result = _mapper.Map<Domain.Models.PurchaseOrderAggregate.PurchaseOrder, QueryResult>(order);
                 var suppliers = await _context.Supplier.ToListAsync();
                 var shipments = (await _context.Shipment.Include(s => s.Status).ToListAsync()).Where(s => s.CanBeAssignedToPurchaseOrder).ToList();
                 result.SupplierOptions = suppliers.ToDictionary(s => s.Id, c => c.Name);

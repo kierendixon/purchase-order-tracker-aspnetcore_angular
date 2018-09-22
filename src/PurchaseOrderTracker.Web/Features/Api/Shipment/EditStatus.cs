@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
             public string UpdatedStatus { get; set; }
         }
 
-        public class CommandHandler : IAsyncRequestHandler<Command>
+        public class CommandHandler : AsyncRequestHandler<Command>
         {
             private readonly PoTrackerDbContext _context;
 
@@ -31,7 +32,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
                 _context = context;
             }
 
-            public async Task Handle(Command command)
+            protected override async Task Handle(Command command, CancellationToken cancellationToken)
             {
                 _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
                 var shipment = await _context.Shipment

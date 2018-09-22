@@ -3,7 +3,6 @@ using System.IO;
 using System.Reflection;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.PlatformAbstractions;
 using PurchaseOrderTracker.DAL;
 
 namespace PurchaseOrderTracker.Web.Tests
@@ -40,6 +39,7 @@ namespace PurchaseOrderTracker.Web.Tests
         /// </param>
         /// <param name="startupAssembly">The target project's assembly.</param>
         /// <returns>The full path to the target project.</returns>
+         /*
         public static string GetProjectPath(string solutionRelativePath, Assembly startupAssembly)
         {
             // Get name of the target project which we want to test
@@ -64,6 +64,6 @@ namespace PurchaseOrderTracker.Web.Tests
             while (directoryInfo.Parent != null);
 
             throw new Exception($"Solution root could not be located using application root {applicationBasePath}.");
-        }
+        }*/
     }
 }

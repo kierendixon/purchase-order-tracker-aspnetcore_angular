@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -61,16 +62,18 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
             }
         }
 
-        public class Handler : IAsyncRequestHandler<Query, Result>
+        public class Handler : IRequestHandler<Query, Result>
         {
             private readonly PoTrackerDbContext _context;
+            private readonly IMapper _mapper;
 
-            public Handler(PoTrackerDbContext context)
+            public Handler(PoTrackerDbContext context, IMapper mapper)
             {
                 _context = context;
+                _mapper = mapper;
             }
             
-            public async Task<Result> Handle(Query query)
+            public async Task<Result> Handle(Query query, CancellationToken cancellationToken)
             {
                 var purchaseOrder = await _context.PurchaseOrder
                     .Include(o => o.Supplier)
@@ -82,8 +85,8 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
                 var productOptions = await _context.Product.Where(p => p.SupplierId == purchaseOrder.Supplier.Id)
                     .ToListAsync();
 
-                return new Result(query.PurchaseOrderId, purchaseOrder.OrderNo, 
-                    Mapper.Map<IEnumerable<PurchaseOrderLine>, List<Result.PurchaseOrderLineViewModel>>(purchaseOrder.LineItems),
+                return new Result(query.PurchaseOrderId, purchaseOrder.OrderNo,
+                    _mapper.Map<IEnumerable<PurchaseOrderLine>, List<Result.PurchaseOrderLineViewModel>>(purchaseOrder.LineItems),
                     productOptions.ToDictionary(p => p.Id, p => p.Name));
 
                 

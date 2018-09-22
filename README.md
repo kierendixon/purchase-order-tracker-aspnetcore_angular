@@ -42,7 +42,7 @@ Testing libraries:
 ### Development Environment Setup
 
   * Install NodeJs (version 6 or higher)
-  * Install Visual Studio (2017 or higher)
+  * Install Visual Studio 2017 (15.8.4 or higher)
   * Install NPM Task Runner Visual Studio Extension
   * Clone git repository
 

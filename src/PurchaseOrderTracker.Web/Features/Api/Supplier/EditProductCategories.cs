@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -50,7 +52,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
             }
         }
 
-        public class Handler : IAsyncRequestHandler<Query, Result>
+        public class Handler : IRequestHandler<Query, Result>
         {
             private readonly PoTrackerDbContext _context;
 
@@ -59,11 +61,13 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
                 _context = context;
             }
 
-            public async Task<Result> Handle(Query query)
+            public async Task<Result> Handle(Query query, CancellationToken cancellationToken)
             {
-                var paginatedCategories = await _context.ProductCategory.Where(c => c.SupplierId == query.SupplierId)
+                var paginatedCategories = await _context.ProductCategory
+                    .Where(c => c.SupplierId == query.SupplierId)
                     .ProjectToPagedList<Result.CategoryViewModel>(query.PageNumber, query.PageSize);
                 var supplier = await _context.Supplier.SingleAsync(s => s.Id == query.SupplierId);
+
                 return new Result(supplier.Id, supplier.Name, paginatedCategories.ToWebApiObject());
             }
         }

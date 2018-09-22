@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +25,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
             public Dictionary<int, string> SupplierOptions { get; }
         }
 
-        public class QueryHandler : IAsyncRequestHandler<Query, QueryResult>
+        public class QueryHandler : IRequestHandler<Query, QueryResult>
         {
             private readonly PoTrackerDbContext _context;
 
@@ -33,7 +34,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
                 _context = context;
             }
 
-            public async Task<QueryResult> Handle(Query query)
+            public async Task<QueryResult> Handle(Query query, CancellationToken cancellationToken)
             {
                 var supplier = await _context.Supplier.ToListAsync();
                 return new QueryResult(supplier.ToDictionary(s => s.Id, c => c.Name));
@@ -60,7 +61,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
             public int OrderId { get; }
         }
 
-        public class CreateHandler : IAsyncRequestHandler<Command, CommandResult>
+        public class CreateHandler : IRequestHandler<Command, CommandResult>
         {
             private readonly PoTrackerDbContext _context;
 
@@ -69,7 +70,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
                 _context = context;
             }
 
-            public async Task<CommandResult> Handle(Command command)
+            public async Task<CommandResult> Handle(Command command, CancellationToken cancellationToken)
             {
                 _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
                 var supplier = await _context.Supplier.FindAsync(command.SupplierId);

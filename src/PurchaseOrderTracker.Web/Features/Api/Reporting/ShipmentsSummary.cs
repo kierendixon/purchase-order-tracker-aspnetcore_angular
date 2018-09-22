@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +31,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Reporting
             public int ShipmentsDelayedMoreThan7Days { get; }
         }
 
-        public class Handler : IAsyncRequestHandler<Query, Result>
+        public class Handler : IRequestHandler<Query, Result>
         {
             private readonly PoTrackerDbContext _context;
 
@@ -39,7 +40,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Reporting
                 _context = context;
             }
 
-            public async Task<Result> Handle(Query query)
+            public async Task<Result> Handle(Query query, CancellationToken cancellationToken)
             {
                 // Numerous queries in this project retrieve all data from the database and then filter in memory
                 // because of bugs in EF Core 1. These are fixed in EF Core 2.

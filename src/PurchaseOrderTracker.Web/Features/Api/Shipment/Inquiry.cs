@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -75,16 +76,18 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
             }
         }
 
-        public class Handler : IAsyncRequestHandler<Query, Result>
+        public class Handler : IRequestHandler<Query, Result>
         {
             private readonly PoTrackerDbContext _context;
+            private readonly IMapper _mapper;
 
-            public Handler(PoTrackerDbContext context)
+            public Handler(PoTrackerDbContext context, IMapper mapper)
             {
                 _context = context;
+                _mapper = mapper;
             }
 
-            public async Task<Result> Handle(Query query)
+            public async Task<Result> Handle(Query query, CancellationToken cancellationToken)
             {
                 var shipments = _context.Shipment.Include(s => s.Status).AsQueryable();
                 switch (query.QueryType)
@@ -111,7 +114,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
 
                 var paginatedShipments =
                     new PagedList<Result.ShipmentViewModel>(
-                        Mapper.Map<IList<Domain.Models.ShipmentAggregate.Shipment>, IList<Result.ShipmentViewModel>>(pageOfShipments),
+                        _mapper.Map<IList<Domain.Models.ShipmentAggregate.Shipment>, IList<Result.ShipmentViewModel>>(pageOfShipments),
                         query.PageNumber, query.PageSize);
 
                 return new Result(paginatedShipments.ToWebApiObject());

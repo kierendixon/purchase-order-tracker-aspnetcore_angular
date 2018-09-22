@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
             public int PurchaseOrderId { get; }
         }
 
-        public class Handler : IAsyncRequestHandler<Command, Result>
+        public class Handler : IRequestHandler<Command, Result>
         {
             private readonly PoTrackerDbContext _context;
 
@@ -39,7 +40,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
                 _context = context;
             }
 
-            public async Task<Result> Handle(Command command)
+            public async Task<Result> Handle(Command command, CancellationToken cancellationToken)
             {
                 _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
                 var purchaseOrder = await _context.PurchaseOrder.Include(o => o.LineItems).SingleAsync(o => o.Id == command.PurchaseOrderId);

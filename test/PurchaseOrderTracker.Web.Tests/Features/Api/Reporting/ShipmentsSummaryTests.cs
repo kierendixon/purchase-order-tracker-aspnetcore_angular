@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using PurchaseOrderTracker.DAL;
@@ -33,7 +34,7 @@ namespace PurchaseOrderTracker.Web.Tests.Features.Api.Reporting
                     {
                         DbInitializer.Initialize(context);
                         var handler = new ShipmentsSummary.Handler(context);
-                        return await handler.Handle(query);
+                        return await handler.Handle(query, CancellationToken.None);
                     }
                 }
             }

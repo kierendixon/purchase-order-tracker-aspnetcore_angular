@@ -11,26 +11,22 @@ namespace PurchaseOrderTracker.Web
     {
         public static void Main(string[] args)
         {
-            IWebHost host = BuildWebHost(args);
+            var host = CreateWebHostBuilder(args).Build();
 
             RunPoTrackerDbInitializer(host);
 
             host.Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args)
-        {
-            return WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .Build();
-        }
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+                .UseStartup<Startup>();
 
         private static void RunPoTrackerDbInitializer(IWebHost host)
         {
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
-
                 try
                 {
                     var context = services.GetRequiredService<PoTrackerDbContext>();

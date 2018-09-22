@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -33,19 +34,21 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
             public bool CanTransitionToDelivered { get; private set; }
         }
 
-        public class QueryHandler : IAsyncRequestHandler<Query, QueryResult>
+        public class QueryHandler : IRequestHandler<Query, QueryResult>
         {
             private readonly PoTrackerDbContext _context;
+            private readonly IMapper _mapper;
 
-            public QueryHandler(PoTrackerDbContext context)
+            public QueryHandler(PoTrackerDbContext context, IMapper mapper)
             {
                 _context = context;
+                _mapper = mapper;
             }
 
-            public async Task<QueryResult> Handle(Query query)
+            public async Task<QueryResult> Handle(Query query, CancellationToken cancellationToken)
             {
                 var shipment = await _context.Shipment.Include(s => s.Status).SingleAsync(s => s.Id == query.Id);
-                return Mapper.Map<Domain.Models.ShipmentAggregate.Shipment, QueryResult>(shipment);
+                return _mapper.Map<Domain.Models.ShipmentAggregate.Shipment, QueryResult>(shipment);
             }
         }
 
@@ -65,24 +68,26 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
             public string DestinationAddress { get; set; }
         }
 
-        public class CommandHandler : IAsyncRequestHandler<Command, QueryResult>
+        public class CommandHandler : IRequestHandler<Command, QueryResult>
         {
             private readonly PoTrackerDbContext _context;
+            private readonly IMapper _mapper;
 
-            public CommandHandler(PoTrackerDbContext context)
+            public CommandHandler(PoTrackerDbContext context, IMapper mapper)
             {
                 _context = context;
+                _mapper = mapper;
             }
 
-            public async Task<QueryResult> Handle(Command command)
+            public async Task<QueryResult> Handle(Command command, CancellationToken cancellationToken)
             {
                 _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
                 var shipment = await _context.Shipment.Include(s => s.Status).SingleAsync(s => s.Id == command.Id);
 
-                Mapper.Map(command, shipment);
+                _mapper.Map(command, shipment);
                 await _context.SaveChangesAsync();
 
-                return Mapper.Map<QueryResult>(shipment);
+                return _mapper.Map<QueryResult>(shipment);
             }
         }
     }

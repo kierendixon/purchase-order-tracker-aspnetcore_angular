@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using PurchaseOrderTracker.DAL;
-using PurchaseOrderTracker.Domain.Exceptions;
 using PurchaseOrderTracker.Web.Infrastructure;
 using PagedListExtensions = PurchaseOrderTracker.Web.Infrastructure.PagedListExtensions;
 
@@ -47,7 +47,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
             }
         }
 
-        public class Handler : IAsyncRequestHandler<Query, Result>
+        public class Handler : IRequestHandler<Query, Result>
         {
             private readonly PoTrackerDbContext _context;
 
@@ -56,7 +56,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
                 _context = context;
             }
 
-            public async Task<Result> Handle(Query query)
+            public async Task<Result> Handle(Query query, CancellationToken cancellationToken)
             {
                 var suppliers = _context.Supplier.AsQueryable();
 

@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using PurchaseOrderTracker.DAL;
 
 namespace PurchaseOrderTracker.Web
@@ -22,18 +23,24 @@ namespace PurchaseOrderTracker.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMediatR(typeof(Startup));
-            services.AddMvc().AddFeatureFolders();
             services.AddAutoMapper(typeof(Startup));
-            Mapper.AssertConfigurationIsValid();
+
+            services.AddMediatR(typeof(Startup));
+
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddFeatureFolders();
 
             services.AddDbContext<PoTrackerDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("PoTrackerDatabase")));
+
             services.AddMemoryCache();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        { 
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, AutoMapper.IConfigurationProvider autoMapper)
+        {
+            autoMapper.AssertConfigurationIsValid();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -44,8 +51,10 @@ namespace PurchaseOrderTracker.Web
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
             }
 
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseMvc(routes =>

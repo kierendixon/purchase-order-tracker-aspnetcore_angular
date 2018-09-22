@@ -18,13 +18,14 @@ namespace PurchaseOrderTracker.Web.Tests
         [SetUp]
         public void OnInit()
         {
-            string solutionRelativeTargetProjectParentDir = "src";
+            // TODO: use new WebApplicationFactory
+            //string solutionRelativeTargetProjectParentDir = "src";
             var startupAssembly = typeof(Startup).GetTypeInfo().Assembly;
-            var contentRoot = TestHelper.GetProjectPath(solutionRelativeTargetProjectParentDir, startupAssembly);
+            //var contentRoot = TestHelper.GetProjectPath(solutionRelativeTargetProjectParentDir, startupAssembly);
 
             var host = WebHost.CreateDefaultBuilder()
                 .UseEnvironment("Testing")
-                .UseContentRoot(contentRoot)
+                //.UseContentRoot(contentRoot)
                 .UseStartup<Startup>();
             var server = new TestServer(host);
             RunPoTrackerDbInitializer(server.Host);

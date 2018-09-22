@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
             public string Name { get; set; }
         }
 
-        public class Handler : IAsyncRequestHandler<Command>
+        public class Handler : AsyncRequestHandler<Command>
         {
             private readonly PoTrackerDbContext _context;
 
@@ -30,7 +31,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
                 _context = context;
             }
 
-            public async Task Handle(Command command)
+            protected override async Task Handle(Command command, CancellationToken cancellationToken)
             {
                 try
                 {

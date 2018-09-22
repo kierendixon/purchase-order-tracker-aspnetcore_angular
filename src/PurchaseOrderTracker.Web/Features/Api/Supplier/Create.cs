@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -28,22 +29,25 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
             public int SupplierId { get; }
         }
 
-        public class Handler : IAsyncRequestHandler<Command, CommandResult>
+        public class Handler : IRequestHandler<Command, CommandResult>
         {
             private readonly PoTrackerDbContext _context;
+            private readonly IMapper _mapper;
 
-            public Handler(PoTrackerDbContext context)
+            public Handler(PoTrackerDbContext context, IMapper mapper)
             {
                 _context = context;
+                _mapper = mapper;
             }
 
-            public async Task<CommandResult> Handle(Command command)
+            public async Task<CommandResult> Handle(Command command, CancellationToken cancellationToken)
             {
                 try
                 {
-                    var supplier = Mapper.Map<Domain.Models.SupplierAggregate.Supplier>(command);
+                    var supplier = _mapper.Map<Domain.Models.SupplierAggregate.Supplier>(command);
                     _context.Supplier.Add(supplier);
                     await _context.SaveChangesAsync();
+
                     return new CommandResult(supplier.Id);
                 }
                 catch (DbUpdateException ex)
