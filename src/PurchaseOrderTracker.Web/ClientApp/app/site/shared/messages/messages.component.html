@@ -2,7 +2,7 @@
     <li *ngFor="let msg of messageService.getMessages(); let i=index" class="list-group-item list-group-item-success"
         [class.list-group-item-danger]="msg.isError" [class.list-group-item-success]="!msg.isError">
         {{msg.msg}}
-        <button (click)="messageService.removeMessage(i)"type="button" class="close">
+        <button (click)="messageService.removeMessage(i)" type="button" class="close">
             <span>&times;</span>
         </button>
     </li>

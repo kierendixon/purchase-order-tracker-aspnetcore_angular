@@ -9,7 +9,7 @@ import { CreateLineItemService, CreateLineItemCommand } from './create-line-item
 })
 export class CreateLineItemComponent {
     @Input() purchaseOrderId: number;
-    @Input() supplierOptions: Map<number, string>;
+    @Input() productOptions: Map<number, string>;
     objectKeys = Object.keys;
     model = new CreateLineItemViewModel();
 
