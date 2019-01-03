@@ -6,13 +6,13 @@ Purchase Order Tracker is a line-of-business system used to track the delivery o
 
 You can maintain **Suppliers** and their **Products**, create **Purchase Orders** with **Line Items**, and assign orders to **Shipments**.
 
-### Purpose
+## Purpose
 
 The purpose of building this system is to teach myself more about the technologies used, not to release it as a real product.
 
-### Technology Stack
+## Technology Stack
 
-This project is built using ASP.NET Core MVC (v2) and Angular (v4). Some of the key libraries used are listed below - refer to each project file and package.json for a full list of dependencies.
+This project is built using ASP.NET Core MVC v2 and Angular v4. Some of the key libraries used are listed below - refer to each csproj and package.json files for a full list of dependencies.
 
 C# libraries:
 
@@ -24,6 +24,7 @@ C# libraries:
 
 Javascript/CSS libraries:
 
+  * [Angular](https://angular.io/)
   * [Bootstrap](https://getbootstrap.com/)
   * [NG Bootstrap](https://ng-bootstrap.github.io)
   * [Webpack](https://webpack.js.org)
@@ -39,12 +40,18 @@ Testing libraries:
   * [Jasmine](https://jasmine.github.io/)
   * [Karma](https://karma-runner.github.io)
 
-### Development Environment Setup
+# Development Environment Setup
 
-  * Install NodeJs (version 6 or higher)
-  * Install Visual Studio 2017 (15.8.4 or higher)
+  * Install SQL Server 2017 (CU3 or higher)
+  * Install NodeJs (v6 or higher)
+  * Install Visual Studio 2017 (v15.8.4 or higher)
   * Install NPM Task Runner Visual Studio Extension
   * Clone git repository
+
+# Running in Docker for Windows
+
+  * Install Docker for WIndows (v18.09.0 or higher)
+  * From within the root source folder run the command `docker-compose up`. This will download the base images, build a new Purchase Order Tracker image, and create and startup the containers.
 
 # Documentation
 
