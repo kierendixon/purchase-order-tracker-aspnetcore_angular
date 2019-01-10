@@ -12,9 +12,7 @@ namespace PurchaseOrderTracker.Web
         public static void Main(string[] args)
         {
             var host = CreateWebHostBuilder(args).Build();
-
             RunPoTrackerDbInitializer(host);
-
             host.Run();
         }
 

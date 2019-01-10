@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using PurchaseOrderTracker.Web.Infrastructure;
 
 namespace PurchaseOrderTracker.Web.Features.Api.Supplier
 {
@@ -19,7 +17,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
         [HttpPut]
         public async Task<ActionResult> Create([FromBody] Create.Command command)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid) //TODO: get rid of this using new asp.net core 2.2 controller attribute
             {
                 var result = await _mediator.Send(command);
                 return new ObjectResult(result);

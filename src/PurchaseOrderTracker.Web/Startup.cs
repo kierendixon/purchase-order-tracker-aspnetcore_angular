@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using PurchaseOrderTracker.DAL;
 
 namespace PurchaseOrderTracker.Web
@@ -31,6 +31,11 @@ namespace PurchaseOrderTracker.Web
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddFeatureFolders();
 
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/dist";
+            });
+
             services.AddDbContext<PoTrackerDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("PoTrackerDatabase")));
 
@@ -44,9 +49,6 @@ namespace PurchaseOrderTracker.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions {
-                    HotModuleReplacement = true
-                });
             }
             else
             {
@@ -56,16 +58,23 @@ namespace PurchaseOrderTracker.Web
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseSpaStaticFiles();
 
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+            });
 
-                routes.MapSpaFallbackRoute(
-                    name: "spa-fallback",
-                    defaults: new { controller = "Home", action = "Index" });
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4201");
+                }
             });
         }
     }
