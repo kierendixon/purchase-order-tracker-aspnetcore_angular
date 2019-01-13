@@ -25,7 +25,7 @@
             <div class="input-group">
                 <input id="estimatedArrivalDate" class="form-control" placeholder="yyyy-mm-dd" [(ngModel)]="model.estimatedArrivalDate" name="estimatedArrivalDate" 
                        ngbDatepicker #d="ngbDatepicker" [readonly]="model.isDelivered">
-                <button class="input-group-addon" (click)="d.toggle()" type="button" tabindex="-1">
+                <button class="input-group-prepend" (click)="d.toggle()" type="button" tabindex="-1">
                     <i class="fa fa-calendar" aria-hidden="true"></i>
                 </button>
             </div>

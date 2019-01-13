@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 export interface AuthService {
     authenticate(username: string, password: string): Observable<string>;

@@ -7,7 +7,7 @@ namespace PurchaseOrderTracker.Web.Features.Home
     {
         public IActionResult Index()
         {
-            return View();
+            return Redirect("/index.html");
         }
 
         public IActionResult Error()

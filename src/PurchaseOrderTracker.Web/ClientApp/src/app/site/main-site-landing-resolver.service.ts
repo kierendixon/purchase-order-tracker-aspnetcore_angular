@@ -1,7 +1,8 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router, Resolve, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
-import { Observable } from 'rxjs/observable';
-import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 
 import { MainSiteService, ShipmentSummaryResult } from './main-site.service';
 import { MessagesService } from './shared/messages/messages.service';
@@ -15,14 +16,16 @@ export class MainSiteLandingResolver implements Resolve<ShipmentSummaryResult> {
     }
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ShipmentSummaryResult> {
-        return this.mainSiteService.handleShipmentSummaryQuery().map(
-            resp => {
-                return resp;
-            },
-            err => {
-                this.messagesService.addHttpResponseError(err);
-                return null;
-            }
+        return this.mainSiteService.handleShipmentSummaryQuery().pipe(
+            map(
+                resp => {
+                    return resp;
+                },
+                err => {
+                    this.messagesService.addHttpResponseError(err);
+                    return null;
+                }
+            )
         );
     }
 }

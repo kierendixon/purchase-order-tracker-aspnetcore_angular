@@ -1,7 +1,7 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router, NavigationStart } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import 'rxjs/add/operator/filter';
+import { filter } from 'rxjs/operators';
 
 import { Message } from './message';
 
@@ -10,11 +10,13 @@ export class MessagesService {
     private messages: Message[] = [];
 
     constructor(router: Router) {
-        router.events.filter(event => event instanceof NavigationStart).subscribe(
-            (event: NavigationStart) => {
-                this.clearMessages();
-            }
-        );
+        router.events
+            .pipe(filter(event => event instanceof NavigationStart))
+            .subscribe(
+                (event: NavigationStart) => {
+                    this.clearMessages();
+                }
+            );
     }
 
     public addMessage(msg: string, isError = false) {
