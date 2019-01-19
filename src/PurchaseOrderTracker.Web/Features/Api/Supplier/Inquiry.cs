@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
 using PurchaseOrderTracker.DAL;
 using PurchaseOrderTracker.Web.Infrastructure;
@@ -50,10 +51,12 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
         public class Handler : IRequestHandler<Query, Result>
         {
             private readonly PoTrackerDbContext _context;
+            private readonly IConfigurationProvider _configuration;
 
-            public Handler(PoTrackerDbContext context)
+            public Handler(PoTrackerDbContext context, IConfigurationProvider configuration)
             {
                 _context = context;
+                _configuration = configuration;
             }
 
             public async Task<Result> Handle(Query query, CancellationToken cancellationToken)
@@ -61,7 +64,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
                 var suppliers = _context.Supplier.AsQueryable();
 
                 var paginatedSuppliers = await
-                    suppliers.ProjectToPagedList<Result.SupplierViewModel>(query.PageNumber, query.PageSize);
+                    suppliers.ProjectToPagedList<Result.SupplierViewModel>(_configuration, query.PageNumber, query.PageSize);
 
                 return new Result(paginatedSuppliers.ToWebApiObject());
             }
