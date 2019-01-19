@@ -14,7 +14,7 @@
             </div>
             <div class="col-7 text-right">
                 <button type="submit" class="btn btn-primary cursor-pointer">Update</button>
-                <button type="button" (click)="onDeleteCategory(i)" class="btn btn-danger cursor-pointer">Delete</button>
+                <button type="button" (click)="onDeleteCategory(i)" class="btn btn-danger cursor-pointer ml-1">Delete</button>
             </div>
         </div>
     </form>
@@ -22,7 +22,7 @@
 <div class="d-flex justify-content-between mt-2">
     <div>
         <button class="btn btn-primary" (click)="showAddProductCategoryModal()">Create New Product Category</button>
-        <a routerLink="/main-site/suppliers/{{supplierId}}" class="btn btn-secondary">Back</a>
+        <a routerLink="/main-site/suppliers/{{supplierId}}" class="btn btn-secondary ml-1">Back</a>
     </div>
     <pagination [paginatedList]="model"></pagination>
 </div>

@@ -1,9 +1,10 @@
 ﻿<div class="d-flex justify-content-between">
     <h1>Edit Products ({{supplierName}})</h1>
     <form class="form-inline" asp-action="EditProducts" method="get">
-        <input class="form-control mr-2" type="text" #search name="ProductCodeFilter" placeholder="Find by Product Code" [class.Disabled]="!hasProducts() && !productsAreFiltered">
-        <button class="btn btn-outline-primary" type="button" (click)="onSearch(search.value)" [class.Disabled]="!hasProducts() && !productsAreFiltered">Search</button>
-        <a *ngIf="productsAreFiltered" class="btn btn-outline-primary ml-2" (click)="onClearSearch()">Clear Search</a>
+        <input class="form-control mr-2" type="text" #search name="ProductCodeFilter" placeholder="Find by Product Code" 
+            [class.Disabled]="!hasProducts() && !productsAreFiltered" (keyup.enter)="onSearch(search.value)" tabindex="100">
+        <button class="btn btn-outline-primary" type="button" (click)="onSearch(search.value)" [class.Disabled]="!hasProducts() && !productsAreFiltered" tabindex="101">Search</button>
+        <a *ngIf="productsAreFiltered" class="btn btn-outline-primary ml-2" (click)="onClearSearch()" tabindex="102">Clear Search</a>
     </form>
 </div>
 <messages></messages>
@@ -47,7 +48,7 @@
             </div>
             <div class="col-2 text-right">
                 <button type="submit" class="btn btn-primary cursor-pointer">Update</button>
-                <button type="button" (click)="onDeleteProduct(i)" class="btn btn-danger cursor-pointer">Delete</button>
+                <button type="button" (click)="onDeleteProduct(i)" class="btn btn-danger cursor-pointer ml-1">Delete</button>
             </div>
         </div>
     </form>
@@ -55,7 +56,7 @@
 <div class="d-flex justify-content-between mt-2">
     <div>
         <button class="btn btn-primary" (click)="showAddProductModal()">Create New Product</button>
-        <a routerLink="/main-site/suppliers/{{supplierId}}" class="btn btn-secondary">Back</a>
+        <a routerLink="/main-site/suppliers/{{supplierId}}" class="btn btn-secondary ml-1">Back</a>
     </div>
     <pagination [paginatedList]="model"></pagination>
 </div>

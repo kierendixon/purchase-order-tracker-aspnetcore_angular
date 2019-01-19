@@ -31,14 +31,12 @@
             </div>
             <div class="col-2 text-right">
                 <button type="submit" class="btn btn-primary cursor-pointer">Update</button>
-                <button type="button" (click)="onDeleteLineItem(i)" class="btn btn-danger cursor-pointer">Delete</button>
+                <button type="button" (click)="onDeleteLineItem(i)" class="btn btn-danger cursor-pointer ml-1">Delete</button>
             </div>
         </div>
     </form>
 </ng-container>
-<div class="d-flex justify-content-between mt-2">
-    <div>
-        <button class="btn btn-primary" (click)="showAddLineItemModal()">Create New Line</button>
-        <a routerLink="/main-site/purchase-orders/{{purchaseOrderId}}" class="btn btn-secondary">Back</a>
-    </div>
+<div class="mt-1">
+    <button class="btn btn-primary" (click)="showAddLineItemModal()">Create New Line</button>
+    <a routerLink="/main-site/purchase-orders/{{purchaseOrderId}}" class="btn btn-secondary ml-1">Back</a>
 </div>
