@@ -42,16 +42,17 @@ namespace PurchaseOrderTracker.Web.Features.Api.Reporting
 
             public async Task<Result> Handle(Query query, CancellationToken cancellationToken)
             {
-                // Numerous queries in this project retrieve all data from the database and then filter in memory
-                // because of bugs in EF Core 1. These are fixed in EF Core 2.
-                // For example: https://github.com/aspnet/EntityFramework/issues/6347
-                var totalOpenOrders = await _context.PurchaseOrder.Include(p => p.Status).ToAsyncEnumerable()
+                // Need to call ToAsyncEnumerable().Count(filter) which fetches all fields from
+                // the database instead of CountAsync(filter) because of a bug in EF Core 2.1
+                // https://github.com/aspnet/EntityFrameworkCore/issues/13546
+
+                var totalOpenOrders = await _context.PurchaseOrder.ToAsyncEnumerable()
                     .Count(p => p.IsOpen);
+                var shipmentsDelayed = await _context.Shipment.ToAsyncEnumerable()
+                    .Count(s => s.IsDelayed());
                 var shipmentsSchedForDeliveryToday =
                     await _context.Shipment.CountAsync(s => s.IsScheduledForDeliveryToday());
-                var shipmentsDelayed = await _context.Shipment.Include(s => s.Status).ToAsyncEnumerable()
-                    .Count(s => s.IsDelayed());
-                var shipmentsDelayedMoreThan7Days = await _context.Shipment.Include(s => s.Status).ToAsyncEnumerable()
+                var shipmentsDelayedMoreThan7Days = await _context.Shipment.ToAsyncEnumerable()
                     .Count(s => s.IsDelayedMoreThan7Days());
 
                 return new Result(totalOpenOrders, shipmentsSchedForDeliveryToday, shipmentsDelayed,

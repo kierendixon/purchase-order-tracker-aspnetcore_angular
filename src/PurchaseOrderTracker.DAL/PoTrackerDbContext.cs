@@ -22,13 +22,6 @@ namespace PurchaseOrderTracker.DAL
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Because EF Core 1 doesn't support mapping complex types / value objects, they are instead
-            // stored as a separate table with their primary key implemented as a "shadow property".
-            // Support for these mappings will be provided in EF Core 2.
-            // See https://github.com/aspnet/EntityFramework/issues/246
-            modelBuilder.Entity<PurchaseOrderStatus>(ConfigurePurchaseOrderStatus);
-            modelBuilder.Entity<ShipmentStatus>(ConfigureShipmentStatus);
-
             modelBuilder.Entity<Product>(ConfigureProduct);
             modelBuilder.Entity<ProductCategory>(ConfigureProductCategory);
             modelBuilder.Entity<PurchaseOrder>(ConfigurePurchaseOrder);
@@ -37,23 +30,11 @@ namespace PurchaseOrderTracker.DAL
             modelBuilder.Entity<Supplier>(ConfigureSupplier);
         }
 
-        private void ConfigurePurchaseOrderStatus(EntityTypeBuilder<PurchaseOrderStatus> entity)
-        {
-            entity.Property<int>("Id").IsRequired();
-            entity.HasKey("Id");
-        }
-
-        private void ConfigureShipmentStatus(EntityTypeBuilder<ShipmentStatus> entity)
-        {
-            entity.Property<int>("Id").IsRequired();
-            entity.HasKey("Id");
-        }
-
         private void ConfigureProductCategory(EntityTypeBuilder<ProductCategory> entity)
         {
             entity.Property(c => c.Name).IsRequired().HasMaxLength(50);
 
-            entity.HasIndex(c => new {c.SupplierId, c.Name}).IsUnique();
+            entity.HasIndex(c => new { c.SupplierId, c.Name }).IsUnique();
         }
 
         private void ConfigurePurchaseOrder(EntityTypeBuilder<PurchaseOrder> entity)
@@ -61,10 +42,13 @@ namespace PurchaseOrderTracker.DAL
             entity.Property(p => p.OrderNo).IsRequired().HasMaxLength(20);
             entity.Property<int>("SupplierId").IsRequired();
             entity.Property<int>("StatusId").IsRequired();
+            entity.OwnsOne(p => p.Status, s =>
+            {
+                s.ToTable(nameof(PurchaseOrderStatus));
+            });
 
             entity.HasIndex(p => p.OrderNo).IsUnique();
         }
-
 
         private void ConfigurePurchaseOrderLine(EntityTypeBuilder<PurchaseOrderLine> entity)
         {
@@ -79,6 +63,10 @@ namespace PurchaseOrderTracker.DAL
             entity.Property(s => s.DestinationAddress).IsRequired();
             entity.Property(s => s.EstimatedArrivalDate).IsRequired();
             entity.Property<int>("StatusId").IsRequired();
+            entity.OwnsOne(p => p.Status, s =>
+            {
+                s.ToTable(nameof(ShipmentStatus));
+            });
 
             entity.HasIndex(s => s.TrackingId).IsUnique();
             entity.HasIndex(s => s.EstimatedArrivalDate);

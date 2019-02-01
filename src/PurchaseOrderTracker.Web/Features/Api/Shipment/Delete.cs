@@ -28,7 +28,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
             protected override async Task Handle(Command command, CancellationToken cancellationToken)
             {
                 _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
-                var shipment = await _context.Shipment.Include(s => s.Status).SingleAsync(s => s.Id == command.Id);
+                var shipment = await _context.Shipment.SingleAsync(s => s.Id == command.Id);
 
                 if (!shipment.CanBeDeleted)
                     throw new PurchaseOrderTrackerException("Shipment cannot be deleted");

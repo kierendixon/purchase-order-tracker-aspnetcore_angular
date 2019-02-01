@@ -68,7 +68,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
                 result.SupplierOptions = suppliers.ToDictionary(s => s.Id, c => c.Name);
                 if (purchaseOrder.CanShipmentBeUpdated)
                 {
-                    var shipments = (await _context.Shipment.Include(s => s.Status).ToListAsync())
+                    var shipments = (await _context.Shipment.ToListAsync())
                         .Where(s => s.CanBeAssignedToPurchaseOrder).ToList();
                     result.ShipmentOptions = shipments.ToDictionary(s => s.Id, c => c.TrackingId);
                 }
@@ -119,7 +119,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
 
                 var result = _mapper.Map<Domain.Models.PurchaseOrderAggregate.PurchaseOrder, QueryResult>(order);
                 var suppliers = await _context.Supplier.ToListAsync();
-                var shipments = (await _context.Shipment.Include(s => s.Status).ToListAsync()).Where(s => s.CanBeAssignedToPurchaseOrder).ToList();
+                var shipments = (await _context.Shipment.ToListAsync()).Where(s => s.CanBeAssignedToPurchaseOrder).ToList();
                 result.SupplierOptions = suppliers.ToDictionary(s => s.Id, c => c.Name);
                 result.ShipmentOptions = shipments.ToDictionary(s => s.Id, c => c.TrackingId);
 
@@ -142,7 +142,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
                 }
                 else if (order.Shipment == null && command.ShipmentId != null)
                 {
-                    var shipment = await _context.Shipment.Include(s => s.Status).SingleAsync(s => s.Id == command.ShipmentId);
+                    var shipment = await _context.Shipment.SingleAsync(s => s.Id == command.ShipmentId);
                     order.Shipment = shipment;
                 }
             }

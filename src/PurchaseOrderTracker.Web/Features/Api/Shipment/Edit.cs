@@ -47,7 +47,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
 
             public async Task<QueryResult> Handle(Query query, CancellationToken cancellationToken)
             {
-                var shipment = await _context.Shipment.Include(s => s.Status).SingleAsync(s => s.Id == query.Id);
+                var shipment = await _context.Shipment.SingleAsync(s => s.Id == query.Id);
                 return _mapper.Map<Domain.Models.ShipmentAggregate.Shipment, QueryResult>(shipment);
             }
         }
@@ -82,7 +82,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
             public async Task<QueryResult> Handle(Command command, CancellationToken cancellationToken)
             {
                 _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
-                var shipment = await _context.Shipment.Include(s => s.Status).SingleAsync(s => s.Id == command.Id);
+                var shipment = await _context.Shipment.SingleAsync(s => s.Id == command.Id);
 
                 _mapper.Map(command, shipment);
                 await _context.SaveChangesAsync();

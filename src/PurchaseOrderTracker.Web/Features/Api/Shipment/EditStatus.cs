@@ -36,10 +36,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
             {
                 _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
                 var shipment = await _context.Shipment
-                    .Include(s => s.Status)
                     .Include(s => s.PurchaseOrders)
-                    .Include(s => s.PurchaseOrders)
-                        .ThenInclude(p => p.Status)
                     .SingleAsync(s => s.Id == command.Id);
 
                 if (command.UpdatedStatus == ShipmentStatus.Trigger.AwaitingShipping.ToString())
