@@ -30,5 +30,5 @@ interface ResultPurchaseOrder {
     orderNo: string;
     createdDate: Date;
     supplierName: string;
-    currentState: string;
+    status: string;
 }

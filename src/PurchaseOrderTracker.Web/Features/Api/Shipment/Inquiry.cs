@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using PurchaseOrderTracker.DAL;
 using PurchaseOrderTracker.Web.Infrastructure;
 using X.PagedList;
@@ -45,7 +44,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
             public class ShipmentViewModel
             {
                 public ShipmentViewModel(int id, string trackingId, string company, DateTime estimatedArrivalDate,
-                    string comments, decimal shippingCost, string currentState, string destinationAddress, bool isDelayed,
+                    string comments, decimal shippingCost, string status, string destinationAddress, bool isDelayed,
                     bool isDelayedMoreThan7Days, bool isScheduledForDeliveryToday)
                 {
                     Id = id;
@@ -54,7 +53,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
                     EstimatedArrivalDate = estimatedArrivalDate;
                     Comments = comments;
                     ShippingCost = shippingCost;
-                    CurrentState = currentState;
+                    Status = status;
                     DestinationAddress = destinationAddress;
                     IsDelayed = isDelayed;
                     IsDelayedMoreThan7Days = isDelayedMoreThan7Days;
@@ -67,7 +66,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
                 public DateTime EstimatedArrivalDate { get; }
                 public string Comments { get; }
                 public decimal ShippingCost { get; }
-                public string CurrentState { get; }
+                public string Status { get; }
                 public string DestinationAddress { get; }
 
                 public bool IsDelayed { get; }
@@ -80,16 +79,22 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
         {
             private readonly PoTrackerDbContext _context;
             private readonly IMapper _mapper;
+            private readonly IConfigurationProvider _configuration;
 
-            public Handler(PoTrackerDbContext context, IMapper mapper)
+            public Handler(PoTrackerDbContext context, IMapper mapper, IConfigurationProvider configuration)
             {
                 _context = context;
                 _mapper = mapper;
+                _configuration = configuration;
             }
 
             public async Task<Result> Handle(Query query, CancellationToken cancellationToken)
             {
-                var shipments = _context.Shipment.Include(s => s.Status).AsQueryable();
+                // Need to call ToList(). which fetches all fields from
+                // the database instead of projecting because of a bug in EF Core 2.1
+                // https://github.com/aspnet/EntityFrameworkCore/issues/13546
+                var shipments = (await _context.Shipment.ToListAsync()).AsQueryable();
+
                 switch (query.QueryType)
                 {
                     case QueryType.All:
@@ -105,20 +110,18 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
                         shipments = shipments.Where(s => s.IsScheduledForDeliveryToday());
                         break;
                 }
+                
+                // Can't project with AutoMapper due to bugs. See notes in MappingProfile.cs
+                // var pageOfShipments = await shipmentsList.AsQueryable()
+                //    .ProjectToPagedList<Result.ShipmentViewModel>(_configuration, query.PageNumber, query.PageSize);
 
-                // LINQ can't project computed values, and the DelegateCompile package to decompile computed values doesn't suport .NET Core 1.1
-                // Perform paging manually instead of using ProjectToPagedList()
-//                var pageOfShipments = await shipments.Skip(query.PageSize * (query.PageNumber - 1)).Take(query.PageSize)
-//                    .ToListAsync();
-                var pageOfShipments = await shipments.ToListAsync();
-
-                var paginatedShipments =
+                var pageOfShipments =
                     new PagedList<Result.ShipmentViewModel>(
-                        _mapper.Map<IList<Domain.Models.ShipmentAggregate.Shipment>, IList<Result.ShipmentViewModel>>(pageOfShipments),
+                        _mapper.Map<IList<Domain.Models.ShipmentAggregate.Shipment>, IList<Result.ShipmentViewModel>>(shipments.ToList()),
                         query.PageNumber, query.PageSize);
 
-                return new Result(paginatedShipments.ToWebApiObject());
-            }
+                return new Result(pageOfShipments.ToWebApiObject());
+            }       
         }
     }
 }

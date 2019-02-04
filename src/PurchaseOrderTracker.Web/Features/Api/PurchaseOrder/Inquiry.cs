@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PurchaseOrderTracker.DAL;
-using PurchaseOrderTracker.Domain.Exceptions;
 using PurchaseOrderTracker.Web.Infrastructure;
 using X.PagedList;
 using PagedListExtensions = PurchaseOrderTracker.Web.Infrastructure.PagedListExtensions;
@@ -48,20 +47,20 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
             public class PurchaseOrderViewModel
             {
                 public PurchaseOrderViewModel(int id, string orderNo, DateTime createdDate, string supplierName,
-                    string currentState)
+                    string status)
                 {
                     Id = id;
                     OrderNo = orderNo;
                     CreatedDate = createdDate;
                     SupplierName = supplierName;
-                    CurrentState = currentState;
+                    Status = status;
                 }
 
                 public int Id { get; }
                 public string OrderNo { get; }
                 public DateTime CreatedDate { get; }
                 public string SupplierName { get; }
-                public string CurrentState { get; }
+                public string Status { get; }
             }
         }
 
@@ -69,50 +68,54 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
         {
             private readonly PoTrackerDbContext _context;
             private readonly IMapper _mapper;
+            private readonly IConfigurationProvider _configuration;
 
-            public Handler(PoTrackerDbContext context, IMapper mapper)
+            public Handler(PoTrackerDbContext context, IMapper mapper, IConfigurationProvider configuration)
             {
                 _context = context;
                 _mapper = mapper;
+                _configuration = configuration;
             }
 
             public async Task<Result> Handle(Query query, CancellationToken cancellationToken)
             {
-                // Due to similar bugs described in the /Home/Index.cs source file we retrieve all data from 
-                // the database and then filter in memory
-                var allOrders = await _context.PurchaseOrder
+                // Need to call ToList() which fetches all fields from
+                // the database instead of projecting because of a bug in EF Core 2.1
+                // https://github.com/aspnet/EntityFrameworkCore/issues/13546
+                var orders = (await _context.PurchaseOrder
                     .Include(o => o.Supplier)
-                    .Include(o => o.Status)
                     .Include(o => o.Shipment)
-                        .ThenInclude(s => s.Status)
-                    .ToListAsync();
+                    .ToListAsync())
+                    .AsQueryable();
 
-                IQueryable<Domain.Models.PurchaseOrderAggregate.PurchaseOrder> orders = null;
                 switch (query.QueryType)
                 {
                     case QueryType.All:
-                        orders = allOrders.AsQueryable();
+                        orders = orders.AsQueryable();
                         break;
                     case QueryType.Open:
-                        orders = allOrders.Where(o => o.IsOpen).AsQueryable();
+                        orders = orders.Where(o => o.IsOpen).AsQueryable();
                         break;
                     case QueryType.ScheduledForDeliveryToday:
-                        orders = allOrders.Where(o => o.Shipment != null && o.Shipment.IsScheduledForDeliveryToday()).AsQueryable();
+                        orders = orders.Where(o => o.Shipment != null && o.Shipment.IsScheduledForDeliveryToday()).AsQueryable();
                         break;
                     case QueryType.Delayed:
-                        orders = allOrders.Where(o => o.Shipment != null && o.Shipment.IsDelayed()).AsQueryable();
+                        orders = orders.Where(o => o.Shipment != null && o.Shipment.IsDelayed()).AsQueryable();
                         break;
                     case QueryType.DelayedMoreThan7Days:
-                        orders = allOrders.Where(o => o.Shipment != null && o.Shipment.IsDelayedMoreThan7Days()).AsQueryable();
+                        orders = orders.Where(o => o.Shipment != null && o.Shipment.IsDelayedMoreThan7Days()).AsQueryable();
                         break;
                 }
 
-                // var paginatedOrders = await orders.ProjectToPagedList<Result.PurchaseOrderViewModel>(query.PageNumber, query.PageSize);
+                // Can't project with AutoMapper due to bugs. See notes in MappingProfile.cs
+                // var pageOfOrders = await orders.ToList().AsQueryable().
+                //    ProjectToPagedList<Result.PurchaseOrderViewModel>(_configuration, query.PageNumber, query.PageSize);
+
                 var paginatedOrders =
                     new PagedList<Result.PurchaseOrderViewModel>(
                         _mapper.Map<IQueryable<Domain.Models.PurchaseOrderAggregate.PurchaseOrder>, IList<Result.PurchaseOrderViewModel>>(orders),
                         query.PageNumber, query.PageSize);
-
+               
                 return new Result(paginatedOrders.ToWebApiObject());
             }
         }

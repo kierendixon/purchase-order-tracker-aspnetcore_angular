@@ -51,7 +51,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
 
             public class ProductViewModel
             {
-                public ProductViewModel(int productId, string prodCode, string name, int? categoryId, double? price)
+                public ProductViewModel(int productId, string prodCode, string name, int? categoryId, decimal? price)
                 {
                     ProductId = productId;
                     ProdCode = prodCode;
@@ -70,7 +70,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
                 [Display(Name = "Category")]
                 public int? CategoryId { get; }
 
-                public double? Price { get; }
+                public decimal? Price { get; }
             }
         }
 
@@ -87,7 +87,9 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
 
             public async Task<Result> Handle(Query query, CancellationToken cancellationToken)
             {
-                var supplier = await _context.Supplier.Include(s => s.ProductCategories).SingleAsync(s => s.Id == query.SupplierId);
+                var supplier = await _context.Supplier.Include(s => s.ProductCategories)
+                    .SingleAsync(s => s.Id == query.SupplierId);
+
                 if (supplier == null)
                     throw new PurchaseOrderTrackerException($"Cannot find Supplier with id '${query.SupplierId}'");
 
@@ -96,14 +98,18 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
                 if (query.ProductCodeFilter != null)
                 {
                     productsAreFiltered = true;
-                    //TODO: .Include(p.Category) was missing... ?
-                    products = _context.Product.Include(p => p.Category).Where(p => p.SupplierId == query.SupplierId &&
-                                                           p.ProdCode == query.ProductCodeFilter).AsQueryable();
+                    products = _context.Product
+                        .Include(p => p.Category)
+                        .Where(p => p.SupplierId == query.SupplierId 
+                                && p.ProdCode == query.ProductCodeFilter
+                        ).AsQueryable();
                 }
                 else
                 {
-                    //TODO: .Include(p.Category) was missing... ?
-                    products = _context.Product.Include(p => p.Category).Where(p => p.SupplierId == query.SupplierId).AsQueryable();
+                    products = _context.Product
+                        .Include(p => p.Category)
+                        .Where(p => p.SupplierId == query.SupplierId)
+                        .AsQueryable();
                 }
 
                 var paginatedProducts =

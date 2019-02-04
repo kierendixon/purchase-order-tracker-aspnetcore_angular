@@ -25,7 +25,7 @@
             <td>{{shipment.company}}</td>
             <td>{{shipment.estimatedArrivalDate | date:'short'}}</td>
             <td>{{shipment.shippingCost | currency:'AUD':true:'4.2-2' }}</td>
-            <td>{{shipment.currentState}}</td>
+            <td>{{shipment.status}}</td>
             <td>{{shipment.destinationAddress}}</td>
             <td>{{shipment.comments}}</td>
             <td title="Shipment delayed"><input type="checkbox" [checked]="shipment.isDelayed" disabled></td>

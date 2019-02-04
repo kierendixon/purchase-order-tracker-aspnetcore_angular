@@ -62,7 +62,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
             public async Task<Result> Handle(Query query, CancellationToken cancellationToken)
             {
                 var suppliers = _context.Supplier.AsQueryable();
-
+                
                 var paginatedSuppliers = await
                     suppliers.ProjectToPagedList<Result.SupplierViewModel>(_configuration, query.PageNumber, query.PageSize);
 

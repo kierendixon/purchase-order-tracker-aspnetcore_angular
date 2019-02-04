@@ -33,6 +33,7 @@ interface ResultShipment {
     estimatedArrivalDate: Date;
     comments: string;
     shippingCost: number;
+    status: string;
     destinationAddress: string;
     isDelayed: boolean;
     isDelayedMoreThan7Days: boolean;
