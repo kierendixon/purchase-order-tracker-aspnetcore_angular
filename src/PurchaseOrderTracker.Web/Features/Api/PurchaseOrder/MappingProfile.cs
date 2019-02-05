@@ -10,7 +10,6 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
         public MappingProfile()
         {
             CreateMap<PurchaseOrderLine, EditLineItems.Result.PurchaseOrderLineViewModel>();
-            CreateMap<Product, EditLineItems.Result.PurchaseOrderLineViewModel>();
 
             CreateMap<Domain.Models.PurchaseOrderAggregate.PurchaseOrder, Edit.QueryResult>()
                 .ForMember(dest => dest.SupplierOptions, opt => opt.Ignore())
