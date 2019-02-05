@@ -20,7 +20,6 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
         public class Query : IRequest<Result>
         {
             [Required]
-            [FromRoute(Name = "Id")]
             public int PurchaseOrderId { get; set; }
         }
 
@@ -42,11 +41,6 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
 
             public class PurchaseOrderLineViewModel
             {
-                //TODO: We shouldn't need this
-                public PurchaseOrderLineViewModel()
-                {
-                }
-
                 public PurchaseOrderLineViewModel(int id, int productId, decimal purchasePrice, int purchaseQty)
                 {
                     Id = id;

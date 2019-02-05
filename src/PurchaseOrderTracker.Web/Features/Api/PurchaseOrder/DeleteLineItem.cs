@@ -14,7 +14,6 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
         public class Command : IRequest<Result>
         {
             [Required]
-            [FromRoute(Name = "Id")]
             public int? PurchaseOrderId { get; set; }
 
             [Required]

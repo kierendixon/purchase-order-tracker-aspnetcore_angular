@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
 {
     [Route("api/[controller]")]
-    public class PurchaseOrderController : Controller
+    [ApiController]
+    public class PurchaseOrderController : ControllerBase
     {
         private readonly IMediator _mediator;
 
@@ -17,56 +18,36 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
         [HttpPut]
         public async Task<ActionResult> Create([FromBody]Create.Command command)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _mediator.Send(command);
-                return new ObjectResult(result);
-            }
-            return BadRequest(ModelState);
+            var result = await _mediator.Send(command);
+            return new ObjectResult(result);
         }
 
         [HttpGet]
         public async Task<ActionResult> Create([FromBody]Create.Query query)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _mediator.Send(query);
-                return new ObjectResult(result);
-            }
-            return BadRequest(ModelState);
+            var result = await _mediator.Send(query);
+            return new ObjectResult(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult> Edit(Edit.Query query)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _mediator.Send(query);
-                return Ok(result);
-            }
-            return BadRequest(ModelState);
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpPost("{id}")]
         public async Task<ActionResult> Edit([FromBody]Edit.Command command)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _mediator.Send(command);
-                return Ok(result);
-            }
-            return BadRequest(ModelState);
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(Delete.Command command)
         {
-            if (ModelState.IsValid)
-            {
-                await _mediator.Send(command);
-                return Ok();
-            }
-            return BadRequest(ModelState);
+            await _mediator.Send(command);
+            return Ok();
         }
 
         [HttpGet("{id}/line-items")]
@@ -107,12 +88,8 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
         [HttpGet("[action]")]
         public async Task<IActionResult> Inquiry(Inquiry.Query query)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _mediator.Send(query);
-                return new ObjectResult(result);
-            }
-            return BadRequest(ModelState);
+            var result = await _mediator.Send(query);
+            return new ObjectResult(result);
         }
     }
 }

@@ -24,7 +24,6 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
             public int PageSize { get; set; } = 15;
 
             [Required]
-            [FromRoute(Name = "Id")]
             public int? SupplierId { get; set; }
 
             [FromQuery]

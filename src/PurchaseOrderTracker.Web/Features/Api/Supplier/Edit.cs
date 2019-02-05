@@ -15,7 +15,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
     {
         public class Query : IRequest<QueryResult>
         {
-            public int? Id { get; set; }
+            public int? SupplierId { get; set; }
         }
 
         public class QueryResult
@@ -61,9 +61,9 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
             public async Task<QueryResult> Handle(Query query, CancellationToken cancellationToken)
             {
                 IQueryable<Domain.Models.SupplierAggregate.Supplier> suppliersQueryable = _context.Supplier;
-                if (query.Id != null)
+                if (query.SupplierId != null)
                 {
-                    suppliersQueryable = suppliersQueryable.Where(s => s.Id == query.Id);
+                    suppliersQueryable = suppliersQueryable.Where(s => s.Id == query.SupplierId);
                 }
 
                 var suppliers = await suppliersQueryable

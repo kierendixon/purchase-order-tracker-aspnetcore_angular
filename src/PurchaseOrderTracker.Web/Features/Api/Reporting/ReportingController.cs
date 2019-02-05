@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace PurchaseOrderTracker.Web.Features.Api.Reporting
 {
     [Route("api/[controller]")]
-    public class ReportingController : Controller
+    [ApiController]
+    public class ReportingController : ControllerBase
     {
         private readonly IMediator _mediator;
 

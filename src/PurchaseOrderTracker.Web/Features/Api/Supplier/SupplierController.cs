@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace PurchaseOrderTracker.Web.Features.Api.Supplier
 {
     [Route("api/[controller]")]
-    public class SupplierController : Controller
+    [ApiController]
+    public class SupplierController : ControllerBase
     {
         private readonly IMediator _mediator;
 
@@ -17,51 +18,39 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
         [HttpPut]
         public async Task<ActionResult> Create([FromBody] Create.Command command)
         {
-            if (ModelState.IsValid) //TODO: get rid of this using new asp.net core 2.2 controller attribute
-            {
-                var result = await _mediator.Send(command);
-                return new ObjectResult(result);
-            }
-            return BadRequest(ModelState);
+            var result = await _mediator.Send(command);
+            return new ObjectResult(result);
         }
 
-        [HttpGet("{id?}")]
+        [HttpGet("{supplierId?}")]
         public async Task<IActionResult> Get(Edit.Query query)
         {
             var result = await _mediator.Send(query);
             return new ObjectResult(result);
         }
 
-        [HttpPost("{id}")]
+        [HttpPost("{supplierId}")]
         public async Task<ActionResult> Update([FromBody] Edit.Command command)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _mediator.Send(command);
-                return Ok(result);
-            }
-            return BadRequest(ModelState);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(Delete.Command command)
-        {
-            if (ModelState.IsValid)
-            {
-                await _mediator.Send(command);
-                return Ok();
-            }
-            return BadRequest(ModelState);
-        }
-
-        [HttpPut("{id}/products")]
-        public async Task<IActionResult> CreateProduct([FromBody]CreateProduct.Command command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
         }
 
-        [HttpGet("{id}/products")]
+        [HttpDelete("{supplierId}")]
+        public async Task<ActionResult> Delete(Delete.Command command)
+        {
+            await _mediator.Send(command);
+            return Ok();
+        }
+
+        [HttpPut("{supplierId}/products")]
+        public async Task<IActionResult> CreateProduct([FromBody] CreateProduct.Command command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpGet("{supplierId}/products")]
         public async Task<IActionResult> GetProducts(EditProducts.Query query)
         {
             var result = await _mediator.Send(query);
@@ -81,23 +70,23 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
             var result = await _mediator.Send(command);
             return Ok(result);
         }
-
-        [HttpGet("{id}/product-categories")]
+        
+        [HttpGet("{supplierId}/product-categories")]
         public async Task<IActionResult> EditProductCategories(EditProductCategories.Query query)
         {
             var result = await _mediator.Send(query);
             return new ObjectResult(result);
         }
 
-        [HttpPut("{id}/product-categories")]
-        public async Task<IActionResult> CreateProductCategory([FromBody]CreateProductCategory.Command command)
+        [HttpPut("{supplierId}/product-categories")]
+        public async Task<IActionResult> CreateProductCategory([FromBody] CreateProductCategory.Command command)
         {
             await _mediator.Send(command);
             return Ok();
         }
 
         [HttpPost("{supplierId}/product-categories/{categoryId}")]
-        public async Task<IActionResult> EditProductCategory([FromBody]EditProductCategory.Command command)
+        public async Task<IActionResult> EditProductCategory([FromBody] EditProductCategory.Command command)
         {
             await _mediator.Send(command);
             return Ok();
@@ -113,12 +102,8 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
         [HttpGet("[action]")]
         public async Task<IActionResult> Inquiry(Inquiry.Query query)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _mediator.Send(query);
-                return new ObjectResult(result);
-            }
-            return BadRequest(ModelState);
+            var result = await _mediator.Send(query);
+            return new ObjectResult(result);
         }
     }
 }

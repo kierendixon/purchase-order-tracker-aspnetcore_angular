@@ -2,12 +2,10 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
 using PurchaseOrderTracker.DAL;
 
 namespace PurchaseOrderTracker.Web
@@ -30,6 +28,17 @@ namespace PurchaseOrderTracker.Web
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddFeatureFolders();
+
+            // This must be configured after services.AddMvc() in ASP.Net 2.1. It is fixed in ASP.Net 2.2
+            // https://github.com/aspnet/Docs/issues/6881
+            //
+            // When the new [ApiController] attribute in ASP.Net Core 2.1 is added to a controller 
+            // it restricts binding of values from a single source based on a set of inference rules.
+            // I.e., values are only bound from query params or only from request body, not both.
+            // This breaks binding of values to mediator Command/Query objects which expect values from multiple sources
+            // The SuppressInferBindingSourcesForParameters option disables this behaviour.
+            // https://github.com/aspnet/Mvc/issues/8111
+            services.Configure<ApiBehaviorOptions>(opt => opt.SuppressInferBindingSourcesForParameters = true);
 
             services.AddSpaStaticFiles(configuration =>
             {
