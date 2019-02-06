@@ -73,7 +73,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
                     .Include(o => o.Supplier)
                     .Include(o => o.LineItems)
                     .ThenInclude(li => li.Product)
-                    .SingleAsync(o => o.Id == query.PurchaseOrderId);
+                    .SingleOrDefaultAsync(o => o.Id == query.PurchaseOrderId);
 
                 if (purchaseOrder == null)
                     throw new PurchaseOrderTrackerException($"Cannot find Purchase Order with id '${query.PurchaseOrderId}'");
