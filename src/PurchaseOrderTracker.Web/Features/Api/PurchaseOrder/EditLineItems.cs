@@ -20,7 +20,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
         public class Query : IRequest<Result>
         {
             [Required]
-            public int PurchaseOrderId { get; set; }
+            public int? PurchaseOrderId { get; set; }
         }
 
         public class Result
@@ -74,12 +74,14 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
                     .Include(o => o.LineItems)
                     .ThenInclude(li => li.Product)
                     .SingleAsync(o => o.Id == query.PurchaseOrderId);
+
                 if (purchaseOrder == null)
                     throw new PurchaseOrderTrackerException($"Cannot find Purchase Order with id '${query.PurchaseOrderId}'");
+
                 var productOptions = await _context.Product.Where(p => p.SupplierId == purchaseOrder.Supplier.Id)
                     .ToListAsync();
 
-                return new Result(query.PurchaseOrderId, purchaseOrder.OrderNo,
+                return new Result(query.PurchaseOrderId.Value, purchaseOrder.OrderNo,
                     _mapper.Map<IEnumerable<PurchaseOrderLine>, List<Result.PurchaseOrderLineViewModel>>(purchaseOrder.LineItems),
                     productOptions.ToDictionary(p => p.Id, p => p.Name));
 

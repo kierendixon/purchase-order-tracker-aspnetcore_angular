@@ -19,7 +19,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
         public class Query : IRequest<Command>
         {
             [Required]
-            public int SupplierId { get; set; }
+            public int? SupplierId { get; set; }
         }
 
         public class Command : IRequest<CommandResult>
@@ -35,7 +35,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
             }
 
             [Required]
-            public int SupplierId { get; set; }
+            public int? SupplierId { get; set; }
 
             [Required]
             public string ProdCode { get; set; }
@@ -45,7 +45,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
             public string Name { get; set; }
 
             [Required]
-            public int CategoryId { get; set; }
+            public int? CategoryId { get; set; }
 
             public double? Price { get; set; }
 
@@ -77,7 +77,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
                 var supplier = await _context.Supplier.Include(s => s.ProductCategories)
                     .SingleAsync(s => s.Id == query.SupplierId);
 
-                return new Command(query.SupplierId, supplier.ProductCategories.ToDictionary(c => c.Id, c => c.Name));
+                return new Command(query.SupplierId.Value, supplier.ProductCategories.ToDictionary(c => c.Id, c => c.Name));
             }
         }
 
@@ -105,7 +105,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
                     supplier.AddProduct(product);
                     await _context.SaveChangesAsync();
 
-                    return new CommandResult(command.SupplierId);
+                    return new CommandResult(command.SupplierId.Value);
                 }
                 catch (DbUpdateException ex)
                 {

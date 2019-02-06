@@ -13,10 +13,10 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
         public class Command : IRequest<Result>
         {
             [Required]
-            public int SupplierId { get; set; }
+            public int? SupplierId { get; set; }
 
             [Required]
-            public int ProductId { get; set; }
+            public int? ProductId { get; set; }
         }
 
         public class Result
@@ -48,7 +48,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
                 supplier.RemoveProduct(product);
                 await _context.SaveChangesAsync();
 
-                return new Result(command.SupplierId);
+                return new Result(command.SupplierId.Value);
             }
         }
     }

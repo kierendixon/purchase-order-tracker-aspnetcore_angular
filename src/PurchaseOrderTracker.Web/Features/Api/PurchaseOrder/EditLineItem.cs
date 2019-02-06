@@ -14,13 +14,13 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
         public class Command : IRequest<Result>
         {
             [Required]
-            public int PurchaseOrderId { get; set; }
+            public int? PurchaseOrderId { get; set; }
 
             [Required]
-            public int LineItemId { get; set; }
+            public int? LineItemId { get; set; }
 
             [Required]
-            public int ProductId { get; set; }
+            public int? ProductId { get; set; }
 
             [Required]
             public int? PurchaseQty { get; set; }
@@ -63,7 +63,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
                 lineItem.PurchaseQty = command.PurchaseQty.Value;
                 await _context.SaveChangesAsync();
 
-                return new Result(command.PurchaseOrderId);
+                return new Result(command.PurchaseOrderId.Value);
             }
 
             private async Task UpdateProductIfChanged(PurchaseOrderLine lineItem, Command command)

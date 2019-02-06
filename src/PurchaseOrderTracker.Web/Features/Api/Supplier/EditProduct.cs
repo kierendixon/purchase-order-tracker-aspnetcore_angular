@@ -14,10 +14,10 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
         public class Command : IRequest<Result>
         {
             [Required]
-            public int SupplierId { get; set; }
+            public int? SupplierId { get; set; }
 
             [Required]
-            public int ProductId { get; set; }
+            public int? ProductId { get; set; }
 
             [Required]
             public string ProdCode { get; set; }
@@ -64,7 +64,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
                 product.Category = await DetermineNewCategory(_context, supplier, product.Category, command.CategoryId);
                 await _context.SaveChangesAsync();
 
-                return new Result(command.SupplierId);
+                return new Result(command.SupplierId.Value);
             }
 
             private async Task<ProductCategory> DetermineNewCategory(PoTrackerDbContext context,
