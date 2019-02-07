@@ -17,7 +17,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
         public class Query : IRequest<QueryResult>
         {
             [Required]
-            public int? Id { get; set; }
+            public int? PurchaseOrderId { get; set; }
         }
 
         public class QueryResult
@@ -62,7 +62,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
                     .Include(p => p.Status)
                     .Include(p => p.Shipment)
                     .ThenInclude(s => s.Status)
-                    .SingleAsync(p => p.Id == query.Id);
+                    .SingleAsync(p => p.Id == query.PurchaseOrderId);
 
             var result = _mapper.Map<Domain.Models.PurchaseOrderAggregate.PurchaseOrder, QueryResult>(purchaseOrder);
                 result.SupplierOptions = suppliers.ToDictionary(s => s.Id, c => c.Name);

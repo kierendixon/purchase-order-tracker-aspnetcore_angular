@@ -29,56 +29,56 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
             return new ObjectResult(result);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{purchaseOrderId}")]
         public async Task<ActionResult> Edit(Edit.Query query)
         {
             var result = await _mediator.Send(query);
             return Ok(result);
         }
 
-        [HttpPost("{id}")]
+        [HttpPost("{purchaseOrderId}")]
         public async Task<ActionResult> Edit([FromBody]Edit.Command command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{purchaseOrderId}")]
         public async Task<ActionResult> Delete(Delete.Command command)
         {
             await _mediator.Send(command);
             return Ok();
         }
 
-        [HttpGet("{id}/line-items")]
+        [HttpGet("{purchaseOrderId}/line-items")]
         public async Task<IActionResult> EditLineItems(EditLineItems.Query query)
         {
             var result = await _mediator.Send(query);
             return new ObjectResult(result);
         }
 
-        [HttpPut("{id}/line-items")]
+        [HttpPut("{purchaseOrderId}/line-items")]
         public async Task<IActionResult> CreateLineItem([FromBody]CreateLineItem.Command command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
         }
 
-        [HttpPost("{id}/line-items/{lineItemId}")]
+        [HttpPost("{purchaseOrderId}/line-items/{lineItemId}")]
         public async Task<IActionResult> EditLineItem([FromBody]EditLineItem.Command command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
         }
 
-        [HttpDelete("{id}/line-items/{lineItemId}")]
+        [HttpDelete("{purchaseOrderId}/line-items/{lineItemId}")]
         public async Task<IActionResult> DeleteLineItem(DeleteLineItem.Command command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
         }
 
-        [HttpPost("{id}/status")]
+        [HttpPost("{purchaseOrderId}/status")]
         public async Task<ActionResult> UpdateStatus([FromBody]EditStatus.Command command)
         {
             await _mediator.Send(command);
