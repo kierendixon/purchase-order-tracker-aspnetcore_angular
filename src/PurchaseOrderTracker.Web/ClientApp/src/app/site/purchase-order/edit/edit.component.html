@@ -2,26 +2,26 @@
 <messages></messages>
 <form *ngIf="model !== undefined" (ngSubmit)="onSubmit()" #form="ngForm">
     <div class="form-group row">
-        <label name="id" for="id" class="col-2 col-form-label">Id</label>
-        <div class="col-10">
+        <label name="id" for="id" class="col-4 col-md-2 col-form-label">Id</label>
+        <div class="col-8 col-md-4">
             <input id="id" class="form-control" value="{{model.id}}" readonly />
         </div>
     </div>
     <div class="form-group row">
-        <label name="createdDate" for="createdDate" class="col-2 col-form-label">Created</label>
-        <div class="col-10">
+        <label name="createdDate" for="createdDate" class="col-4 col-md-2 col-form-label">Created</label>
+        <div class="col-8 col-md-4">
             <input id="createdDate" class="form-control" value="{{model.createdDate | date:'short'}}" readonly />
         </div>
     </div>
     <div class="form-group row">
-        <label name="orderNo" for="orderNo" class="col-2 col-form-label">Order Number</label>
-        <div class="col-10">
+        <label name="orderNo" for="orderNo" class="col-4 col-md-2 col-form-label">Order Number</label>
+        <div class="col-8 col-md-4">
             <input id="orderNo" [(ngModel)]="model.orderNo" name="orderNo" class="form-control" required [readonly]="model.isCancelled"/>
         </div>
     </div>
     <div class="form-group row">
-        <label for="supplierId" class="col-2 col-form-label">Supplier</label>
-        <div class="col-10">
+        <label for="supplierId" class="col-4 col-md-2 col-form-label">Supplier</label>
+        <div class="col-8 col-md-4">
             <select id="supplierId" [(ngModel)]="model.supplierId" name="supplierId" class="form-control" [disabled]="model.isCancelled">
                 <!-- Default blank -->
                 <option></option>
@@ -30,8 +30,8 @@
         </div>
     </div>
     <div class="form-group row">
-        <label for="shipmentId" class="col-2 col-form-label">Shipment</label>
-        <div class="col-10">
+        <label for="shipmentId" class="col-4 col-md-2 col-form-label">Shipment</label>
+        <div class="col-8 col-md-4">
             <input *ngIf="!model.canShipmentBeUpdated" class="form-control" value="{{model.shipmentTrackingId}}" readonly/>
             <span class="text-danger" *ngIf="!model.isApprovedOrLaterStatus && !model.isCancelled">Purchase Order must be approved before it can be assigned to a shipment</span>
             <select *ngIf="model.isApprovedOrLaterStatus && model.canShipmentBeUpdated && hasShipmentOptions()"
@@ -44,14 +44,14 @@
         </div>
     </div>
     <div class="form-group row">
-        <label name="currentState" for="currentState" class="col-2 col-form-label">Status</label>
-        <div class="col-10">
+        <label name="currentState" for="currentState" class="col-4 col-md-2 col-form-label">Status</label>
+        <div class="col-8 col-md-4">
             <input id="currentState" [(ngModel)]="model.currentState" name="currentState" class="form-control" readonly />
         </div>
     </div>
     <div *ngIf="!model.isDelivered" class="form-group row">
-        <label class="col-2 col-form-label">Update Status</label>
-        <div class="col-10">
+        <label class="col-4 col-md-2 col-form-label">Update Status</label>
+        <div class="col-8 col-md-4">
             <button *ngIf="model.canTransitionToPendingApproval" type="button" (click)="onUpdateStatus('PendingApproval')" class="btn btn-outline-dark cursor-pointer">Pending Approval</button>
             <button *ngIf="model.canTransitionToApproved" type="button" (click)="onUpdateStatus('Approved')" class="btn btn-outline-dark cursor-pointer">Approved</button>
             <button *ngIf="model.canTransitionToCancelled" type="button" (click)="onUpdateStatus('Cancelled')" class="btn btn-outline-dark cursor-pointer">Cancelled</button>

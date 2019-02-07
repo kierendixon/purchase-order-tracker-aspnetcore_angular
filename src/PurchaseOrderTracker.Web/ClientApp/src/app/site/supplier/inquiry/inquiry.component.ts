@@ -6,7 +6,8 @@ import { InquiryService, InquiryQuery, InquiryResult } from './inquiry.service';
 import { queryTypeQueryParam, pageNumberQueryParam } from '../../config/routing.config';
 
 @Component({
-    templateUrl: './inquiry.component.html'
+    templateUrl: './inquiry.component.html',
+    styleUrls: ['./inquiry.component.scss']
 })
 export class InquiryComponent implements OnInit {
     readonly defaultPageNumber = 1;

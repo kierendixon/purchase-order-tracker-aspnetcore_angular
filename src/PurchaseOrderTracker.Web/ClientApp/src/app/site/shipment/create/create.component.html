@@ -2,20 +2,20 @@
 <messages></messages>
 <form (ngSubmit)="onSubmit()" #form="ngForm">
     <div class="form-group row">
-        <label name="trackingId" for="trackingId" class="col-2 col-form-label">Tracking Id</label>
-        <div class="col-10">
+        <label name="trackingId" for="trackingId" class="col-4 col-md-2 col-form-label">Tracking Id</label>
+        <div class="col-8 col-md-4">
             <input id="trackingId" [(ngModel)]="model.trackingId" name="trackingId" class="form-control" required />
         </div>
     </div>
     <div class="form-group row">
-        <label name="company" for="company" class="col-2 col-form-label">Company</label>
-        <div class="col-10">
+        <label name="company" for="company" class="col-4 col-md-2 col-form-label">Company</label>
+        <div class="col-8 col-md-4">
             <input id="company" [(ngModel)]="model.company" name="company" class="form-control" required />
         </div>
     </div>
     <div class="form-group row">
-        <label name="eta" for="eta" class="col-2 col-form-label">ETA</label>
-        <div class="col-10">
+        <label name="eta" for="eta" class="col-4 col-md-2 col-form-label">ETA</label>
+        <div class="col-8 col-md-4">
             <div class="input-group">
                 <input id="eta" class="form-control" placeholder="yyyy-mm-dd" [(ngModel)]="model.eta" name="eta" ngbDatepicker #d="ngbDatepicker">
                 <button class="input-group-addon" (click)="d.toggle()" type="button" tabindex="-1">
@@ -25,20 +25,20 @@
         </div>
     </div>
     <div class="form-group row">
-        <label name="shippingCost" for="shippingCost" class="col-2 col-form-label">Shipping Cost</label>
-        <div class="col-10">
+        <label name="shippingCost" for="shippingCost" class="col-4 col-md-2 col-form-label">Shipping Cost</label>
+        <div class="col-8 col-md-4">
             <input id="shippingCost" [(ngModel)]="model.shippingCost" name="shippingCost" class="form-control" required />
         </div>
     </div>
     <div class="form-group row">
-        <label name="destinationAddress" for="destinationAddress" class="col-2 col-form-label">Dest. Address</label>
-        <div class="col-10">
+        <label name="destinationAddress" for="destinationAddress" class="col-4 col-md-2 col-form-label">Dest. Address</label>
+        <div class="col-8 col-md-4">
             <input id="destinationAddress" [(ngModel)]="model.destinationAddress" name="destinationAddress" class="form-control" required />
         </div>
     </div>
     <div class="form-group row">
-        <label name="comments" for="comments" class="col-2 col-form-label">Comments</label>
-        <div class="col-10">
+        <label name="comments" for="comments" class="col-4 col-md-2 col-form-label">Comments</label>
+        <div class="col-8 col-md-4">
             <textarea id="comments" [(ngModel)]="model.comments" name="comments" class="form-control" rows="5"></textarea>
         </div>
     </div>

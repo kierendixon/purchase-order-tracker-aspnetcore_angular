@@ -3,8 +3,8 @@
 <messages></messages>
 <form (ngSubmit)="onSubmit()" #form="ngForm">
     <div class="form-group row">
-        <label name="name" for="name" class="col-1 col-form-label">Name</label>
-        <div class="col-11">
+        <label name="name" for="name" class="col-4 col-md-2 col-form-label">Name</label>
+        <div class="col-8 col-md-4">
             <input id="name" [(ngModel)]="model.name" name="name" class="form-control" required />
         </div>
     </div>
