@@ -31,7 +31,7 @@ export class CreateProductComponent {
     }
 }
 
-class CreateProductViewModel {
+export class CreateProductViewModel {
     prodCode: string;
     name: string;
     categoryId: number;

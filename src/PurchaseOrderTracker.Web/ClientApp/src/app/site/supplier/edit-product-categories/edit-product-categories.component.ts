@@ -92,11 +92,13 @@ export class EditProductCategoriesComponent implements OnInit {
     }
 
     hasCategories(): boolean {
-        return this.model ? this.model.items.length > 0 : false;
+        return this.model
+            ? this.model.items.length > 0
+            : false;
     }
 }
 
-class ProductCategory {
+export class ProductCategory {
     id: number;
     name: string;
 }

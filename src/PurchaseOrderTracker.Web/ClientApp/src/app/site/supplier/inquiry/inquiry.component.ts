@@ -37,6 +37,8 @@ export class InquiryComponent implements OnInit {
     }
 
     hasRecords(): boolean {
-        return this.model === undefined ? false : this.model.pagedList.items.length > 0;
+        return this.model === undefined
+            ? false
+            : this.model.pagedList.items.length > 0;
     }
 }

@@ -9,7 +9,6 @@ import { mainSiteUrl, returnUrlQueryParam } from '../config/routing.config';
     templateUrl: './account.component.html',
     styleUrls: ['./account.component.scss']
 })
-
 export class AccountComponent implements OnInit {
     errorMessage: string;
     model = new AccountViewModel();

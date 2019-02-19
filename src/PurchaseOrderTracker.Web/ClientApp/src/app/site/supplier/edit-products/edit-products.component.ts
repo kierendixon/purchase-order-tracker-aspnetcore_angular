@@ -121,7 +121,7 @@ export class EditProductsComponent implements OnInit {
     }
 }
 
-class EditProductViewModel {
+export class EditProductViewModel {
     productId: number;
     prodCode: string;
     name: string;

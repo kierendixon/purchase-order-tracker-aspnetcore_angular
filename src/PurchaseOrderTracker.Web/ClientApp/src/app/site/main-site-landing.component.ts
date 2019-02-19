@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { shipmentSummaryResultResolverDataKey } from './config/routing.config';
-import { MainSiteService, ShipmentSummaryResult } from './main-site.service';
-import { MessagesService } from './shared/messages/messages.service';
+import { ShipmentSummaryResult } from './main-site.service';
 
 @Component({
     templateUrl: './main-site-landing.component.html'
@@ -11,9 +10,7 @@ import { MessagesService } from './shared/messages/messages.service';
 export class MainSiteLandingComponent implements OnInit {
     model: ShipmentSummaryResult;
 
-    constructor(private mainSiteService: MainSiteService,
-        private messagesService: MessagesService,
-        private route: ActivatedRoute) { }
+    constructor(private route: ActivatedRoute) { }
 
     ngOnInit(): void {
         this.route.data.subscribe(

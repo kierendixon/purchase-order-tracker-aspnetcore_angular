@@ -10,7 +10,7 @@ import { CreateProductCategoryService, CreateProductCategoryCommand } from './cr
 export class CreateProductCategoryComponent {
     @Input() supplierId: number;
     objectKeys = Object.keys;
-    model = new CreateProductViewModel();
+    model = new CreateProductCategoryViewModel();
 
     constructor(public activeModal: NgbActiveModal,
         private createProductCategoryService: CreateProductCategoryService,
@@ -25,6 +25,6 @@ export class CreateProductCategoryComponent {
     }
 }
 
-class CreateProductViewModel {
+export class CreateProductCategoryViewModel {
     name: string;
 }

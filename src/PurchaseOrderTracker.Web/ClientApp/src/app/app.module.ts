@@ -11,7 +11,7 @@ import { AppComponent } from './app.component';
 import { AccountComponent } from './account/account.component';
 import { RouteNotFoundComponent } from './route-not-found/route-not-found.component';
 import * as CONFIG from './config/app.config';
-import { AuthGuard } from './infrastructure/security/auth-guard.service';
+import { AuthGuard } from './infrastructure/security/auth-guard';
 import { StubbedAuthService } from './infrastructure/security/stubbed-auth.service';
 
 @NgModule({

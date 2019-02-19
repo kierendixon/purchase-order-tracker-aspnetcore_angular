@@ -8,7 +8,7 @@ import { CreateComponent } from './create/create.component';
 import { EditComponent } from './edit/edit.component';
 import { EditLineItemsComponent } from './edit-line-items/edit-line-items.component';
 
-import { AuthGuard } from '../../infrastructure/security/auth-guard.service';
+import { AuthGuard } from '../../infrastructure/security/auth-guard';
 
 const poRoutes: Routes = [
     {

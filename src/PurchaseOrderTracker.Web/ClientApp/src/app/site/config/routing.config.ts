@@ -1,14 +1,11 @@
 ﻿import * as _ from 'lodash';
+import { mainSiteUrl } from '../../config/routing.config';
 
 // query parameters
 
 export const queryTypeQueryParam = 'queryType';
 export const pageNumberQueryParam = 'pageNumber';
 export const idParam = 'id';
-
-// URLs
-
-const mainSiteUrl = '/main-site';
 
 // supplier URLs
 

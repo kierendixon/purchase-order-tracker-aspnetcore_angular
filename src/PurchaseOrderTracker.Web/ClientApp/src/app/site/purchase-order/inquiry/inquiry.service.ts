@@ -25,7 +25,7 @@ export interface InquiryResult {
     pagedList: PaginatedList<ResultPurchaseOrder>;
 }
 
-interface ResultPurchaseOrder {
+export interface ResultPurchaseOrder {
     id: string;
     orderNo: string;
     createdDate: Date;

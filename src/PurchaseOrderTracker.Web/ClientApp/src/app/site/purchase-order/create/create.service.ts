@@ -36,7 +36,7 @@ export interface SuppliersResult {
     suppliers: SuppliersResultSupplier[];
 }
 
-interface SuppliersResultSupplier {
+export interface SuppliersResultSupplier {
     id: number;
     name: string;
 }

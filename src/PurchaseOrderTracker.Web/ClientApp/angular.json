@@ -91,6 +91,7 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
+            "codeCoverage": true,
             "styles": [
               "src/styles/bootstrap2.scss",
               "src/styles/globals.scss",

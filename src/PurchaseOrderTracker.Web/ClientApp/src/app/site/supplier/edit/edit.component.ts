@@ -56,7 +56,7 @@ export class EditComponent implements OnInit {
     }
 }
 
-class EditViewModel {
+export class EditViewModel {
     id: number;
     name: string;
 }

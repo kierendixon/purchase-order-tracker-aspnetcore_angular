@@ -26,7 +26,7 @@ export interface InquiryResult {
     pagedList: PaginatedList<ResultShipment>;
 }
 
-interface ResultShipment {
+export interface ResultShipment {
     id: number;
     trackingId: string;
     company: string;

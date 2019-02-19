@@ -25,7 +25,7 @@ export interface InquiryResult {
     pagedList: PaginatedList<ResultSupplier>;
 }
 
-interface ResultSupplier {
+export interface ResultSupplier {
     id: string;
     name: string;
 }

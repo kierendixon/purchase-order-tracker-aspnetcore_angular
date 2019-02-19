@@ -29,7 +29,7 @@ export class EditComponent implements OnInit {
         this.refreshData();
     }
 
-    private refreshData(): void {
+    refreshData(): void {
         const query = new EditQuery(this.shipmentId);
         this.editService.handleQuery(query).subscribe(
             result => this.model = this.convertEditQueryResultToViewModel(result),
@@ -89,7 +89,7 @@ export class EditComponent implements OnInit {
     }
 }
 
-class EditViewModel {
+export class EditViewModel {
     static estimatedArrivalDatePropertyName = 'estimatedArrivalDate';
 
     id: number;

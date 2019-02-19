@@ -1,5 +1,5 @@
 ﻿import { Component, Input } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 
 import { PaginatedList } from './paginated-list';
 import { pageNumberQueryParam } from '../../config/routing.config';
@@ -25,9 +25,9 @@ export class PaginationComponent {
         return pageNumbers;
     }
 
-    pageNavQueryParams(pageNumber: number): any {
+    queryParamsWithPageNumber(pageNumber: number): Params {
         const queryParams = {};
-        this.route.queryParams.subscribe(data => {
+        this.route.queryParams.subscribe((data: Params) => {
             // TODO: remove tslint ignore
             // tslint:disable-next-line:forin
             for (const key in data) {
@@ -35,6 +35,7 @@ export class PaginationComponent {
             }
         });
         queryParams[pageNumberQueryParam] = pageNumber;
+
         return queryParams;
     }
 

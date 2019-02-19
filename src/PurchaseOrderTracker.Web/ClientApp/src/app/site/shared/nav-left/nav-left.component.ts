@@ -1,6 +1,8 @@
 ﻿import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { purchaseOrdersUrl, shipmentsUrl, suppliersUrl } from '../../config/routing.config';
+
 @Component({
     // TODO: remove tslint ignore
     // tslint:disable-next-line:component-selector
@@ -10,18 +12,19 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class NavLeftComponent {
 
+    // TODO: use activeROute instead of router ?
     constructor(private activeRoute: ActivatedRoute, private router: Router) {
     }
 
     public isDisplayPurchaseOrdersNav(): boolean {
-        return this.router.url.toLowerCase().indexOf('/purchase-orders') === 10;
+        return this.router.url.toLowerCase().indexOf(purchaseOrdersUrl) === 0;
     }
 
     public isDisplaySuppliersNav(): boolean {
-        return this.router.url.toLowerCase().indexOf('/suppliers') === 10;
+        return this.router.url.toLowerCase().indexOf(suppliersUrl) === 0;
     }
 
     public isDisplayShipmentsNav(): boolean {
-        return this.router.url.toLowerCase().indexOf('/shipments') === 10;
+        return this.router.url.toLowerCase().indexOf(shipmentsUrl) === 0;
     }
 }
