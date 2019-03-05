@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="Purchase Order Tracking Rule Set" ToolsVersion="15.0">
+  <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
+    <!-- Elements must be documented
+         Reasoning: Not necessary for this project -->
+    <Rule Id="SA1600" Action="None" />
+    <!-- Partial elements must be documented
+         Reasoning: Not necessary for this project -->
+    <Rule Id="SA1601" Action="None" />
+    <!-- Enumeration items must be documented
+         Reasoning: Not necessary for this project -->
+    <Rule Id="SA1602" Action="None" />
+    <!-- Filename must match type
+         Reasoning: Common sense approach -->
+    <Rule Id="SA1649" Action="Error" />
+    <!-- Prefix local calls with this
+         Reasoning: Personal preference -->
+    <Rule Id="SA1101" Action="None" />
+    <!-- Enable XML documentation output
+         Reasoning: Not necessary for this project -->
+    <Rule Id="SA1652" Action="None" />
+    <!-- The file header is missing
+         Reasoning: Not necessary for this project -->
+    <Rule Id="SA1633" Action="None" />
+    <!-- Field must not begin with an underscore
+         Reasoning: Personal preference -->
+    <Rule Id="SA1309" Action="None" />
+    <!-- Elements must be separated by blank line
+         Reasoning: Would be useful if class properties could be excluded -->
+    <Rule Id="SA1516" Action="None" />
+    <!-- The parameters must all be placed on the same line or each parameter must be placed on its own line
+         Reasoning: Personal preference -->
+    <Rule Id="SA1117" Action="None" />
+  </Rules>
+  <Rules AnalyzerId="Microsoft.CodeQuality" RuleNamespace="Microsoft.CodeQuality.Analyzers">
+    <!-- Do not nest type Constructor
+         Reasoning: Must be disabled to allow classes which follow the CQRS pattern to be nested -->
+    <Rule Id="CA1034" Action="None" />
+    <!-- Do not directly await a Task without calling ConfigureAwait
+         Reasoning: Not applicable to .Net Core projects -->
+    <Rule Id="CA2007" Action="None" />
+    <!-- The type name <name> conflicts in whole or in part with the namespace <name>
+         Reasoning: Too many instances with Query class and Microsoft.EntityFrameworkCore.InMemory.Query namespace -->
+    <Rule Id="CA1724" Action="None" />
+    <!-- The behavior of 'string.ToLower()' could vary based on the current user's locale settings
+         Reasoning: Not necessary for this project -->
+    <Rule Id="CA1304" Action="None" />
+  </Rules>
+</RuleSet>

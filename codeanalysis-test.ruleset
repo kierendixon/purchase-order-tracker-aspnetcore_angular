@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="Purchase Order Tracking Rule Set - Test Projects" ToolsVersion="15.0">
+  <Include Path="codeanalysis.ruleset" Action="Default" />
+  <Rules AnalyzerId="Microsoft.CodeQuality" RuleNamespace="Microsoft.CodeQuality.Analyzers">
+    <!-- Remove the underscores from member name
+         Reasoning: Incompatible with test method naming convention -->
+    <Rule Id="CA1707" Action="None" />
+  </Rules>
+</RuleSet>

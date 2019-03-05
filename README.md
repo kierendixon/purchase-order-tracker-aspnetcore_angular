@@ -12,7 +12,7 @@ The purpose of building this system is to teach myself more about the technologi
 
 ## Technology Stack
 
-This project is built using ASP.NET Core MVC v2 and Angular v5. Some of the key libraries used are listed below - refer to each csproj and package.json files for a full list of dependencies.
+This project is built using ASP.NET Core MVC v2 and Angular. Some of the key libraries used are listed below - refer to each of the csproj and package.json files for a full list of dependencies.
 
 C# libraries:
 
@@ -46,7 +46,11 @@ Testing libraries:
   * Install SQL Server 2017 (CU3 or higher)
   * Install NodeJs (v10.15 or higher)
   * Install Visual Studio 2017 (v15.8.4 or higher)
-  * Install NPM Task Runner Visual Studio Extension
+  * Install Visual Studio Code (v1.31 or higher)
+  * Install these VS Code extensions:
+    * EditorConfig
+    * stylelint
+    * TSlint
   * Clone git repository
 
 # Running in Docker for Windows

@@ -5,7 +5,7 @@ using PurchaseOrderTracker.Domain.Tests.Builders;
 
 namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
 {
-    public class ProductCategoryTest
+    public class ProductCategoryTests
     {
         [TestFixture]
         public class Constructor

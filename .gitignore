@@ -295,3 +295,16 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+
+# SonarQube analysis
+**/.sonarqube/
+
+# dotCover reports
+**/dotCover.html
+**/dotCover
+
+# TSLint report output
+**/tslint-report.json
+
+# StyleLint report output
+**/stylelint-report.json
