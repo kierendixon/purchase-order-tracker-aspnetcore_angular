@@ -114,7 +114,7 @@ describe('AccountComponent', () => {
         });
 
         it('should set error message if authentication service returns error', () => {
-            const isUserAuthenticatedSpy = authService.authenticate.and.returnValue( throwError(TestHelper.ErrorMessage) );
+            const isUserAuthenticatedSpy = authService.authenticate.and.returnValue( throwError('an error ocurred') );
             component.onSubmit();
 
             expect(component.errorMessage).toBe('an error ocurred');

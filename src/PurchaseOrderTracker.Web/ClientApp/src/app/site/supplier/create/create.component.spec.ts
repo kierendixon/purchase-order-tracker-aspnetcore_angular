@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
+import { TestHelper } from '../../../../test/test-helper';
 import { MainSiteModule } from '../../main-site.module';
 import { AppModule } from '../../../app.module';
 import { CreateComponent } from './create.component';
