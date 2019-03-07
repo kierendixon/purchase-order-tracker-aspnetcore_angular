@@ -2,12 +2,13 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
-import { MainSiteModule } from '../../main-site.module';
+import { TestHelper } from '../../../../test/test-helper';
 import { AppModule } from '../../../app.module';
-import { CreateComponent } from './create.component';
-import { MessagesService } from '../../shared/messages/messages.service';
-import { CreateService, CreateResult } from './create.service';
 import { editShipmentUrl } from '../../config/routing.config';
+import { MainSiteModule } from '../../main-site.module';
+import { MessagesService } from '../../shared/messages/messages.service';
+import { CreateComponent } from './create.component';
+import { CreateResult, CreateService } from './create.service';
 
 describe('CreateComponent', () => {
     let component: CreateComponent;
@@ -35,10 +36,10 @@ describe('CreateComponent', () => {
             const createResult: CreateResult = {
                 id: shipmentId
             };
-            const createService = fixture.debugElement.injector.get(CreateService) as CreateService;
+            const createService = fixture.debugElement.injector.get(CreateService);
             const handleSpy = spyOn(createService, 'handle').and.returnValue( of(createResult) );
 
-            const router = fixture.debugElement.injector.get(Router) as Router;
+            const router = fixture.debugElement.injector.get(Router);
             const navigateByUrlSpy = spyOn(router, 'navigateByUrl');
 
             const navigateToUrl = editShipmentUrl(shipmentId);
@@ -50,11 +51,11 @@ describe('CreateComponent', () => {
         });
 
         it('sends error to messsage service if error returned', () => {
-            const error = new Error('an error message');
-            const createService = fixture.debugElement.injector.get(CreateService) as CreateService;
+            const error = TestHelper.buildError();
+            const createService = fixture.debugElement.injector.get(CreateService);
             const handleSpy = spyOn(createService, 'handle').and.returnValue( throwError(error) );
 
-            const messagesService = fixture.debugElement.injector.get(MessagesService) as MessagesService;
+            const messagesService = fixture.debugElement.injector.get(MessagesService);
             const addHttpResponseErrorSpy = spyOn(messagesService, 'addHttpResponseError');
 
             component.onSubmit();

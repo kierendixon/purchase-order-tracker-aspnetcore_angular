@@ -50,7 +50,7 @@ describe('PaginationComponent', () => {
             const url = 'a-test/url';
             const urlWithQueryParams = url + '?param1=a&param2=b';
 
-            const router = fixture.debugElement.injector.get(Router) as Router;
+            const router = fixture.debugElement.injector.get(Router);
             spyOnProperty(router, 'url', 'get').and.returnValue(urlWithQueryParams);
 
             expect(component.urlWithoutQueryParams()).toBe(url);
@@ -65,7 +65,7 @@ describe('PaginationComponent', () => {
                 param3: 'param1value'
             };
 
-            const route = fixture.debugElement.injector.get(ActivatedRoute) as ActivatedRoute;
+            const route = fixture.debugElement.injector.get(ActivatedRoute);
             route.queryParams = of(queryParams);
 
             const pageNumber = 3;
@@ -79,7 +79,7 @@ describe('PaginationComponent', () => {
         });
 
         it('returns just page number when there are no query params', () => {
-            const route = fixture.debugElement.injector.get(ActivatedRoute) as ActivatedRoute;
+            const route = fixture.debugElement.injector.get(ActivatedRoute);
             route.queryParams = of({});
 
             const pageNumber = 3;

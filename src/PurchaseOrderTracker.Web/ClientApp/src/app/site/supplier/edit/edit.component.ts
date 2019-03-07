@@ -36,7 +36,7 @@ export class EditComponent implements OnInit {
 
     private convertEditQueryResultToViewModel(result: EditQueryResult): EditViewModel {
         // properties are exactly the same
-        return <EditViewModel>result.suppliers[0];
+        return result.suppliers[0] as EditViewModel;
     }
 
     onSubmit() {

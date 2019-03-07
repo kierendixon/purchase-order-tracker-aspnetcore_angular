@@ -40,7 +40,7 @@ describe('InquiryComponent', () => {
             queryParams[queryTypeQueryParam] = queryTypeParam;
             queryParams[pageNumberQueryParam] = pageNumberParam;
 
-            const route = fixture.debugElement.injector.get(ActivatedRoute) as ActivatedRoute;
+            const route = fixture.debugElement.injector.get(ActivatedRoute);
             route.queryParams = of(queryParams);
             const refreshDataSpy = spyOn(component, 'refreshData');
 
@@ -55,7 +55,7 @@ describe('InquiryComponent', () => {
             const queryParams: Params = {};
             queryParams[queryTypeQueryParam] = queryTypeParam;
 
-            const route = fixture.debugElement.injector.get(ActivatedRoute) as ActivatedRoute;
+            const route = fixture.debugElement.injector.get(ActivatedRoute);
             route.queryParams = of(queryParams);
             const refreshDataSpy = spyOn(component, 'refreshData');
 
@@ -68,7 +68,7 @@ describe('InquiryComponent', () => {
     describe('#refreshData', () => {
         it('updates component\'s model with response', () => {
             const model = SupplierTestHelper.buildInquiryResult();
-            const inquiryService = fixture.debugElement.injector.get(InquiryService) as InquiryService;
+            const inquiryService = fixture.debugElement.injector.get(InquiryService);
             const handleSpy = spyOn(inquiryService, 'handle').and.returnValue( of(model) );
 
             component.refreshData('queryType', 1);
@@ -79,10 +79,10 @@ describe('InquiryComponent', () => {
 
         it('sends error to messsage service if error returned', () => {
             const error = TestHelper.buildError();
-            const inquiryService = fixture.debugElement.injector.get(InquiryService) as InquiryService;
+            const inquiryService = fixture.debugElement.injector.get(InquiryService);
             const handleSpy = spyOn(inquiryService, 'handle').and.returnValue( throwError(error) );
 
-            const messagesService = fixture.debugElement.injector.get(MessagesService) as MessagesService;
+            const messagesService = fixture.debugElement.injector.get(MessagesService);
             const addHttpResponseErrorSpy = spyOn(messagesService, 'addHttpResponseError');
 
             component.refreshData('queryType', 1);

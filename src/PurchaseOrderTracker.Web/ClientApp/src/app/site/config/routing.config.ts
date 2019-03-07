@@ -13,7 +13,7 @@ export const suppliersUrl = `${mainSiteUrl}/suppliers`;
 
 export function editSupplierUrl(supplierId: number): string {
     const compiled = _.template(suppliersUrl + '/${supplierId}');
-    return compiled({ supplierId: supplierId });
+    return compiled({ supplierId });
 }
 
 // shipment URLs
@@ -22,7 +22,7 @@ export const shipmentsUrl = `${mainSiteUrl}/shipments`;
 
 export function editShipmentUrl(shipmentId: number): string {
     const compiled = _.template(shipmentsUrl + '/${shipmentId}');
-    return compiled({ shipmentId: shipmentId });
+    return compiled({ shipmentId });
 }
 
 // purchase-order URLs
@@ -31,10 +31,9 @@ export const purchaseOrdersUrl = `${mainSiteUrl}/purchase-orders`;
 
 export function editPurchaseOrderUrl(purchaseOrderId: number): string {
     const compiled = _.template(purchaseOrdersUrl + '/${purchaseOrderId}');
-    return compiled({ purchaseOrderId: purchaseOrderId });
+    return compiled({ purchaseOrderId });
 }
 
 // resolver guard data keys
 
 export const shipmentSummaryResultResolverDataKey = 'ShipmentSummaryResult';
-

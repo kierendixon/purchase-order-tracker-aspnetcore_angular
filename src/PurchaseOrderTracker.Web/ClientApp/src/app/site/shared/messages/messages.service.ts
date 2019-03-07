@@ -34,7 +34,7 @@ export class MessagesService {
                 this.addErrorMessage(err.error.message);
             } else {
                 // The backend returned an unsuccessful response code
-                const httpErr = <HttpErrorResponse>err;
+                const httpErr = err as HttpErrorResponse;
                 this.addErrorMessage(`Error returned from server. Code: ${httpErr.status}, body: ${JSON.stringify(httpErr.error)}`);
             }
         }

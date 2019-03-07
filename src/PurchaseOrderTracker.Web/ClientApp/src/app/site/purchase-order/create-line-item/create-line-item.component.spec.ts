@@ -2,12 +2,13 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { of, throwError } from 'rxjs';
 
-import { MainSiteModule } from '../../main-site.module';
+import { TestHelper } from '../../../../test/test-helper';
 import { AppModule } from '../../../app.module';
+import { MainSiteModule } from '../../main-site.module';
+import { MessagesService } from '../../shared/messages/messages.service';
 import { PurchaseOrderModule } from '../purchase-order.module';
 import { CreateLineItemComponent } from './create-line-item.component';
-import { MessagesService } from '../../shared/messages/messages.service';
-import { CreateLineItemService, CreateLineItemCommandResult } from './create-line-item.service';
+import { CreateLineItemService } from './create-line-item.service';
 
 describe('CreateLineItemComponent', () => {
     let component: CreateLineItemComponent;
@@ -37,10 +38,10 @@ describe('CreateLineItemComponent', () => {
                 purchasePrice: 1,
                 purchaseQty: 1
             };
-            const createService = fixture.debugElement.injector.get(CreateLineItemService) as CreateLineItemService;
+            const createService = fixture.debugElement.injector.get(CreateLineItemService);
             const handleSpy = spyOn(createService, 'handle').and.returnValue( of({}) );
 
-            const activeModal = fixture.debugElement.injector.get(NgbActiveModal) as NgbActiveModal;
+            const activeModal = fixture.debugElement.injector.get(NgbActiveModal);
             const activeModalSpy = spyOn(activeModal, 'close');
 
             component.onSubmit();
@@ -50,11 +51,11 @@ describe('CreateLineItemComponent', () => {
         });
 
         it('sends error to messsage service if error returned', () => {
-            const error = new Error('an error message');
-            const createService = fixture.debugElement.injector.get(CreateLineItemService) as CreateLineItemService;
+            const error = TestHelper.buildError();
+            const createService = fixture.debugElement.injector.get(CreateLineItemService);
             const handleSpy = spyOn(createService, 'handle').and.returnValue( throwError(error) );
 
-            const messagesService = fixture.debugElement.injector.get(MessagesService) as MessagesService;
+            const messagesService = fixture.debugElement.injector.get(MessagesService);
             const addHttpResponseErrorSpy = spyOn(messagesService, 'addHttpResponseError');
 
             component.onSubmit();

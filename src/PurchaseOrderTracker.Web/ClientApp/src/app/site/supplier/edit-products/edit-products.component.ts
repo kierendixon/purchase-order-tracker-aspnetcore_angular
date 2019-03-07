@@ -61,7 +61,7 @@ export class EditProductsComponent implements OnInit {
 
     private convertQueryResultToViewModel(data: PaginatedList<EditProductsResultProduct>): PaginatedList<EditProductViewModel> {
         // properties are exactly the same
-        return <PaginatedList<EditProductViewModel>>data;
+        return data as PaginatedList<EditProductViewModel>;
     }
 
     showAddProductModal() {

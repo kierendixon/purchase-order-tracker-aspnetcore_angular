@@ -41,7 +41,7 @@ describe('EditProductsComponent', () => {
             const params: Params = {};
             params[idParam] = 1;
 
-            const activatedRoute = fixture.debugElement.injector.get(ActivatedRoute) as ActivatedRoute;
+            const activatedRoute = fixture.debugElement.injector.get(ActivatedRoute);
             activatedRoute.snapshot.params = params;
             activatedRoute.snapshot.queryParams = of({});
 
@@ -54,7 +54,7 @@ describe('EditProductsComponent', () => {
             const queryParams: Params = {};
             queryParams[pageNumberQueryParam] = 1;
 
-            const route = fixture.debugElement.injector.get(ActivatedRoute) as ActivatedRoute;
+            const route = fixture.debugElement.injector.get(ActivatedRoute);
             route.queryParams = of(queryParams);
             const refreshDataSpy = spyOn(component, 'refreshData');
 
@@ -68,7 +68,7 @@ describe('EditProductsComponent', () => {
             const defaultPageNumber = 1;
             const queryParams: Params = {};
 
-            const route = fixture.debugElement.injector.get(ActivatedRoute) as ActivatedRoute;
+            const route = fixture.debugElement.injector.get(ActivatedRoute);
             route.queryParams = of(queryParams);
             const refreshDataSpy = spyOn(component, 'refreshData');
 
@@ -81,7 +81,7 @@ describe('EditProductsComponent', () => {
 
     describe('#refreshData', () => {
         it('resets pageNumber if param is true', () => {
-            const editProductsService = fixture.debugElement.injector.get(EditProductsService) as EditProductsService;
+            const editProductsService = fixture.debugElement.injector.get(EditProductsService);
             spyOn(editProductsService, 'handle').and.returnValue( of(SupplierTestHelper.buildEditProductsResult()) );
 
             component.refreshData(true);
@@ -93,7 +93,7 @@ describe('EditProductsComponent', () => {
             const pageNumber = 5;
             component.pageNumber = pageNumber;
 
-            const editProductsService = fixture.debugElement.injector.get(EditProductsService) as EditProductsService;
+            const editProductsService = fixture.debugElement.injector.get(EditProductsService);
             spyOn(editProductsService, 'handle').and.returnValue( of(SupplierTestHelper.buildEditProductsResult()) );
 
             component.refreshData(false);
@@ -104,7 +104,7 @@ describe('EditProductsComponent', () => {
         it('updates component\'s model with response', () => {
             const editProductsResult = SupplierTestHelper.buildEditProductsResult();
 
-            const editProductsService = fixture.debugElement.injector.get(EditProductsService) as EditProductsService;
+            const editProductsService = fixture.debugElement.injector.get(EditProductsService);
             const handleSpy = spyOn(editProductsService, 'handle').and.returnValue( of(editProductsResult) );
 
             component.refreshData();
@@ -123,10 +123,10 @@ describe('EditProductsComponent', () => {
 
         it('sends error to messsage service if error returned', () => {
             const error = TestHelper.buildError();
-            const editProductsService = fixture.debugElement.injector.get(EditProductsService) as EditProductsService;
+            const editProductsService = fixture.debugElement.injector.get(EditProductsService);
             const handleSpy = spyOn(editProductsService, 'handle').and.returnValue( throwError(error) );
 
-            const messagesService = fixture.debugElement.injector.get(MessagesService) as MessagesService;
+            const messagesService = fixture.debugElement.injector.get(MessagesService);
             const messagesSpy = spyOn(messagesService, 'addHttpResponseError');
 
             component.refreshData();
@@ -140,7 +140,7 @@ describe('EditProductsComponent', () => {
         it('opens a CreateProductComponent modal and sets categoryOptions and supplierId', () => {
             component.supplierId = 1;
             component.categoryOptions = SupplierTestHelper.buildEditProductsResult().categoryOptions;
-            const modal = fixture.debugElement.injector.get(NgbModal) as NgbModal;
+            const modal = fixture.debugElement.injector.get(NgbModal);
             const modalRef = modal.open(CreateProductComponent);
             const openSpy = spyOn(modal, 'open').and.returnValue(modalRef);
 
@@ -152,12 +152,12 @@ describe('EditProductsComponent', () => {
         });
 
         it('adds a message to mesageService and calls refreshData', fakeAsync(() => {
-            const modal = fixture.debugElement.injector.get(NgbModal) as NgbModal;
+            const modal = fixture.debugElement.injector.get(NgbModal);
             const modalRef = modal.open(CreateProductComponent);
             modalRef.result = Promise.resolve({});
             spyOn(modal, 'open').and.returnValue(modalRef);
 
-            const messagesService = fixture.debugElement.injector.get(MessagesService) as MessagesService;
+            const messagesService = fixture.debugElement.injector.get(MessagesService);
             const addMessageSpy = spyOn(messagesService, 'addMessage');
             const refreshDataSpy = spyOn(component, 'refreshData');
 
@@ -169,12 +169,12 @@ describe('EditProductsComponent', () => {
         }));
 
         it('does not add a message to mesageService or call refreshData if modal returns an undefined response', () => {
-            const modal = fixture.debugElement.injector.get(NgbModal) as NgbModal;
+            const modal = fixture.debugElement.injector.get(NgbModal);
             const modalRef = modal.open(CreateProductComponent);
             modalRef.result = Promise.resolve(undefined);
             spyOn(modal, 'open').and.returnValue(modalRef);
 
-            const messagesService = fixture.debugElement.injector.get(MessagesService) as MessagesService;
+            const messagesService = fixture.debugElement.injector.get(MessagesService);
             const addMessageSpy = spyOn(messagesService, 'addMessage');
             const refreshDataSpy = spyOn(component, 'refreshData');
 
@@ -194,13 +194,12 @@ describe('EditProductsComponent', () => {
 
         it('adds message to messageService and calls refreshData', () => {
             const result: DeleteResult = {};
-            const deleteProductService = fixture.debugElement.injector
-                .get(DeleteProductService) as DeleteProductService;
+            const deleteProductService = fixture.debugElement.injector.get(DeleteProductService);
             const handleSpy = spyOn(deleteProductService, 'handle').and.returnValue( of(result) );
 
             const refreshDataSpy = spyOn(component, 'refreshData');
 
-            const messagesService = fixture.debugElement.injector.get(MessagesService) as MessagesService;
+            const messagesService = fixture.debugElement.injector.get(MessagesService);
             const addMessageSpy = spyOn(messagesService, 'addMessage');
 
             component.onDeleteProduct(modelIndex);
@@ -212,11 +211,10 @@ describe('EditProductsComponent', () => {
 
         it('sends error to messsage service if error returned', () => {
             const error = TestHelper.buildError();
-            const deleteProductService = fixture.debugElement.injector
-                .get(DeleteProductService) as DeleteProductService;
+            const deleteProductService = fixture.debugElement.injector.get(DeleteProductService);
             const handleSpy = spyOn(deleteProductService, 'handle').and.returnValue( throwError(error) );
 
-            const messagesService = fixture.debugElement.injector.get(MessagesService) as MessagesService;
+            const messagesService = fixture.debugElement.injector.get(MessagesService);
             const messagesSpy = spyOn(messagesService, 'addHttpResponseError');
 
             component.onDeleteProduct(modelIndex);
@@ -235,10 +233,10 @@ describe('EditProductsComponent', () => {
 
         it('adds message to messageService', () => {
             const result: EditProductResult = {};
-            const editProductService = fixture.debugElement.injector.get(EditProductService) as EditProductService;
+            const editProductService = fixture.debugElement.injector.get(EditProductService);
             const handleSpy = spyOn(editProductService, 'handle').and.returnValue( of(result) );
 
-            const messagesService = fixture.debugElement.injector.get(MessagesService) as MessagesService;
+            const messagesService = fixture.debugElement.injector.get(MessagesService);
             const addMessageSpy = spyOn(messagesService, 'addMessage');
 
             component.onSubmitEditProduct(modelIndex);
@@ -249,10 +247,10 @@ describe('EditProductsComponent', () => {
 
         it('sends error to messsage service if error returned', () => {
             const error = TestHelper.buildError();
-            const editProductService = fixture.debugElement.injector.get(EditProductService) as EditProductService;
+            const editProductService = fixture.debugElement.injector.get(EditProductService);
             const handleSpy = spyOn(editProductService, 'handle').and.returnValue( throwError(error) );
 
-            const messagesService = fixture.debugElement.injector.get(MessagesService) as MessagesService;
+            const messagesService = fixture.debugElement.injector.get(MessagesService);
             const messagesSpy = spyOn(messagesService, 'addHttpResponseError');
 
             component.onSubmitEditProduct(modelIndex);

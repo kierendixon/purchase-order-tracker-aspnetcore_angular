@@ -33,12 +33,12 @@ describe('CreateComponent', () => {
         it('navigates to edit supplier URL when created successfully', () => {
             const supplierId = 1;
             const createResult: CreateResult = {
-                supplierId: supplierId
+                supplierId
             };
-            const createService = fixture.debugElement.injector.get(CreateService) as CreateService;
+            const createService = fixture.debugElement.injector.get(CreateService);
             const createServiceSpy = spyOn(createService, 'handle').and.returnValue( of(createResult) );
 
-            const router = fixture.debugElement.injector.get(Router) as Router;
+            const router = fixture.debugElement.injector.get(Router);
             const routerSpy = spyOn(router, 'navigateByUrl');
 
             const navigateToUrl = editSupplierUrl(supplierId);
@@ -50,11 +50,11 @@ describe('CreateComponent', () => {
         });
 
         it('sends error to messsage service if error returned', () => {
-            const error = new Error('an error message');
-            const createService = fixture.debugElement.injector.get(CreateService) as CreateService;
+            const error = new Error(TestHelper.ErrorMessage);
+            const createService = fixture.debugElement.injector.get(CreateService);
             const createServiceSpy = spyOn(createService, 'handle').and.returnValue( throwError(error) );
 
-            const messagesService = fixture.debugElement.injector.get(MessagesService) as MessagesService;
+            const messagesService = fixture.debugElement.injector.get(MessagesService);
             const messagesSpy = spyOn(messagesService, 'addHttpResponseError');
 
             component.onSubmit();

@@ -28,6 +28,6 @@ export class AuthGuard implements CanActivate {
     navigateToLoginPage(state: RouterStateSnapshot): void {
         const queryParams: any = {};
         queryParams[returnUrlQueryParam] = state.url;
-        this.router.navigate([accountUrl], { queryParams: queryParams });
+        this.router.navigate([accountUrl], { queryParams });
     }
 }

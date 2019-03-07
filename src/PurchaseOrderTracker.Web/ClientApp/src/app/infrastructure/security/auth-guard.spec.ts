@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 import { AuthGuard } from './auth-guard';
 import { AuthService } from './auth.service';
 
-describe('AuthGuard', function () {
+describe('AuthGuard', () => {
     let authGuard: AuthGuard;
     let authServiceSpy: AuthService;
 
@@ -16,9 +16,9 @@ describe('AuthGuard', function () {
 
     describe('#canActivate', () => {
         it('returns true if user is authenticated', () => {
-            const stubbedActivatedRouteSnapshot = <ActivatedRouteSnapshot>{};
-            const stubbedRouterStateSnapshot = <RouterStateSnapshot>{};
-            (<jasmine.Spy> authServiceSpy.isUserAuthenticated).and.returnValue( of(true) );
+            const stubbedActivatedRouteSnapshot = {} as ActivatedRouteSnapshot;
+            const stubbedRouterStateSnapshot = {} as RouterStateSnapshot;
+            (authServiceSpy.isUserAuthenticated as jasmine.Spy).and.returnValue( of(true) );
             const canActivate = authGuard.canActivate(stubbedActivatedRouteSnapshot, stubbedRouterStateSnapshot);
 
             expect(authServiceSpy.isUserAuthenticated).toHaveBeenCalledTimes(1);
@@ -26,10 +26,10 @@ describe('AuthGuard', function () {
         });
 
         it('calls navigateToLoginPage to user is not authenticated', () => {
-            const stubbedActivatedRouteSnapshot = <ActivatedRouteSnapshot>{};
-            const stubbedRouterStateSnapshot = <RouterStateSnapshot>{};
+            const stubbedActivatedRouteSnapshot = {} as ActivatedRouteSnapshot;
+            const stubbedRouterStateSnapshot = {} as RouterStateSnapshot;
 
-            (<jasmine.Spy> authServiceSpy.isUserAuthenticated).and.returnValue( of(false) );
+            (authServiceSpy.isUserAuthenticated as jasmine.Spy).and.returnValue( of(false) );
             const navigateToLoginPageSpy = spyOn(authGuard, 'navigateToLoginPage');
 
             const canActivate = authGuard.canActivate(stubbedActivatedRouteSnapshot, stubbedRouterStateSnapshot);

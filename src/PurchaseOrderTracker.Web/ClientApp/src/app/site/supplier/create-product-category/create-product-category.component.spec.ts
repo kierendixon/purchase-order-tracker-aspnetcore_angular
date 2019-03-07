@@ -1,14 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { of, throwError } from 'rxjs';
 
-import { MainSiteModule } from '../../main-site.module';
+import { TestHelper } from '../../../../test/test-helper';
 import { AppModule } from '../../../app.module';
-import { SupplierModule } from '../supplier.module';
-import { CreateProductCategoryComponent, CreateProductCategoryViewModel } from './create-product-category.component';
+import { MainSiteModule } from '../../main-site.module';
 import { MessagesService } from '../../shared/messages/messages.service';
-import { CreateProductCategoryService, CreateProductCategoryResult } from './create-product-category.service';
+import { SupplierModule } from '../supplier.module';
+import { CreateProductCategoryComponent } from './create-product-category.component';
+import { CreateProductCategoryService } from './create-product-category.service';
 
 describe('CreateProductCategoryComponent', () => {
     let component: CreateProductCategoryComponent;
@@ -37,11 +37,10 @@ describe('CreateProductCategoryComponent', () => {
             component.model = {
                 name: 'name'
             };
-            const createService = fixture.debugElement.injector
-                .get(CreateProductCategoryService) as CreateProductCategoryService;
+            const createService = fixture.debugElement.injector.get(CreateProductCategoryService);
             const createServiceSpy = spyOn(createService, 'handle').and.returnValue( of({}) );
 
-            const activeModal = fixture.debugElement.injector.get(NgbActiveModal) as NgbActiveModal;
+            const activeModal = fixture.debugElement.injector.get(NgbActiveModal);
             const activeModalSpy = spyOn(activeModal, 'close');
 
             component.onSubmit();
@@ -51,12 +50,11 @@ describe('CreateProductCategoryComponent', () => {
         });
 
         it('sends error to messsage service if error returned', () => {
-            const error = new Error('an error message');
-            const createService = fixture.debugElement.injector
-                .get(CreateProductCategoryService) as CreateProductCategoryService;
+            const error = TestHelper.buildError();
+            const createService = fixture.debugElement.injector.get(CreateProductCategoryService);
             const createServiceSpy = spyOn(createService, 'handle').and.returnValue( throwError(error) );
 
-            const messagesService = fixture.debugElement.injector.get(MessagesService) as MessagesService;
+            const messagesService = fixture.debugElement.injector.get(MessagesService);
             const messagesSpy = spyOn(messagesService, 'addHttpResponseError');
 
             component.onSubmit();

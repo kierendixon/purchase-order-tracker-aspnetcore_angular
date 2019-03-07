@@ -1,12 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpErrorResponse } from '@angular/common/http';
 import { NavigationStart, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 
-import { MessagesService } from './messages.service';
 import { TestHelper } from '../../../../test/test-helper';
+import { MessagesService } from './messages.service';
 
-describe('MessagesService', function () {
+describe('MessagesService', () => {
     let service: MessagesService;
     let eventsSub: BehaviorSubject<any>;
 
@@ -30,25 +29,25 @@ describe('MessagesService', function () {
 
     describe('#addMessage', () => {
         it('adds message as error type', () => {
-            service.addMessage('an error message', true);
-            expectSingleMessage(true, 'an error message');
+            service.addMessage(TestHelper.ErrorMessage, true);
+            expectSingleMessage(true, TestHelper.ErrorMessage);
         });
 
         it('adds message as non-error type', () => {
-            service.addMessage('a non-error message', false);
-            expectSingleMessage(false, 'a non-error message');
+            service.addMessage(TestHelper.NonErrorMessage, false);
+            expectSingleMessage(false, TestHelper.NonErrorMessage);
         });
 
         it('adds message as non-error type when type not specified', () => {
-            service.addMessage('a non-error message');
-            expectSingleMessage(false, 'a non-error message');
+            service.addMessage(TestHelper.NonErrorMessage);
+            expectSingleMessage(false, TestHelper.NonErrorMessage);
         });
     });
 
     describe('#addErrorMessage', () => {
         it('adds message as error type', () => {
-            service.addErrorMessage('an error message');
-            expectSingleMessage(true, 'an error message');
+            service.addErrorMessage(TestHelper.ErrorMessage);
+            expectSingleMessage(true, TestHelper.ErrorMessage);
         });
     });
 

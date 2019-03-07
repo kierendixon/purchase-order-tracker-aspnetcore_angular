@@ -2,7 +2,7 @@ import { fakeAsync, tick } from '@angular/core/testing';
 
 import { StubbedAuthService } from './stubbed-auth.service';
 
-describe('StubbedAuthService', function () {
+describe('StubbedAuthService', () => {
     let service: StubbedAuthService;
 
     beforeEach(() => {

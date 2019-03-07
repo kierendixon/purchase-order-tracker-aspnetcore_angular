@@ -52,7 +52,7 @@ export class EditProductCategoriesComponent implements OnInit {
 
     private convertQueryResultToViewModel(data: PaginatedList<ProductCategoryResult>): PaginatedList<ProductCategory> {
         // properties are exactly the same
-        return <PaginatedList<ProductCategory>>data;
+        return data as PaginatedList<ProductCategory>;
     }
 
     showAddProductCategoryModal() {

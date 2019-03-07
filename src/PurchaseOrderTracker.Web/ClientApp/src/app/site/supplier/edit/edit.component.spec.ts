@@ -37,7 +37,7 @@ describe('EditComponent', () => {
             const params: Params = {};
             params[idParam] = 1;
 
-            const activatedRoute = fixture.debugElement.injector.get(ActivatedRoute) as ActivatedRoute;
+            const activatedRoute = fixture.debugElement.injector.get(ActivatedRoute);
             activatedRoute.snapshot.params = params;
             spyOn(component, 'refreshData');
 
@@ -60,7 +60,7 @@ describe('EditComponent', () => {
                 suppliers: [supplier]
             };
 
-            const editService = fixture.debugElement.injector.get(EditService) as EditService;
+            const editService = fixture.debugElement.injector.get(EditService);
             const handleQuerySpy = spyOn(editService, 'handleQuery').and.returnValue( of(editQueryResult) );
 
             component.refreshData();
@@ -72,10 +72,10 @@ describe('EditComponent', () => {
 
         it('sends error to messsage service if error returned', () => {
             const error = TestHelper.buildError();
-            const editService = fixture.debugElement.injector.get(EditService) as EditService;
+            const editService = fixture.debugElement.injector.get(EditService);
             const handleQuerySpy = spyOn(editService, 'handleQuery').and.returnValue( throwError(error) );
 
-            const messagesService = fixture.debugElement.injector.get(MessagesService) as MessagesService;
+            const messagesService = fixture.debugElement.injector.get(MessagesService);
             const messagesSpy = spyOn(messagesService, 'addHttpResponseError');
 
             component.refreshData();
@@ -90,10 +90,10 @@ describe('EditComponent', () => {
             component.model = SupplierTestHelper.buildEditViewModel();
             component.supplierId = 1;
 
-            const editService = fixture.debugElement.injector.get(EditService) as EditService;
+            const editService = fixture.debugElement.injector.get(EditService);
             const handleCommandSpy = spyOn(editService, 'handleCommand').and.returnValue( of({}) );
 
-            const messagesService = fixture.debugElement.injector.get(MessagesService) as MessagesService;
+            const messagesService = fixture.debugElement.injector.get(MessagesService);
             const addMessageSpy = spyOn(messagesService, 'addMessage');
 
             component.onSubmit();
@@ -105,10 +105,10 @@ describe('EditComponent', () => {
         it('sends error to messsage service if error returned', () => {
             component.model = SupplierTestHelper.buildEditViewModel();
             const error = TestHelper.buildError();
-            const editService = fixture.debugElement.injector.get(EditService) as EditService;
+            const editService = fixture.debugElement.injector.get(EditService);
             const handleCommandSpy = spyOn(editService, 'handleCommand').and.returnValue( throwError(error) );
 
-            const messagesService = fixture.debugElement.injector.get(MessagesService) as MessagesService;
+            const messagesService = fixture.debugElement.injector.get(MessagesService);
             const messagesSpy = spyOn(messagesService, 'addHttpResponseError');
 
             component.onSubmit();
@@ -122,10 +122,10 @@ describe('EditComponent', () => {
         it('navigates to suppliers URL when deleted successfully', () => {
             component.supplierId = 1;
 
-            const deleteService = fixture.debugElement.injector.get(DeleteService) as DeleteService;
+            const deleteService = fixture.debugElement.injector.get(DeleteService);
             const handleCommandSpy = spyOn(deleteService, 'handle').and.returnValue( of({}) );
 
-            const router = fixture.debugElement.injector.get(Router) as Router;
+            const router = fixture.debugElement.injector.get(Router);
             const navigateByUrlSpy = spyOn(router, 'navigateByUrl');
 
             component.onDelete();
@@ -136,10 +136,10 @@ describe('EditComponent', () => {
 
         it('sends error to messsage service if error returned', () => {
             const error = TestHelper.buildError();
-            const deleteService = fixture.debugElement.injector.get(DeleteService) as DeleteService;
+            const deleteService = fixture.debugElement.injector.get(DeleteService);
             const handleSpy = spyOn(deleteService, 'handle').and.returnValue( throwError(error) );
 
-            const messagesService = fixture.debugElement.injector.get(MessagesService) as MessagesService;
+            const messagesService = fixture.debugElement.injector.get(MessagesService);
             const messagesSpy = spyOn(messagesService, 'addHttpResponseError');
 
             component.onDelete();

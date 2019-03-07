@@ -1,12 +1,13 @@
-import { async, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
-import { Router, ActivatedRoute, Params } from '@angular/router';
+import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
+import { BasePage } from '../../test/base-page';
+import { TestHelper } from '../../test/test-helper';
 import { AppModule } from '../app.module';
-import { AccountComponent } from './account.component';
 import * as CONFIG from '../config/app.config';
 import { mainSiteUrl, returnUrlQueryParam } from '../config/routing.config';
-import { BasePage } from '../../test/base-page';
+import { AccountComponent } from './account.component';
 
 describe('AccountComponent', () => {
     let component: AccountComponent;
@@ -47,10 +48,10 @@ describe('AccountComponent', () => {
 
     describe('#skipLoginIfAlreadyAuthenticated', () => {
         it('should set error message if authentication service returns error', () => {
-            const isUserAuthenticatedSpy = authService.isUserAuthenticated.and.returnValue( throwError('an error ocurred') );
+            const isUserAuthenticatedSpy = authService.isUserAuthenticated.and.returnValue( throwError(TestHelper.ErrorMessage) );
             component.skipLoginIfAlreadyAuthenticated();
 
-            expect(component.errorMessage).toBe('an error ocurred');
+            expect(component.errorMessage).toBe(TestHelper.ErrorMessage);
             expect(isUserAuthenticatedSpy).toHaveBeenCalledTimes(1);
         });
 
@@ -79,10 +80,10 @@ describe('AccountComponent', () => {
             const queryParams: Params = {};
             queryParams[returnUrlQueryParam] = returnUrlQueryParamValue;
 
-            const activatedRoute = fixture.debugElement.injector.get(ActivatedRoute) as ActivatedRoute;
+            const activatedRoute = fixture.debugElement.injector.get(ActivatedRoute);
             activatedRoute.snapshot.queryParams = queryParams;
 
-            const router = fixture.debugElement.injector.get(Router) as Router;
+            const router = fixture.debugElement.injector.get(Router);
             const navigateByUrlSpy = spyOn(router, 'navigateByUrl');
 
             component.navigateToNextUrl();
@@ -91,8 +92,8 @@ describe('AccountComponent', () => {
         });
 
         it('should navigate to default url if no query param provided', () => {
-            const activatedRoute = fixture.debugElement.injector.get(ActivatedRoute) as ActivatedRoute;
-            const router = fixture.debugElement.injector.get(Router) as Router;
+            const activatedRoute = fixture.debugElement.injector.get(ActivatedRoute);
+            const router = fixture.debugElement.injector.get(Router);
             const navigateByUrlSpy = spyOn(router, 'navigateByUrl');
 
             component.navigateToNextUrl();
@@ -113,7 +114,7 @@ describe('AccountComponent', () => {
         });
 
         it('should set error message if authentication service returns error', () => {
-            const isUserAuthenticatedSpy = authService.authenticate.and.returnValue( throwError('an error ocurred') );
+            const isUserAuthenticatedSpy = authService.authenticate.and.returnValue( throwError(TestHelper.ErrorMessage) );
             component.onSubmit();
 
             expect(component.errorMessage).toBe('an error ocurred');
@@ -158,14 +159,13 @@ describe('AccountComponent', () => {
         }));
 
         it('error message is bound to view', () => {
-            const errorMessage = 'an error message';
             const page = new Page(fixture);
-            component.errorMessage = errorMessage;
+            component.errorMessage = TestHelper.ErrorMessage;
 
             spyOn(component, 'ngOnInit');
             fixture.detectChanges();
 
-            expect(page.messageDiv.textContent).toMatch(errorMessage);
+            expect(page.messageDiv.textContent).toMatch(TestHelper.ErrorMessage);
         });
 
         it('submit button event is handled by onSubmit', () => {
