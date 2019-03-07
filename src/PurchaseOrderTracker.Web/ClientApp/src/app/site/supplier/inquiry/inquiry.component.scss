@@ -1,17 +1,17 @@
 @import "bootstrap2";
 
 @include media-breakpoint-up(md) {
-    col {
-        &.id {
-            width: 10%;
-        }
-
-        &.name {
-            width: 20%;
-        }
-
-        &.products {
-            width: 70%;
-        }
+  col {
+    &.id {
+      width: 10%;
     }
+
+    &.name {
+      width: 20%;
+    }
+
+    &.products {
+      width: 70%;
+    }
+  }
 }
