@@ -1,5 +1,5 @@
 [![Build status](https://dev.azure.com/purchase-order-tracker/Purchase%20Order%20Tracker%20-%20Angular/_apis/build/status/Purchase%20Order%20Tracker%20-%20Angular%20.NET%20Core)](https://dev.azure.com/purchase-order-tracker/Purchase%20Order%20Tracker%20-%20Angular/_build/latest?definitionId=2)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=purchase-order-tracker-aspnetcore_angular&metric=alert_status)](https://sonarcloud.io/dashboard?id=purchase-order-tracker-aspnetcore_angular)
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/dashboard?id=purchase-order-tracker-aspnetcore_angular)
 
 # Purchase Order Tracker (ASP.NET Core + Angular)
 
