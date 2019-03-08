@@ -5,8 +5,6 @@ import { pageNumberQueryParam } from '../../config/routing.config';
 import { PaginatedList } from './paginated-list';
 
 @Component({
-  // TODO: remove tslint ignore
-  // tslint:disable-next-line:component-selector
   selector: 'pagination',
   templateUrl: './pagination.component.html'
 })
@@ -27,8 +25,6 @@ export class PaginationComponent {
   queryParamsWithPageNumber(pageNumber: number): Params {
     const queryParams = {};
     this.route.queryParams.subscribe((data: Params) => {
-      // TODO: remove tslint ignore
-      // tslint:disable-next-line:forin
       for (const key in data) {
         queryParams[key] = data[key];
       }

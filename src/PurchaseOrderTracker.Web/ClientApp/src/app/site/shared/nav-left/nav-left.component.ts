@@ -4,8 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { purchaseOrdersUrl, shipmentsUrl, suppliersUrl } from '../../config/routing.config';
 
 @Component({
-  // TODO: remove tslint ignore
-  // tslint:disable-next-line:component-selector
   selector: 'nav-left',
   templateUrl: './nav-left.component.html',
   styleUrls: ['./nav-left.component.scss']

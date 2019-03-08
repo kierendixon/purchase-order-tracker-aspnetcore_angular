@@ -3,8 +3,6 @@
 import { MessagesService } from './messages.service';
 
 @Component({
-  // TODO: remove tslint ignore
-  // tslint:disable-next-line:component-selector
   selector: 'messages',
   templateUrl: './messages.component.html'
 })

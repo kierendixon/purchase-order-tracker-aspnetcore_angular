@@ -22,6 +22,7 @@
  *  This also includes Android Emulators with older versions of Chrome and Google Search/Googlebot
  */
 
+// tslint:disable-next-line: no-commented-code
 // import 'core-js/es6/symbol';
 // import 'core-js/es6/object';
 // import 'core-js/es6/function';

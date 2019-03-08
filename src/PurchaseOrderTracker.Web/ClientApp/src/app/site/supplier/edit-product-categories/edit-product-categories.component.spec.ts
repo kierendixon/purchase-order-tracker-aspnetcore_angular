@@ -22,7 +22,7 @@ describe('EditProductCategoriesComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [AppModule, MainSiteModule],
-      providers: [NgbActiveModal] // TODO
+      providers: [NgbActiveModal]
     }).compileComponents();
   }));
 
