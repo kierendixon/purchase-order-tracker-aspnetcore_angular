@@ -1,7 +1,7 @@
 // do not name this file '_variables.scss' because it will override bootstrap's file of the same name
 
-@import "functions"; // bootstrap
-@import "variables"; // bootstrap
+@import 'functions'; // bootstrap
+@import 'variables'; // bootstrap
 
 // override bootstrap variables
 
@@ -9,9 +9,9 @@ $blue: hsl(207, 63%, 43%);
 $red: hsl(7, 72%, 50%);
 $yellow: hsl(36, 88%, 54%);
 $green: hsl(119, 44%, 50%);
-$hero: darken(theme-color("primary"), 25%);
+$hero: darken(theme-color('primary'), 25%);
 
 // extend theme with additional semantic colours
 $theme-colors: (
-  "hero": $hero
+  'hero': $hero
 );

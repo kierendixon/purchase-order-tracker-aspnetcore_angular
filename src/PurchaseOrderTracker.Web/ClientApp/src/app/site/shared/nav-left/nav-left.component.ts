@@ -8,11 +8,11 @@ import { purchaseOrdersUrl, shipmentsUrl, suppliersUrl } from '../../config/rout
   // tslint:disable-next-line:component-selector
   selector: 'nav-left',
   templateUrl: './nav-left.component.html',
-  styleUrls: ['./nav-left.component.css']
+  styleUrls: ['./nav-left.component.scss']
 })
 export class NavLeftComponent {
   // TODO: use activeROute instead of router ?
-  constructor(private activeRoute: ActivatedRoute, private router: Router) {}
+  constructor(private activeRoute: ActivatedRoute, private router: Router) { }
 
   public isDisplayPurchaseOrdersNav(): boolean {
     return this.router.url.toLowerCase().indexOf(purchaseOrdersUrl) === 0;

@@ -1,0 +1,28 @@
+#nav-left {
+  background-color: rgba(238, 238, 238, 0.25);
+  border-right: 1px solid #eee;
+  bottom: 0;
+  left: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-top: 10px 0px 20px 0px;
+  position: fixed;
+  top: 58px;
+  z-index: 1000;
+
+  .nav {
+    margin-bottom: 20px;
+  }
+
+  .nav-item {
+    width: 100%;
+  }
+
+  .nav-item + .nav-item {
+    margin-left: 0;
+  }
+
+  .nav-link {
+    border-radius: 0;
+  }
+}
