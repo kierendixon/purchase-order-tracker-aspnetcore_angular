@@ -12,7 +12,7 @@ import { purchaseOrdersUrl, shipmentsUrl, suppliersUrl } from '../../config/rout
 })
 export class NavLeftComponent {
   // TODO: use activeROute instead of router ?
-  constructor(private activeRoute: ActivatedRoute, private router: Router) { }
+  constructor(private activeRoute: ActivatedRoute, private router: Router) {}
 
   public isDisplayPurchaseOrdersNav(): boolean {
     return this.router.url.toLowerCase().indexOf(purchaseOrdersUrl) === 0;
