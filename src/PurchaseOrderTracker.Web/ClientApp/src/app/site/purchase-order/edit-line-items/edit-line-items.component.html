@@ -1,42 +1,44 @@
-﻿<h1>Edit Line Items ({{model?.purchaseOrderOrderNo}})</h1>
+﻿<h1>Edit Line Items ({{ model?.purchaseOrderOrderNo }})</h1>
 <messages></messages>
 <span *ngIf="!hasLineItems()" class="bg-warning text-white d-block">Purchase Order has no line items</span>
 <ng-container *ngIf="hasLineItems()">
-    <div class="row no-gutters font-weight-bold">
-        <div class="col-6">
-            Product
-        </div>
-        <div class="col-2">
-            Purchase Price
-        </div>
-        <div class="col-2">
-            Quantity
-        </div>
-        <div class="col-2">
-            <!-- action buttons -->
-        </div>
+  <div class="row no-gutters font-weight-bold">
+    <div class="col-6">
+      Product
     </div>
-    <form *ngFor="let lineItem of model.lineItems; let i=index" (ngSubmit)="onSubmitEditLineItem(i)" method="POST">
-        <div class="row no-gutters mb-1">
-            <div class="col-6 pr-1">
-                <select [(ngModel)]="lineItem.productId" name="productId" class="form-control">
-                    <option *ngFor="let key of objectKeys(model.productOptions)" [value]="key">{{model.productOptions[key]}}</option>
-                </select>
-            </div>
-            <div class="col-2 pr-1">
-                <input [(ngModel)]="lineItem.purchasePrice" name="prodcode" class="form-control" />
-            </div>
-            <div class="col-2 pr-1">
-                <input [(ngModel)]="lineItem.purchaseQty" name="Name" class="form-control" />
-            </div>
-            <div class="col-2 text-right">
-                <button type="submit" class="btn btn-primary cursor-pointer">Update</button>
-                <button type="button" (click)="onDeleteLineItem(i)" class="btn btn-danger cursor-pointer ml-1">Delete</button>
-            </div>
-        </div>
-    </form>
+    <div class="col-2">
+      Purchase Price
+    </div>
+    <div class="col-2">
+      Quantity
+    </div>
+    <div class="col-2">
+      <!-- action buttons -->
+    </div>
+  </div>
+  <form *ngFor="let lineItem of model.lineItems; let i = index" (ngSubmit)="onSubmitEditLineItem(i)" method="POST">
+    <div class="row no-gutters mb-1">
+      <div class="col-6 pr-1">
+        <select [(ngModel)]="lineItem.productId" name="productId" class="form-control">
+          <option *ngFor="let key of objectKeys(model.productOptions)" [value]="key">{{
+            model.productOptions[key]
+          }}</option>
+        </select>
+      </div>
+      <div class="col-2 pr-1">
+        <input [(ngModel)]="lineItem.purchasePrice" name="prodcode" class="form-control" />
+      </div>
+      <div class="col-2 pr-1">
+        <input [(ngModel)]="lineItem.purchaseQty" name="Name" class="form-control" />
+      </div>
+      <div class="col-2 text-right">
+        <button type="submit" class="btn btn-primary cursor-pointer">Update</button>
+        <button type="button" (click)="onDeleteLineItem(i)" class="btn btn-danger cursor-pointer ml-1">Delete</button>
+      </div>
+    </div>
+  </form>
 </ng-container>
 <div class="mt-1">
-    <button class="btn btn-primary" (click)="showAddLineItemModal()">Create New Line</button>
-    <a routerLink="/main-site/purchase-orders/{{purchaseOrderId}}" class="btn btn-secondary ml-1">Back</a>
+  <button class="btn btn-primary" (click)="showAddLineItemModal()">Create New Line</button>
+  <a routerLink="/main-site/purchase-orders/{{ purchaseOrderId }}" class="btn btn-secondary ml-1">Back</a>
 </div>

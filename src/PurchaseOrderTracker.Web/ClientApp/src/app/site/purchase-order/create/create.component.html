@@ -1,21 +1,21 @@
 ﻿<h1>Create Purchase Order</h1>
 <messages></messages>
 <form (ngSubmit)="onSubmit()" #form="ngForm">
-    <div class="form-group row">
-        <label name="orderNo" for="orderNo" class="col-2 col-form-label">Order Number</label>
-        <div class="col-3">
-            <input id="orderNo" [(ngModel)]="model.orderNo" name="orderNo" class="form-control" required />
-        </div>
+  <div class="form-group row">
+    <label name="orderNo" for="orderNo" class="col-2 col-form-label">Order Number</label>
+    <div class="col-3">
+      <input id="orderNo" [(ngModel)]="model.orderNo" name="orderNo" class="form-control" required />
     </div>
-    <div class="form-group row" *ngIf="supplierOptions">
-        <label for="supplierId" class="col-2 col-form-label">Supplier</label>
-        <div class="col-3">
-            <select id="supplierId" [(ngModel)]="model.supplierId" name="supplierId" class="form-control">
-                <!-- Default blank -->
-                <option></option>
-                <option *ngFor="let supplier of supplierOptions" [value]="supplier.id">{{supplier.name}}</option>
-            </select>
-        </div>
+  </div>
+  <div class="form-group row" *ngIf="supplierOptions">
+    <label for="supplierId" class="col-2 col-form-label">Supplier</label>
+    <div class="col-3">
+      <select id="supplierId" [(ngModel)]="model.supplierId" name="supplierId" class="form-control">
+        <!-- Default blank -->
+        <option></option>
+        <option *ngFor="let supplier of supplierOptions" [value]="supplier.id">{{ supplier.name }}</option>
+      </select>
     </div>
-    <button class="btn btn-primary" type="submit" [disabled]="!form.form.valid">Create</button>
+  </div>
+  <button class="btn btn-primary" type="submit" [disabled]="!form.form.valid">Create</button>
 </form>

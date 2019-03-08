@@ -1,37 +1,43 @@
 ﻿<div class="modal-header">
-        <h5 class="modal-title">Create Line Item</h5>
-        <button type="button" class="close" (click)="activeModal.dismiss()" tabindex="-1">
-            <span>&times;</span>
-        </button>
-    </div>
+  <h5 class="modal-title">Create Line Item</h5>
+  <button type="button" class="close" (click)="activeModal.dismiss()" tabindex="-1">
+    <span>&times;</span>
+  </button>
+</div>
 <div class="modal-body">
-    <messages></messages>
-    <form (ngSubmit)="onSubmit()">
-        <div class="form-group row">
-            <label for="productId" class="col-4 col-form-label">Product</label>
-            <div class="col-8">
-                <select id="productId" [(ngModel)]="model.productId" name="productId" class="form-control">
-                    <!-- Default blank -->
-                    <option></option>
-                    <option *ngFor="let key of objectKeys(productOptions)" [value]="key">{{productOptions[key]}}</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="purchasePrice" class="col-4 col-form-label">Purchase Price</label>
-            <div class="col-8">
-                <input id="purchasePrice" type="text" [(ngModel)]="model.purchasePrice" name="purchasePrice" class="form-control" />
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="purchaseQty" class="col-4 col-form-label">Quantity</label>
-            <div class="col-8">
-                <input id="purchaseQty" [(ngModel)]="model.purchaseQty" name="purchaseQty" class="form-control" />
-            </div>
-        </div>
-    </form>
+  <messages></messages>
+  <form (ngSubmit)="onSubmit()">
+    <div class="form-group row">
+      <label for="productId" class="col-4 col-form-label">Product</label>
+      <div class="col-8">
+        <select id="productId" [(ngModel)]="model.productId" name="productId" class="form-control">
+          <!-- Default blank -->
+          <option></option>
+          <option *ngFor="let key of objectKeys(productOptions)" [value]="key">{{ productOptions[key] }}</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="purchasePrice" class="col-4 col-form-label">Purchase Price</label>
+      <div class="col-8">
+        <input
+          id="purchasePrice"
+          type="text"
+          [(ngModel)]="model.purchasePrice"
+          name="purchasePrice"
+          class="form-control"
+        />
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="purchaseQty" class="col-4 col-form-label">Quantity</label>
+      <div class="col-8">
+        <input id="purchaseQty" [(ngModel)]="model.purchaseQty" name="purchaseQty" class="form-control" />
+      </div>
+    </div>
+  </form>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onSubmit()">Create</button>
-    <button type="button" class="btn btn-secondary" (click)="activeModal.close()">Close</button>
+  <button type="button" class="btn btn-primary" (click)="onSubmit()">Create</button>
+  <button type="button" class="btn btn-secondary" (click)="activeModal.close()">Close</button>
 </div>

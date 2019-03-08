@@ -1,62 +1,84 @@
 ﻿<div class="d-flex justify-content-between">
-    <h1>Edit Products ({{supplierName}})</h1>
-    <form class="form-inline" asp-action="EditProducts" method="get">
-        <input class="form-control mr-2" type="text" #search name="ProductCodeFilter" placeholder="Find by Product Code" 
-            [class.Disabled]="!hasProducts() && !productsAreFiltered" (keyup.enter)="onSearch(search.value)" tabindex="100">
-        <button class="btn btn-outline-primary" type="button" (click)="onSearch(search.value)" [class.Disabled]="!hasProducts() && !productsAreFiltered" tabindex="101">Search</button>
-        <a *ngIf="productsAreFiltered" class="btn btn-outline-primary ml-2" (click)="onClearSearch()" tabindex="102">Clear Search</a>
-    </form>
+  <h1>Edit Products ({{ supplierName }})</h1>
+  <form class="form-inline" asp-action="EditProducts" method="get">
+    <input
+      class="form-control mr-2"
+      type="text"
+      #search
+      name="ProductCodeFilter"
+      placeholder="Find by Product Code"
+      [class.Disabled]="!hasProducts() && !productsAreFiltered"
+      (keyup.enter)="onSearch(search.value)"
+      tabindex="100"
+    />
+    <button
+      class="btn btn-outline-primary"
+      type="button"
+      (click)="onSearch(search.value)"
+      [class.Disabled]="!hasProducts() && !productsAreFiltered"
+      tabindex="101"
+    >
+      Search
+    </button>
+    <a *ngIf="productsAreFiltered" class="btn btn-outline-primary ml-2" (click)="onClearSearch()" tabindex="102"
+      >Clear Search</a
+    >
+  </form>
 </div>
 <messages></messages>
-<span *ngIf="productsAreFiltered && !hasProducts()"class="bg-warning text-white d-block">No results found for search</span>
-<span *ngIf="!productsAreFiltered && !hasProducts()" class="bg-warning text-white d-block">Supplier has no products</span>
+<span *ngIf="productsAreFiltered && !hasProducts()" class="bg-warning text-white d-block"
+  >No results found for search</span
+>
+<span *ngIf="!productsAreFiltered && !hasProducts()" class="bg-warning text-white d-block"
+  >Supplier has no products</span
+>
 <ng-container *ngIf="hasProducts()">
-    <div class="row no-gutters font-weight-bold">
-        <div class="col-1">
-            Product Code
-        </div>
-        <div class="col-5">
-            Name
-        </div>
-        <div class="col-3">
-            Category
-        </div>
-        <div class="col-1">
-            Price
-        </div>
-        <div class="col-2">
-            <!-- action buttons -->
-        </div>
+  <div class="row no-gutters font-weight-bold">
+    <div class="col-1">
+      Product Code
     </div>
-    <form *ngFor="let product of model.items; let i=index" (ngSubmit)="onSubmitEditProduct(i)" method="POST">
-        <div class="row no-gutters mb-1">
-            <div class="col-1 pr-1">
-                <input [(ngModel)]="product.prodCode" name="prodcode" class="form-control" />
-            </div>
-            <div class="col-5 pr-1">
-                <input [(ngModel)]="product.name" name="Name" class="form-control" />
-            </div>
-            <div class="col-3 pr-1">
-                <select [(ngModel)]="product.categoryId" name="categoryId" class="form-control">
-                    <!-- Default blank -->
-                    <option></option>
-                    <option *ngFor="let key of objectKeys(categoryOptions)" [value]="key">{{categoryOptions[key]}}</option>
-                </select>
-            </div>
-            <div class="col-1 pr-1">
-                <input [(ngModel)]="product.price" name="Price" class="form-control" />
-            </div>
-            <div class="col-2 text-right">
-                <button type="submit" class="btn btn-primary cursor-pointer">Update</button>
-                <button type="button" (click)="onDeleteProduct(i)" class="btn btn-danger cursor-pointer ml-1">Delete</button>
-            </div>
-        </div>
-    </form>
+    <div class="col-5">
+      Name
+    </div>
+    <div class="col-3">
+      Category
+    </div>
+    <div class="col-1">
+      Price
+    </div>
+    <div class="col-2">
+      <!-- action buttons -->
+    </div>
+  </div>
+  <form *ngFor="let product of model.items; let i = index" (ngSubmit)="onSubmitEditProduct(i)" method="POST">
+    <div class="row no-gutters mb-1">
+      <div class="col-1 pr-1">
+        <input [(ngModel)]="product.prodCode" name="prodcode" class="form-control" />
+      </div>
+      <div class="col-5 pr-1">
+        <input [(ngModel)]="product.name" name="Name" class="form-control" />
+      </div>
+      <div class="col-3 pr-1">
+        <select [(ngModel)]="product.categoryId" name="categoryId" class="form-control">
+          <!-- Default blank -->
+          <option></option>
+          <option *ngFor="let key of objectKeys(categoryOptions)" [value]="key">{{ categoryOptions[key] }}</option>
+        </select>
+      </div>
+      <div class="col-1 pr-1">
+        <input [(ngModel)]="product.price" name="Price" class="form-control" />
+      </div>
+      <div class="col-2 text-right">
+        <button type="submit" class="btn btn-primary cursor-pointer">Update</button>
+        <button type="button" (click)="onDeleteProduct(i)" class="btn btn-danger cursor-pointer ml-1">Delete</button>
+      </div>
+    </div>
+  </form>
 </ng-container>
 <div class="d-flex justify-content-between mt-2">
-    <div>
-        <button class="btn btn-primary" (click)="showAddProductModal()">Create New Product</button>
-        <a routerLink="/main-site/suppliers/{{supplierId}}" class="btn btn-secondary ml-1">Back</a>
-    </div>
-    <pagination [paginatedList]="model"></pagination>
+  <div>
+    <button class="btn btn-primary" (click)="showAddProductModal()">Create New Product</button>
+    <a routerLink="/main-site/suppliers/{{ supplierId }}" class="btn btn-secondary ml-1">Back</a>
+  </div>
+  <pagination [paginatedList]="model"></pagination>
 </div>

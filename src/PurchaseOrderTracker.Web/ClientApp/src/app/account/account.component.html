@@ -1,14 +1,29 @@
 <div class="signin-container h-100 d-flex justify-content-center align-items-center bg-hero">
-    <form class="signin rounded p-4 border bg-white" (ngSubmit)="onSubmit()" novalidate>
-        <div class="mb-4 d-flex align-items-end">
-            <img src="/assets/images/logo.png" width="40" height="40" class="mr-1" alt="Logo">
-            <span class="font-weight-bold">Purchase Order Tracker</span>
-        </div>
-    
-        <div *ngIf="errorMessage" class="alert alert-danger">{{errorMessage}}</div>
-        <h1 class="h4 mb-3">Sign In</h1>
-        <input [(ngModel)]="model.username" class="form-control" type="text" name="username" placeholder="Username" autofocus required>
-        <input [(ngModel)]="model.password" class="form-control mb-2 mt-2" type="password" name="password" placeholder="Password" required>
-        <button class="btn btn-primary float-right" type="submit">Sign in</button>
-    </form>
+  <form class="signin rounded p-4 border bg-white" (ngSubmit)="onSubmit()" novalidate>
+    <div class="mb-4 d-flex align-items-end">
+      <img src="/assets/images/logo.png" width="40" height="40" class="mr-1" alt="Logo" />
+      <span class="font-weight-bold">Purchase Order Tracker</span>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+    <h1 class="h4 mb-3">Sign In</h1>
+    <input
+      [(ngModel)]="model.username"
+      class="form-control"
+      type="text"
+      name="username"
+      placeholder="Username"
+      autofocus
+      required
+    />
+    <input
+      [(ngModel)]="model.password"
+      class="form-control mb-2 mt-2"
+      type="password"
+      name="password"
+      placeholder="Password"
+      required
+    />
+    <button class="btn btn-primary float-right" type="submit">Sign in</button>
+  </form>
 </div>

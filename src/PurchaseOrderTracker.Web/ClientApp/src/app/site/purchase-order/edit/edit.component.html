@@ -1,64 +1,112 @@
 ﻿<h1>Edit Purchase Order</h1>
 <messages></messages>
 <form *ngIf="model !== undefined" (ngSubmit)="onSubmit()" #form="ngForm">
-    <div class="form-group row">
-        <label name="id" for="id" class="col-4 col-md-2 col-form-label">Id</label>
-        <div class="col-8 col-md-4">
-            <input id="id" class="form-control" value="{{model.id}}" readonly />
-        </div>
+  <div class="form-group row">
+    <label name="id" for="id" class="col-4 col-md-2 col-form-label">Id</label>
+    <div class="col-8 col-md-4">
+      <input id="id" class="form-control" value="{{ model.id }}" readonly />
     </div>
-    <div class="form-group row">
-        <label name="createdDate" for="createdDate" class="col-4 col-md-2 col-form-label">Created</label>
-        <div class="col-8 col-md-4">
-            <input id="createdDate" class="form-control" value="{{model.createdDate | date:'short'}}" readonly />
-        </div>
+  </div>
+  <div class="form-group row">
+    <label name="createdDate" for="createdDate" class="col-4 col-md-2 col-form-label">Created</label>
+    <div class="col-8 col-md-4">
+      <input id="createdDate" class="form-control" value="{{ model.createdDate | date: 'short' }}" readonly />
     </div>
-    <div class="form-group row">
-        <label name="orderNo" for="orderNo" class="col-4 col-md-2 col-form-label">Order Number</label>
-        <div class="col-8 col-md-4">
-            <input id="orderNo" [(ngModel)]="model.orderNo" name="orderNo" class="form-control" required [readonly]="model.isCancelled"/>
-        </div>
+  </div>
+  <div class="form-group row">
+    <label name="orderNo" for="orderNo" class="col-4 col-md-2 col-form-label">Order Number</label>
+    <div class="col-8 col-md-4">
+      <input
+        id="orderNo"
+        [(ngModel)]="model.orderNo"
+        name="orderNo"
+        class="form-control"
+        required
+        [readonly]="model.isCancelled"
+      />
     </div>
-    <div class="form-group row">
-        <label for="supplierId" class="col-4 col-md-2 col-form-label">Supplier</label>
-        <div class="col-8 col-md-4">
-            <select id="supplierId" [(ngModel)]="model.supplierId" name="supplierId" class="form-control" [disabled]="model.isCancelled">
-                <!-- Default blank -->
-                <option></option>
-                <option *ngFor="let key of objectKeys(model.supplierOptions)" [value]="key">{{model.supplierOptions[key]}}</option>
-            </select>
-        </div>
+  </div>
+  <div class="form-group row">
+    <label for="supplierId" class="col-4 col-md-2 col-form-label">Supplier</label>
+    <div class="col-8 col-md-4">
+      <select
+        id="supplierId"
+        [(ngModel)]="model.supplierId"
+        name="supplierId"
+        class="form-control"
+        [disabled]="model.isCancelled"
+      >
+        <!-- Default blank -->
+        <option></option>
+        <option *ngFor="let key of objectKeys(model.supplierOptions)" [value]="key">{{
+          model.supplierOptions[key]
+        }}</option>
+      </select>
     </div>
-    <div class="form-group row">
-        <label for="shipmentId" class="col-4 col-md-2 col-form-label">Shipment</label>
-        <div class="col-8 col-md-4">
-            <input *ngIf="!model.canShipmentBeUpdated" class="form-control" value="{{model.shipmentTrackingId}}" readonly/>
-            <span class="text-danger" *ngIf="!model.isApprovedOrLaterStatus && !model.isCancelled">Purchase Order must be approved before it can be assigned to a shipment</span>
-            <select *ngIf="model.isApprovedOrLaterStatus && model.canShipmentBeUpdated && hasShipmentOptions()"
-                    id="shipmentId" [(ngModel)]="model.shipmentId" name="shipmentId" class="form-control" [disabled]="!model.isApprovedOrLaterStatus">
-                <!-- Default blank -->
-                <option></option>
-                <option *ngFor="let key of objectKeys(model.shipmentOptions)" [value]="key">{{model.shipmentOptions[key]}}</option>
-            </select>
-            <span *ngIf="model.isApprovedOrLaterStatus && model.canShipmentBeUpdated && !hasShipmentOptions()">No shipments available</span>
-        </div>
+  </div>
+  <div class="form-group row">
+    <label for="shipmentId" class="col-4 col-md-2 col-form-label">Shipment</label>
+    <div class="col-8 col-md-4">
+      <input *ngIf="!model.canShipmentBeUpdated" class="form-control" value="{{ model.shipmentTrackingId }}" readonly />
+      <span class="text-danger" *ngIf="!model.isApprovedOrLaterStatus && !model.isCancelled"
+        >Purchase Order must be approved before it can be assigned to a shipment</span
+      >
+      <select
+        *ngIf="model.isApprovedOrLaterStatus && model.canShipmentBeUpdated && hasShipmentOptions()"
+        id="shipmentId"
+        [(ngModel)]="model.shipmentId"
+        name="shipmentId"
+        class="form-control"
+        [disabled]="!model.isApprovedOrLaterStatus"
+      >
+        <!-- Default blank -->
+        <option></option>
+        <option *ngFor="let key of objectKeys(model.shipmentOptions)" [value]="key">{{
+          model.shipmentOptions[key]
+        }}</option>
+      </select>
+      <span *ngIf="model.isApprovedOrLaterStatus && model.canShipmentBeUpdated && !hasShipmentOptions()"
+        >No shipments available</span
+      >
     </div>
-    <div class="form-group row">
-        <label name="currentState" for="currentState" class="col-4 col-md-2 col-form-label">Status</label>
-        <div class="col-8 col-md-4">
-            <input id="currentState" [(ngModel)]="model.currentState" name="currentState" class="form-control" readonly />
-        </div>
+  </div>
+  <div class="form-group row">
+    <label name="currentState" for="currentState" class="col-4 col-md-2 col-form-label">Status</label>
+    <div class="col-8 col-md-4">
+      <input id="currentState" [(ngModel)]="model.currentState" name="currentState" class="form-control" readonly />
     </div>
-    <div *ngIf="!model.isDelivered" class="form-group row">
-        <label class="col-4 col-md-2 col-form-label">Update Status</label>
-        <div class="col-8 col-md-4">
-            <button *ngIf="model.canTransitionToPendingApproval" type="button" (click)="onUpdateStatus('PendingApproval')" class="btn btn-outline-dark cursor-pointer">Pending Approval</button>
-            <button *ngIf="model.canTransitionToApproved" type="button" (click)="onUpdateStatus('Approved')" class="btn btn-outline-dark cursor-pointer">Approved</button>
-            <button *ngIf="model.canTransitionToCancelled" type="button" (click)="onUpdateStatus('Cancelled')" class="btn btn-outline-dark cursor-pointer">Cancelled</button>
-        </div>
+  </div>
+  <div *ngIf="!model.isDelivered" class="form-group row">
+    <label class="col-4 col-md-2 col-form-label">Update Status</label>
+    <div class="col-8 col-md-4">
+      <button
+        *ngIf="model.canTransitionToPendingApproval"
+        type="button"
+        (click)="onUpdateStatus('PendingApproval')"
+        class="btn btn-outline-dark cursor-pointer"
+      >
+        Pending Approval
+      </button>
+      <button
+        *ngIf="model.canTransitionToApproved"
+        type="button"
+        (click)="onUpdateStatus('Approved')"
+        class="btn btn-outline-dark cursor-pointer"
+      >
+        Approved
+      </button>
+      <button
+        *ngIf="model.canTransitionToCancelled"
+        type="button"
+        (click)="onUpdateStatus('Cancelled')"
+        class="btn btn-outline-dark cursor-pointer"
+      >
+        Cancelled
+      </button>
     </div>
-    <button class="btn btn-primary" type="submit" [disabled]="!form.form.valid">Save</button>
-    <a routerLink="edit-line-items" class="btn btn-primary ml-1">Edit Line Items</a>
-    <button class="btn btn-danger cursor-pointer ml-1" (click)="onDelete()" type="button">Delete</button>
-    <a class="btn btn-secondary ml-1" role="button" routerLink="/main-site/purchase-orders">Back</a>
+  </div>
+  <button class="btn btn-primary" type="submit" [disabled]="!form.form.valid">Save</button>
+  <a routerLink="edit-line-items" class="btn btn-primary ml-1">Edit Line Items</a>
+  <button class="btn btn-danger cursor-pointer ml-1" (click)="onDelete()" type="button">Delete</button>
+  <a class="btn btn-secondary ml-1" role="button" routerLink="/main-site/purchase-orders">Back</a>
 </form>

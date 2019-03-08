@@ -2,29 +2,31 @@
 <messages></messages>
 <span *ngIf="!hasRecords()" class="bg-warning text-white d-block">No records found</span>
 <div *ngIf="hasRecords()">
-    <table class="table table-striped text-left">
-        <thead>
-        <tr>
-            <th>Id</th>
-            <th>Order Number</th>
-            <th>Created Date</th>
-            <th>Supplier</th>
-            <th>Status</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let po of model.pagedList.items">
-            <td><a routerLink="../{{po.id}}">{{po.id}}</a></td>
-            <td>{{po.orderNo}}</td>
-            <td>{{po.createdDate | date:'short'}}</td>
-            <td>{{po.supplierName}}</td>
-            <td>{{po.status}}</td>
-            <td><a routerLink="../{{po.id}}/edit-line-items">Line Items</a></td>
-        </tr>
-        </tbody>
-    </table>
-    <div class="d-flex justify-content-end">
-        <pagination [paginatedList]="model.pagedList"></pagination>
-    </div>
+  <table class="table table-striped text-left">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Order Number</th>
+        <th>Created Date</th>
+        <th>Supplier</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let po of model.pagedList.items">
+        <td>
+          <a routerLink="../{{ po.id }}">{{ po.id }}</a>
+        </td>
+        <td>{{ po.orderNo }}</td>
+        <td>{{ po.createdDate | date: "short" }}</td>
+        <td>{{ po.supplierName }}</td>
+        <td>{{ po.status }}</td>
+        <td><a routerLink="../{{ po.id }}/edit-line-items">Line Items</a></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="d-flex justify-content-end">
+    <pagination [paginatedList]="model.pagedList"></pagination>
+  </div>
 </div>

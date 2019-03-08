@@ -1,28 +1,30 @@
 ﻿<h1>Suppliers Inquiry</h1>
 <messages></messages>
 <div *ngIf="hasRecords()">
-    <table class="table table-striped text-left">
-        <colgroup>
-            <col class="id">
-            <col class="name">
-            <col class="products">
-        </colgroup>
-        <thead>
-        <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Products</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let supplier of model.pagedList.items">
-            <td><a routerLink="../{{supplier.id}}">{{supplier.id}}</a></td>
-            <td>{{supplier.name}}</td>
-            <td><a routerLink="../{{supplier.id}}/edit-products">Products</a></td>
-        </tr>
-        </tbody>
-    </table>
-    <div class="d-flex justify-content-end">
-        <pagination [paginatedList]="model.pagedList"></pagination>
-    </div>
+  <table class="table table-striped text-left">
+    <colgroup>
+      <col class="id" />
+      <col class="name" />
+      <col class="products" />
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Products</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let supplier of model.pagedList.items">
+        <td>
+          <a routerLink="../{{ supplier.id }}">{{ supplier.id }}</a>
+        </td>
+        <td>{{ supplier.name }}</td>
+        <td><a routerLink="../{{ supplier.id }}/edit-products">Products</a></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="d-flex justify-content-end">
+    <pagination [paginatedList]="model.pagedList"></pagination>
+  </div>
 </div>
