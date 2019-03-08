@@ -1,8 +1,8 @@
-﻿import { Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { MessagesService } from '../../shared/messages/messages.service';
-import { CreateProductCategoryService, CreateProductCategoryCommand } from './create-product-category.service';
+import { CreateProductCategoryCommand, CreateProductCategoryService } from './create-product-category.service';
 
 @Component({
   templateUrl: './create-product-category.component.html'

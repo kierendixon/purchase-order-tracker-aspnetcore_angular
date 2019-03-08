@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MainSiteModule } from '../../main-site.module';
 import { AppModule } from '../../../app.module';
+import { MainSiteModule } from '../../main-site.module';
 import { NavTopComponent } from './nav-top.component';
 
 describe('NavTopComponent', () => {

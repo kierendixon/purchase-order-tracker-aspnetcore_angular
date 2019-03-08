@@ -1,11 +1,11 @@
-﻿import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { MessagesService } from '../../shared/messages/messages.service';
-import { DeleteService, DeleteCommand } from './delete.service';
-import { EditService, EditQuery, EditQueryResult, EditCommand } from './edit.service';
-import { EditStatusService, EditStatusCommand } from './edit-status.service';
 import { idParam, purchaseOrdersUrl } from '../../config/routing.config';
+import { MessagesService } from '../../shared/messages/messages.service';
+import { DeleteCommand, DeleteService } from './delete.service';
+import { EditStatusCommand, EditStatusService } from './edit-status.service';
+import { EditCommand, EditQuery, EditQueryResult, EditService } from './edit.service';
 
 @Component({
   templateUrl: './edit.component.html'

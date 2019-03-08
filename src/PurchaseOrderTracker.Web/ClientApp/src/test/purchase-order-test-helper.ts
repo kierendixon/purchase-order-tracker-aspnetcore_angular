@@ -1,10 +1,10 @@
-import { InquiryResult, ResultPurchaseOrder } from '../app/site/purchase-order/inquiry/inquiry.service';
-import { EditQueryResult } from '../app/site/purchase-order/edit/edit.service';
 import { SuppliersResult, SuppliersResultSupplier } from '../app/site/purchase-order/create/create.service';
 import {
   EditLineItemsResult,
   EditLineItemsResultItem
 } from '../app/site/purchase-order/edit-line-items/edit-line-items.service';
+import { EditQueryResult } from '../app/site/purchase-order/edit/edit.service';
+import { InquiryResult, ResultPurchaseOrder } from '../app/site/purchase-order/inquiry/inquiry.service';
 
 export class PurchaseOrderTestHelper {
   public static buildInquiryResult(items = [], pageCount = 0, pageNumber = 0, pageSize = 0): InquiryResult {

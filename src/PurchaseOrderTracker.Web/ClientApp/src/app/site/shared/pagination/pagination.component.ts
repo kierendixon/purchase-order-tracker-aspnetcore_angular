@@ -1,8 +1,8 @@
-﻿import { Component, Input } from '@angular/core';
-import { Router, ActivatedRoute, Params } from '@angular/router';
+import { Component, Input } from '@angular/core';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
-import { PaginatedList } from './paginated-list';
 import { pageNumberQueryParam } from '../../config/routing.config';
+import { PaginatedList } from './paginated-list';
 
 @Component({
   // TODO: remove tslint ignore

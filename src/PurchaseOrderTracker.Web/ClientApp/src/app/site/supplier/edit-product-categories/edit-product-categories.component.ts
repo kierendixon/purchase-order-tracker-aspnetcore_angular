@@ -1,18 +1,18 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { PaginatedList } from '../../shared/pagination/paginated-list';
-import { MessagesService } from '../../shared/messages/messages.service';
-import {
-  EditProductCategoriesService,
-  ProductCategoryResult,
-  EditProductCategoriesQuery
-} from './edit-product-categories.service';
-import { EditProductCategoryService, EditProductCategoryCommand } from './edit-product-category.service';
-import { DeleteProductCategoryService, DeleteCommand } from './delete-product-category.service';
-import { CreateProductCategoryComponent } from '../create-product-category/create-product-category.component';
 import { idParam, pageNumberQueryParam } from '../../config/routing.config';
+import { MessagesService } from '../../shared/messages/messages.service';
+import { PaginatedList } from '../../shared/pagination/paginated-list';
+import { CreateProductCategoryComponent } from '../create-product-category/create-product-category.component';
+import { DeleteCommand, DeleteProductCategoryService } from './delete-product-category.service';
+import {
+  EditProductCategoriesQuery,
+  EditProductCategoriesService,
+  ProductCategoryResult
+} from './edit-product-categories.service';
+import { EditProductCategoryCommand, EditProductCategoryService } from './edit-product-category.service';
 
 @Component({
   templateUrl: './edit-product-categories.component.html'

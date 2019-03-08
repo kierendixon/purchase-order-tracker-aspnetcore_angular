@@ -1,9 +1,9 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, Inject, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { AuthService } from '../infrastructure/security/auth.service';
 import { authServiceToken } from '../config/app.config';
 import { mainSiteUrl, returnUrlQueryParam } from '../config/routing.config';
+import { AuthService } from '../infrastructure/security/auth.service';
 
 @Component({
   templateUrl: './account.component.html',

@@ -2,15 +2,15 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Params } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
-import { MainSiteModule } from '../../main-site.module';
-import { AppModule } from '../../../app.module';
-import { PurchaseOrderModule } from '../purchase-order.module';
-import { InquiryComponent } from './inquiry.component';
-import { MessagesService } from '../../shared/messages/messages.service';
-import { InquiryService } from './inquiry.service';
-import { queryTypeQueryParam, pageNumberQueryParam } from '../../config/routing.config';
 import { PurchaseOrderTestHelper } from '../../../../test/purchase-order-test-helper';
 import { TestHelper } from '../../../../test/test-helper';
+import { AppModule } from '../../../app.module';
+import { pageNumberQueryParam, queryTypeQueryParam } from '../../config/routing.config';
+import { MainSiteModule } from '../../main-site.module';
+import { MessagesService } from '../../shared/messages/messages.service';
+import { PurchaseOrderModule } from '../purchase-order.module';
+import { InquiryComponent } from './inquiry.component';
+import { InquiryService } from './inquiry.service';
 
 describe('InquiryComponent', () => {
   let component: InquiryComponent;

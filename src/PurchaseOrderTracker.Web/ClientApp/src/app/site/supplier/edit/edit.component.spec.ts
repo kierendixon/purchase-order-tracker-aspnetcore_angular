@@ -1,16 +1,16 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router, ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
-import { MainSiteModule } from '../../main-site.module';
-import { AppModule } from '../../../app.module';
-import { EditComponent } from './edit.component';
-import { MessagesService } from '../../shared/messages/messages.service';
-import { EditService, EditQueryResult } from './edit.service';
-import { DeleteService } from './delete.service';
-import { idParam, suppliersUrl } from '../../config/routing.config';
-import { TestHelper } from '../../../../test/test-helper';
 import { SupplierTestHelper } from 'src/test/supplier-test-helper';
+import { TestHelper } from '../../../../test/test-helper';
+import { AppModule } from '../../../app.module';
+import { idParam, suppliersUrl } from '../../config/routing.config';
+import { MainSiteModule } from '../../main-site.module';
+import { MessagesService } from '../../shared/messages/messages.service';
+import { DeleteService } from './delete.service';
+import { EditComponent } from './edit.component';
+import { EditQueryResult, EditService } from './edit.service';
 
 describe('EditComponent', () => {
   let component: EditComponent;

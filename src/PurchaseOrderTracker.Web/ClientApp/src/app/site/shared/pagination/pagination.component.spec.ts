@@ -1,12 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router, ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { of } from 'rxjs';
 
-import { MainSiteModule } from '../../main-site.module';
 import { AppModule } from '../../../app.module';
-import { PaginationComponent } from './pagination.component';
-import { PaginatedList } from './paginated-list';
 import { pageNumberQueryParam } from '../../config/routing.config';
+import { MainSiteModule } from '../../main-site.module';
+import { PaginatedList } from './paginated-list';
+import { PaginationComponent } from './pagination.component';
 
 describe('PaginationComponent', () => {
   let component: PaginationComponent;

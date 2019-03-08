@@ -1,18 +1,18 @@
-﻿import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { MessagesService } from '../../shared/messages/messages.service';
 import { idParam } from '../../config/routing.config';
+import { MessagesService } from '../../shared/messages/messages.service';
 import { CreateLineItemComponent } from '../create-line-item/create-line-item.component';
+import { DeleteCommand, DeleteLineItemService } from './delete-line-item.service';
+import { EditLineItemCommand, EditLineItemService } from './edit-line-item.service';
 import {
-  EditLineItemsService,
   EditLineItemsQuery,
   EditLineItemsResult,
-  EditLineItemsResultItem
+  EditLineItemsResultItem,
+  EditLineItemsService
 } from './edit-line-items.service';
-import { EditLineItemService, EditLineItemCommand } from './edit-line-item.service';
-import { DeleteLineItemService, DeleteCommand } from './delete-line-item.service';
 
 @Component({
   templateUrl: './edit-line-items.component.html'

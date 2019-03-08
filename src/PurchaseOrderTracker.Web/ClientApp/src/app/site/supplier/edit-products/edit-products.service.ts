@@ -1,9 +1,9 @@
-﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { PaginatedList } from '../../shared/pagination/paginated-list';
 import { supplierProductsUrl } from '../../config/api.config';
+import { PaginatedList } from '../../shared/pagination/paginated-list';
 
 @Injectable()
 export class EditProductsService {

@@ -1,19 +1,19 @@
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ActivatedRoute, Params } from '@angular/router';
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { of, throwError } from 'rxjs';
 
-import { MainSiteModule } from '../../main-site.module';
-import { AppModule } from '../../../app.module';
-import { EditProductsComponent } from './edit-products.component';
-import { CreateProductComponent } from '../create-product/create-product.component';
-import { MessagesService } from '../../shared/messages/messages.service';
-import { EditProductsService } from './edit-products.service';
-import { EditProductService, EditProductResult } from './edit-product.service';
-import { DeleteProductService, DeleteResult } from './delete-product.service';
-import { idParam, pageNumberQueryParam } from '../../config/routing.config';
-import { TestHelper } from '../../../../test/test-helper';
 import { SupplierTestHelper } from 'src/test/supplier-test-helper';
+import { TestHelper } from '../../../../test/test-helper';
+import { AppModule } from '../../../app.module';
+import { idParam, pageNumberQueryParam } from '../../config/routing.config';
+import { MainSiteModule } from '../../main-site.module';
+import { MessagesService } from '../../shared/messages/messages.service';
+import { CreateProductComponent } from '../create-product/create-product.component';
+import { DeleteProductService, DeleteResult } from './delete-product.service';
+import { EditProductResult, EditProductService } from './edit-product.service';
+import { EditProductsComponent } from './edit-products.component';
+import { EditProductsService } from './edit-products.service';
 
 describe('EditProductsComponent', () => {
   let component: EditProductsComponent;

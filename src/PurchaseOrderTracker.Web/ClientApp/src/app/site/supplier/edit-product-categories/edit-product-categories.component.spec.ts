@@ -1,19 +1,19 @@
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ActivatedRoute, Params } from '@angular/router';
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { of, throwError } from 'rxjs';
 
-import { MainSiteModule } from '../../main-site.module';
-import { AppModule } from '../../../app.module';
-import { EditProductCategoriesComponent } from './edit-product-categories.component';
-import { MessagesService } from '../../shared/messages/messages.service';
-import { EditProductCategoriesService } from './edit-product-categories.service';
-import { EditProductCategoryService, EditProductCategoryResult } from './edit-product-category.service';
-import { DeleteProductCategoryService, DeleteResult } from './delete-product-category.service';
-import { idParam, pageNumberQueryParam } from '../../config/routing.config';
-import { CreateProductCategoryComponent } from '../create-product-category/create-product-category.component';
-import { TestHelper } from '../../../../test/test-helper';
 import { SupplierTestHelper } from 'src/test/supplier-test-helper';
+import { TestHelper } from '../../../../test/test-helper';
+import { AppModule } from '../../../app.module';
+import { idParam, pageNumberQueryParam } from '../../config/routing.config';
+import { MainSiteModule } from '../../main-site.module';
+import { MessagesService } from '../../shared/messages/messages.service';
+import { CreateProductCategoryComponent } from '../create-product-category/create-product-category.component';
+import { DeleteProductCategoryService, DeleteResult } from './delete-product-category.service';
+import { EditProductCategoriesComponent } from './edit-product-categories.component';
+import { EditProductCategoriesService } from './edit-product-categories.service';
+import { EditProductCategoryResult, EditProductCategoryService } from './edit-product-category.service';
 
 describe('EditProductCategoriesComponent', () => {
   let component: EditProductCategoriesComponent;

@@ -1,6 +1,6 @@
-import { InquiryResult, ResultShipment } from '../app/site/shipment/inquiry/inquiry.service';
-import { EditQueryResult } from '../app/site/shipment/edit/edit.service';
 import { EditViewModel } from '../app/site/shipment/edit/edit.component';
+import { EditQueryResult } from '../app/site/shipment/edit/edit.service';
+import { InquiryResult, ResultShipment } from '../app/site/shipment/inquiry/inquiry.service';
 
 export class ShipmentTestHelper {
   public static buildInquiryResult(items = [], pageCount = 0, pageNumber = 0, pageSize = 0): InquiryResult {

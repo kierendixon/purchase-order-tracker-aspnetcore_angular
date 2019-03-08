@@ -1,14 +1,14 @@
-import { InquiryResult, ResultSupplier } from '../app/site/supplier/inquiry/inquiry.service';
-import { EditQueryResultSupplier } from '../app/site/supplier/edit/edit.service';
-import { EditViewModel } from '../app/site/supplier/edit/edit.component';
-import { EditProductCategoriesResult } from '../app/site/supplier/edit-product-categories/edit-product-categories.service';
-import { ProductCategory } from '../app/site/supplier/edit-product-categories/edit-product-categories.component';
 import { PaginatedList } from '../app/site/shared/pagination/paginated-list';
+import { ProductCategory } from '../app/site/supplier/edit-product-categories/edit-product-categories.component';
+import { EditProductCategoriesResult } from '../app/site/supplier/edit-product-categories/edit-product-categories.service';
+import { EditProductViewModel } from '../app/site/supplier/edit-products/edit-products.component';
 import {
   EditProductsResult,
   EditProductsResultProduct
 } from '../app/site/supplier/edit-products/edit-products.service';
-import { EditProductViewModel } from '../app/site/supplier/edit-products/edit-products.component';
+import { EditViewModel } from '../app/site/supplier/edit/edit.component';
+import { EditQueryResultSupplier } from '../app/site/supplier/edit/edit.service';
+import { InquiryResult, ResultSupplier } from '../app/site/supplier/inquiry/inquiry.service';
 
 export class SupplierTestHelper {
   public static buildInquiryResult(items = [], pageCount = 0, pageNumber = 0, pageSize = 0): InquiryResult {

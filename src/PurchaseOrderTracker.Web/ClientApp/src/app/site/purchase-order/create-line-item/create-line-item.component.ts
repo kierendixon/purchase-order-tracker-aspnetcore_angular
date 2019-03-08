@@ -1,8 +1,8 @@
-﻿import { Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { MessagesService } from '../../shared/messages/messages.service';
-import { CreateLineItemService, CreateLineItemCommand } from './create-line-item.service';
+import { CreateLineItemCommand, CreateLineItemService } from './create-line-item.service';
 
 @Component({
   templateUrl: './create-line-item.component.html'

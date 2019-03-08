@@ -1,14 +1,14 @@
-﻿import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { MessagesService } from '../../shared/messages/messages.service';
 import { idParam, pageNumberQueryParam } from '../../config/routing.config';
+import { MessagesService } from '../../shared/messages/messages.service';
 import { PaginatedList } from '../../shared/pagination/paginated-list';
 import { CreateProductComponent } from '../create-product/create-product.component';
-import { EditProductsService, EditProductsQuery, EditProductsResultProduct } from './edit-products.service';
-import { EditProductService, EditProductCommand } from './edit-product.service';
-import { DeleteProductService, DeleteCommand } from './delete-product.service';
+import { DeleteCommand, DeleteProductService } from './delete-product.service';
+import { EditProductCommand, EditProductService } from './edit-product.service';
+import { EditProductsQuery, EditProductsResultProduct, EditProductsService } from './edit-products.service';
 
 @Component({
   templateUrl: './edit-products.component.html'

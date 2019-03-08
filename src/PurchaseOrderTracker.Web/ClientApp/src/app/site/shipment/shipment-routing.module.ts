@@ -3,10 +3,10 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from '../../infrastructure/security/auth-guard';
 import { MainSiteComponent } from '../main-site.component';
-import { ShipmentComponent } from './shipment.component';
-import { InquiryComponent } from './inquiry/inquiry.component';
 import { CreateComponent } from './create/create.component';
 import { EditComponent } from './edit/edit.component';
+import { InquiryComponent } from './inquiry/inquiry.component';
+import { ShipmentComponent } from './shipment.component';
 
 const supplierRoutes: Routes = [
   {

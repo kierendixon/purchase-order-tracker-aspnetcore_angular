@@ -2,12 +2,12 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { MainSiteComponent } from '../main-site.component';
-import { SupplierComponent } from './supplier.component';
-import { InquiryComponent } from './inquiry/inquiry.component';
 import { CreateComponent } from './create/create.component';
-import { EditComponent } from './edit/edit.component';
-import { EditProductsComponent } from './edit-products/edit-products.component';
 import { EditProductCategoriesComponent } from './edit-product-categories/edit-product-categories.component';
+import { EditProductsComponent } from './edit-products/edit-products.component';
+import { EditComponent } from './edit/edit.component';
+import { InquiryComponent } from './inquiry/inquiry.component';
+import { SupplierComponent } from './supplier.component';
 
 import { AuthGuard } from '../../infrastructure/security/auth-guard';
 

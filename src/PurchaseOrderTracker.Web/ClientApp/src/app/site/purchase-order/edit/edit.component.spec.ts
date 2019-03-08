@@ -1,16 +1,16 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router, ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
-import { MainSiteModule } from '../../main-site.module';
-import { AppModule } from '../../../app.module';
-import { EditComponent } from './edit.component';
-import { MessagesService } from '../../shared/messages/messages.service';
-import { EditService } from './edit.service';
-import { DeleteService } from './delete.service';
-import { idParam, purchaseOrdersUrl } from '../../config/routing.config';
-import { TestHelper } from '../../../../test/test-helper';
 import { PurchaseOrderTestHelper } from 'src/test/purchase-order-test-helper';
+import { TestHelper } from '../../../../test/test-helper';
+import { AppModule } from '../../../app.module';
+import { idParam, purchaseOrdersUrl } from '../../config/routing.config';
+import { MainSiteModule } from '../../main-site.module';
+import { MessagesService } from '../../shared/messages/messages.service';
+import { DeleteService } from './delete.service';
+import { EditComponent } from './edit.component';
+import { EditService } from './edit.service';
 
 describe('EditComponent', () => {
   let component: EditComponent;

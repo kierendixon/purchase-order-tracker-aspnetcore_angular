@@ -1,9 +1,9 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
+import { pageNumberQueryParam, queryTypeQueryParam } from '../../config/routing.config';
 import { MessagesService } from '../../shared/messages/messages.service';
-import { InquiryService, InquiryQuery, InquiryResult } from './inquiry.service';
-import { queryTypeQueryParam, pageNumberQueryParam } from '../../config/routing.config';
+import { InquiryQuery, InquiryResult, InquiryService } from './inquiry.service';
 
 @Component({
   templateUrl: './inquiry.component.html',
