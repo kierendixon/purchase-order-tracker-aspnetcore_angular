@@ -49,7 +49,7 @@ Testing libraries:
   * Install Visual Studio 2017 (v15.8.4 or higher)
   * Install Visual Studio Code (v1.31 or higher)
   * Install these VS Code extensions:
-    * EditorConfig
+    * Prettier
     * stylelint
     * TSlint
   * Clone git repository
