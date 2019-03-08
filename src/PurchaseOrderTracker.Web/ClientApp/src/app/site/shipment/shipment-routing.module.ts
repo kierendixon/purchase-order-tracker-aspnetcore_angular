@@ -9,30 +9,26 @@ import { CreateComponent } from './create/create.component';
 import { EditComponent } from './edit/edit.component';
 
 const supplierRoutes: Routes = [
-    {
-        path: 'main-site',
-        component: MainSiteComponent,
-        canActivate: [AuthGuard],
+  {
+    path: 'main-site',
+    component: MainSiteComponent,
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'shipments',
+        component: ShipmentComponent,
         children: [
-            {
-                path: 'shipments',
-                component: ShipmentComponent,
-                children: [
-                    { path: 'inquiry', component: InquiryComponent },
-                    { path: 'create', component: CreateComponent },
-                    { path: ':id', component: EditComponent }
-                ]
-            }
+          { path: 'inquiry', component: InquiryComponent },
+          { path: 'create', component: CreateComponent },
+          { path: ':id', component: EditComponent }
         ]
-    }
+      }
+    ]
+  }
 ];
 
 @NgModule({
-    imports: [
-        RouterModule.forChild(supplierRoutes)
-    ],
-    exports: [
-        RouterModule
-    ]
+  imports: [RouterModule.forChild(supplierRoutes)],
+  exports: [RouterModule]
 })
-export class ShipmentRoutingModule { }
+export class ShipmentRoutingModule {}

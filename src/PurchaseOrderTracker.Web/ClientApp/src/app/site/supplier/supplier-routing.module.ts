@@ -12,32 +12,28 @@ import { EditProductCategoriesComponent } from './edit-product-categories/edit-p
 import { AuthGuard } from '../../infrastructure/security/auth-guard';
 
 const supplierRoutes: Routes = [
-    {
-        path: 'main-site',
-        component: MainSiteComponent,
-        canActivate: [AuthGuard],
+  {
+    path: 'main-site',
+    component: MainSiteComponent,
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'suppliers',
+        component: SupplierComponent,
         children: [
-            {
-                path: 'suppliers',
-                component: SupplierComponent,
-                children: [
-                    { path: 'inquiry', component: InquiryComponent },
-                    { path: 'create', component: CreateComponent },
-                    { path: ':id', component: EditComponent },
-                    { path: ':id/edit-products', component: EditProductsComponent },
-                    { path: ':id/edit-product-categories', component: EditProductCategoriesComponent }
-                ]
-            }
+          { path: 'inquiry', component: InquiryComponent },
+          { path: 'create', component: CreateComponent },
+          { path: ':id', component: EditComponent },
+          { path: ':id/edit-products', component: EditProductsComponent },
+          { path: ':id/edit-product-categories', component: EditProductCategoriesComponent }
         ]
-    }
+      }
+    ]
+  }
 ];
 
 @NgModule({
-    imports: [
-        RouterModule.forChild(supplierRoutes)
-    ],
-    exports: [
-        RouterModule
-    ]
+  imports: [RouterModule.forChild(supplierRoutes)],
+  exports: [RouterModule]
 })
-export class SupplierRoutingModule { }
+export class SupplierRoutingModule {}

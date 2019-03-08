@@ -6,25 +6,24 @@ import { supplierProductUrl } from '../../config/api.config';
 
 @Injectable()
 export class EditProductService {
-    constructor(private http: HttpClient) {
-    }
+  constructor(private http: HttpClient) {}
 
-    public handle(command: EditProductCommand): Observable<EditProductResult> {
-        const url = supplierProductUrl(command.supplierId, command.productId);
-        return this.http.post<EditProductResult>(url, command);
-    }
+  public handle(command: EditProductCommand): Observable<EditProductResult> {
+    const url = supplierProductUrl(command.supplierId, command.productId);
+    return this.http.post<EditProductResult>(url, command);
+  }
 }
 
 export class EditProductCommand {
-    constructor(readonly supplierId: number,
-        readonly productId: number,
-        readonly prodCode: string,
-        readonly name: string,
-        readonly categoryId: number,
-        readonly price: number) {
-    }
+  constructor(
+    readonly supplierId: number,
+    readonly productId: number,
+    readonly prodCode: string,
+    readonly name: string,
+    readonly categoryId: number,
+    readonly price: number
+  ) {}
 }
 
 // tslint:disable-next-line:no-empty-interface
-export interface EditProductResult {
-}
+export interface EditProductResult {}

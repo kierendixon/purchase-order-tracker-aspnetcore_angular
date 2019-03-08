@@ -13,99 +13,98 @@ import { ShipmentTestHelper } from '../../../../test/shipment-test-helper';
 import { TestHelper } from '../../../../test/test-helper';
 
 describe('InquiryComponent', () => {
-    let component: InquiryComponent;
-    let fixture: ComponentFixture<InquiryComponent>;
+  let component: InquiryComponent;
+  let fixture: ComponentFixture<InquiryComponent>;
 
-    beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            imports: [AppModule, MainSiteModule, ShipmentModule]
-        })
-        .compileComponents();
-    }));
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      imports: [AppModule, MainSiteModule, ShipmentModule]
+    }).compileComponents();
+  }));
 
-    beforeEach(() => {
-        fixture = TestBed.createComponent(InquiryComponent);
-        component = fixture.componentInstance;
+  beforeEach(() => {
+    fixture = TestBed.createComponent(InquiryComponent);
+    component = fixture.componentInstance;
+  });
+
+  it('should create', () => {
+    expect(component).toBeDefined();
+  });
+
+  describe('#ngOnInit', () => {
+    it('calls refreshData with the provided query type and page number', () => {
+      const queryTypeParam = 'queryTypeParam';
+      const pageNumberParam = 1;
+      const queryParams: Params = {};
+      queryParams[queryTypeQueryParam] = queryTypeParam;
+      queryParams[pageNumberQueryParam] = pageNumberParam;
+
+      const route = fixture.debugElement.injector.get(ActivatedRoute);
+      route.queryParams = of(queryParams);
+      const refreshDataSpy = spyOn(component, 'refreshData');
+
+      component.ngOnInit();
+
+      expect(refreshDataSpy).toHaveBeenCalledWith(queryTypeParam, pageNumberParam);
     });
 
-    it('should create', () => {
-        expect(component).toBeDefined();
+    it('calls refreshData with the default page number if no query param is provided', () => {
+      const queryTypeParam = 'queryTypeParam';
+      const defaultPageNumber = 1;
+      const queryParams: Params = {};
+      queryParams[queryTypeQueryParam] = queryTypeParam;
+
+      const route = fixture.debugElement.injector.get(ActivatedRoute);
+      route.queryParams = of(queryParams);
+      const refreshDataSpy = spyOn(component, 'refreshData');
+
+      component.ngOnInit();
+
+      expect(refreshDataSpy).toHaveBeenCalledWith(queryTypeParam, defaultPageNumber);
+    });
+  });
+
+  describe('#refreshData', () => {
+    it("updates component's model with response", () => {
+      const model = ShipmentTestHelper.buildInquiryResult();
+      const inquiryService = fixture.debugElement.injector.get(InquiryService);
+      const handleSpy = spyOn(inquiryService, 'handle').and.returnValue(of(model));
+
+      component.refreshData('queryType', 1);
+
+      expect(handleSpy).toHaveBeenCalledTimes(1);
+      expect(component.model).toEqual(model);
     });
 
-    describe('#ngOnInit', () => {
-        it('calls refreshData with the provided query type and page number', () => {
-            const queryTypeParam = 'queryTypeParam';
-            const pageNumberParam = 1;
-            const queryParams: Params = {};
-            queryParams[queryTypeQueryParam] = queryTypeParam;
-            queryParams[pageNumberQueryParam] = pageNumberParam;
+    it('sends error to messsage service if error returned', () => {
+      const error = TestHelper.buildError();
+      const inquiryService = fixture.debugElement.injector.get(InquiryService);
+      const handleSpy = spyOn(inquiryService, 'handle').and.returnValue(throwError(error));
 
-            const route = fixture.debugElement.injector.get(ActivatedRoute);
-            route.queryParams = of(queryParams);
-            const refreshDataSpy = spyOn(component, 'refreshData');
+      const messagesService = fixture.debugElement.injector.get(MessagesService);
+      const addHttpResponseErrorSpy = spyOn(messagesService, 'addHttpResponseError');
 
-            component.ngOnInit();
+      component.refreshData('queryType', 1);
 
-            expect(refreshDataSpy).toHaveBeenCalledWith(queryTypeParam, pageNumberParam);
-        });
+      expect(handleSpy).toHaveBeenCalledTimes(1);
+      expect(addHttpResponseErrorSpy).toHaveBeenCalledWith(error);
+    });
+  });
 
-        it('calls refreshData with the default page number if no query param is provided', () => {
-            const queryTypeParam = 'queryTypeParam';
-            const defaultPageNumber = 1;
-            const queryParams: Params = {};
-            queryParams[queryTypeQueryParam] = queryTypeParam;
-
-            const route = fixture.debugElement.injector.get(ActivatedRoute);
-            route.queryParams = of(queryParams);
-            const refreshDataSpy = spyOn(component, 'refreshData');
-
-            component.ngOnInit();
-
-            expect(refreshDataSpy).toHaveBeenCalledWith(queryTypeParam, defaultPageNumber);
-        });
+  describe('#hasRecords', () => {
+    it("returns false if component's model is undefined", () => {
+      expect(component.model).toBeUndefined();
+      expect(component.hasRecords()).toBe(false);
     });
 
-    describe('#refreshData', () => {
-        it('updates component\'s model with response', () => {
-            const model = ShipmentTestHelper.buildInquiryResult();
-            const inquiryService = fixture.debugElement.injector.get(InquiryService);
-            const handleSpy = spyOn(inquiryService, 'handle').and.returnValue( of(model) );
-
-            component.refreshData('queryType', 1);
-
-            expect(handleSpy).toHaveBeenCalledTimes(1);
-            expect(component.model).toEqual(model);
-        });
-
-        it('sends error to messsage service if error returned', () => {
-            const error = TestHelper.buildError();
-            const inquiryService = fixture.debugElement.injector.get(InquiryService);
-            const handleSpy = spyOn(inquiryService, 'handle').and.returnValue( throwError(error) );
-
-            const messagesService = fixture.debugElement.injector.get(MessagesService);
-            const addHttpResponseErrorSpy = spyOn(messagesService, 'addHttpResponseError');
-
-            component.refreshData('queryType', 1);
-
-            expect(handleSpy).toHaveBeenCalledTimes(1);
-            expect(addHttpResponseErrorSpy).toHaveBeenCalledWith(error);
-        });
+    it("returns false if component's model has no items", () => {
+      component.model = ShipmentTestHelper.buildInquiryResult();
+      expect(component.hasRecords()).toBe(false);
     });
 
-    describe('#hasRecords', () => {
-        it('returns false if component\'s model is undefined', () => {
-            expect(component.model).toBeUndefined();
-            expect(component.hasRecords()).toBe(false);
-        });
-
-        it('returns false if component\'s model has no items', () => {
-            component.model = ShipmentTestHelper.buildInquiryResult();
-            expect(component.hasRecords()).toBe(false);
-        });
-
-        it('returns true if component\'s model has items', () => {
-            component.model = ShipmentTestHelper.buildInquiryResultWithItemsCount(1);
-            expect(component.hasRecords()).toBe(true);
-        });
+    it("returns true if component's model has items", () => {
+      component.model = ShipmentTestHelper.buildInquiryResultWithItemsCount(1);
+      expect(component.hasRecords()).toBe(true);
     });
+  });
 });

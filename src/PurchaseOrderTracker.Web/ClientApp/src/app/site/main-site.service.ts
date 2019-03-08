@@ -6,17 +6,16 @@ import { reportingShipmentSummaryUrl } from './config/api.config';
 
 @Injectable()
 export class MainSiteService {
-    constructor(private http: HttpClient) {
-    }
+  constructor(private http: HttpClient) {}
 
-    public handleShipmentSummaryQuery(): Observable<ShipmentSummaryResult> {
-        return this.http.get<ShipmentSummaryResult>(reportingShipmentSummaryUrl);
-    }
+  public handleShipmentSummaryQuery(): Observable<ShipmentSummaryResult> {
+    return this.http.get<ShipmentSummaryResult>(reportingShipmentSummaryUrl);
+  }
 }
 
 export interface ShipmentSummaryResult {
-    totalOpenOrders: number;
-    shipmentsSchedForDeliveryToday: number;
-    shipmentsDelayed: number;
-    shipmentsDelayedMoreThan7Days: number;
+  totalOpenOrders: number;
+  shipmentsSchedForDeliveryToday: number;
+  shipmentsDelayed: number;
+  shipmentsDelayedMoreThan7Days: number;
 }

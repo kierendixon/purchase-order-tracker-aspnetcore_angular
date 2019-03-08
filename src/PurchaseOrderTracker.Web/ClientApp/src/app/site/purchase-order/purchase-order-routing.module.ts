@@ -11,31 +11,27 @@ import { EditLineItemsComponent } from './edit-line-items/edit-line-items.compon
 import { AuthGuard } from '../../infrastructure/security/auth-guard';
 
 const poRoutes: Routes = [
-    {
-        path: 'main-site',
-        component: MainSiteComponent,
-        canActivate: [AuthGuard],
+  {
+    path: 'main-site',
+    component: MainSiteComponent,
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'purchase-orders',
+        component: PurchaseOrderComponent,
         children: [
-            {
-                path: 'purchase-orders',
-                component: PurchaseOrderComponent,
-                children: [
-                    { path: 'inquiry', component: InquiryComponent },
-                    { path: 'create', component: CreateComponent },
-                    { path: ':id', component: EditComponent },
-                    { path: ':id/edit-line-items', component: EditLineItemsComponent }
-                ]
-            }
+          { path: 'inquiry', component: InquiryComponent },
+          { path: 'create', component: CreateComponent },
+          { path: ':id', component: EditComponent },
+          { path: ':id/edit-line-items', component: EditLineItemsComponent }
         ]
-    }
+      }
+    ]
+  }
 ];
 
 @NgModule({
-    imports: [
-        RouterModule.forChild(poRoutes)
-    ],
-    exports: [
-        RouterModule
-    ]
+  imports: [RouterModule.forChild(poRoutes)],
+  exports: [RouterModule]
 })
-export class PurchaseOrderRoutingModule { }
+export class PurchaseOrderRoutingModule {}

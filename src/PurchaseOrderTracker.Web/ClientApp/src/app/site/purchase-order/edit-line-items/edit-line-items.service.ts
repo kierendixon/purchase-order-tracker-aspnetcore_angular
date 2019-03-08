@@ -6,35 +6,33 @@ import { purchaseOrderLineItemsUrl } from '../../config/api.config';
 
 @Injectable()
 export class EditLineItemsService {
-    constructor(private http: HttpClient) {
-    }
+  constructor(private http: HttpClient) {}
 
-    public handle(query: EditLineItemsQuery): Observable<EditLineItemsResult> {
-        const url = purchaseOrderLineItemsUrl(query.id);
-        return this.http.get<EditLineItemsResult>(url);
-    }
+  public handle(query: EditLineItemsQuery): Observable<EditLineItemsResult> {
+    const url = purchaseOrderLineItemsUrl(query.id);
+    return this.http.get<EditLineItemsResult>(url);
+  }
 }
 
 export class EditLineItemsQuery {
-    constructor(readonly id: number) {
-    }
+  constructor(readonly id: number) {}
 }
 
 export interface EditLineItemsResult {
-    purchaseOrderId: number;
-    purchaseOrderOrderNo: string;
-    lineItems: EditLineItemsResultItem[];
-    productOptions: SelectOption[];
+  purchaseOrderId: number;
+  purchaseOrderOrderNo: string;
+  lineItems: EditLineItemsResultItem[];
+  productOptions: SelectOption[];
 }
 
 export interface EditLineItemsResultItem {
-    id: number;
-    productId: number;
-    purchasePrice: number;
-    purchaseQty: number;
+  id: number;
+  productId: number;
+  purchasePrice: number;
+  purchaseQty: number;
 }
 
 interface SelectOption {
-    id: number;
-    value: string;
+  id: number;
+  value: string;
 }

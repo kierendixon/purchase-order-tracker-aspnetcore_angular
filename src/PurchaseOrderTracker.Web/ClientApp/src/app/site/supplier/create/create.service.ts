@@ -6,18 +6,16 @@ import { baseSupplierUrl } from '../../config/api.config';
 
 @Injectable()
 export class CreateService {
-    constructor(private http: HttpClient) {
-    }
+  constructor(private http: HttpClient) {}
 
-    public handle(command: CreateCommand): Observable<CreateResult> {
-        return this.http.put<CreateResult>(baseSupplierUrl, command);
-    }
+  public handle(command: CreateCommand): Observable<CreateResult> {
+    return this.http.put<CreateResult>(baseSupplierUrl, command);
+  }
 }
 
 export class CreateCommand {
-    constructor(readonly name: string) {
-    }
+  constructor(readonly name: string) {}
 }
 export interface CreateResult {
-    supplierId: number;
+  supplierId: number;
 }

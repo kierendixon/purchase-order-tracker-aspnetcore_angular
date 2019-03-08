@@ -30,12 +30,31 @@ import { EditProductService } from './edit-products/edit-product.service';
 import { InquiryService } from './inquiry/inquiry.service';
 
 @NgModule({
-    imports: [CommonModule, FormsModule, HttpClientModule, NgbModule, SharedModule, SupplierRoutingModule],
-    declarations: [SupplierComponent, InquiryComponent, CreateComponent, EditComponent, EditProductsComponent,
-        CreateProductComponent, EditProductCategoriesComponent, CreateProductCategoryComponent],
-    entryComponents: [CreateProductComponent, CreateProductCategoryComponent],
-    providers: [CreateProductService, CreateProductCategoryService, CreateService, DeleteService, EditService,
-        DeleteProductCategoryService, EditProductCategoriesService, EditProductCategoryService,
-        DeleteProductService, EditProductsService, EditProductService, InquiryService]
+  imports: [CommonModule, FormsModule, HttpClientModule, NgbModule, SharedModule, SupplierRoutingModule],
+  declarations: [
+    SupplierComponent,
+    InquiryComponent,
+    CreateComponent,
+    EditComponent,
+    EditProductsComponent,
+    CreateProductComponent,
+    EditProductCategoriesComponent,
+    CreateProductCategoryComponent
+  ],
+  entryComponents: [CreateProductComponent, CreateProductCategoryComponent],
+  providers: [
+    CreateProductService,
+    CreateProductCategoryService,
+    CreateService,
+    DeleteService,
+    EditService,
+    DeleteProductCategoryService,
+    EditProductCategoriesService,
+    EditProductCategoryService,
+    DeleteProductService,
+    EditProductsService,
+    EditProductService,
+    InquiryService
+  ]
 })
-export class SupplierModule { }
+export class SupplierModule {}

@@ -6,24 +6,24 @@ import { CreateService, CreateCommand } from './create.service';
 import { editSupplierUrl } from '../../config/routing.config';
 
 @Component({
-    templateUrl: './create.component.html'
+  templateUrl: './create.component.html'
 })
 export class CreateComponent {
-    model = new SupplierViewModel();
+  model = new SupplierViewModel();
 
-    constructor(private router: Router,
-        private createService: CreateService,
-        private messagesService: MessagesService) {}
+  constructor(private router: Router, private createService: CreateService, private messagesService: MessagesService) {}
 
-    onSubmit() {
-        const command = new CreateCommand(this.model.name);
-        this.createService.handle(command).subscribe(
-            result => this.router.navigateByUrl(editSupplierUrl(result.supplierId)),
-            err => this.messagesService.addHttpResponseError(err)
-        );
-    }
+  onSubmit() {
+    const command = new CreateCommand(this.model.name);
+    this.createService
+      .handle(command)
+      .subscribe(
+        result => this.router.navigateByUrl(editSupplierUrl(result.supplierId)),
+        err => this.messagesService.addHttpResponseError(err)
+      );
+  }
 }
 
 class SupplierViewModel {
-    name: string;
+  name: string;
 }

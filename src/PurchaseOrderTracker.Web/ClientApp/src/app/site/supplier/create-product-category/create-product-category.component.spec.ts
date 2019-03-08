@@ -11,56 +11,55 @@ import { CreateProductCategoryComponent } from './create-product-category.compon
 import { CreateProductCategoryService } from './create-product-category.service';
 
 describe('CreateProductCategoryComponent', () => {
-    let component: CreateProductCategoryComponent;
-    let fixture: ComponentFixture<CreateProductCategoryComponent>;
+  let component: CreateProductCategoryComponent;
+  let fixture: ComponentFixture<CreateProductCategoryComponent>;
 
-    beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            imports: [AppModule, MainSiteModule, SupplierModule],
-            providers: [NgbActiveModal]
-        })
-        .compileComponents();
-    }));
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      imports: [AppModule, MainSiteModule, SupplierModule],
+      providers: [NgbActiveModal]
+    }).compileComponents();
+  }));
 
-    beforeEach(() => {
-        fixture = TestBed.createComponent(CreateProductCategoryComponent);
-        component = fixture.componentInstance;
+  beforeEach(() => {
+    fixture = TestBed.createComponent(CreateProductCategoryComponent);
+    component = fixture.componentInstance;
+  });
+
+  it('should create', () => {
+    expect(component).toBeDefined();
+  });
+
+  describe('#onSubmit', () => {
+    it('closes modal when created successfully', () => {
+      component.supplierId = 1;
+      component.model = {
+        name: 'name'
+      };
+      const createService = fixture.debugElement.injector.get(CreateProductCategoryService);
+      const createServiceSpy = spyOn(createService, 'handle').and.returnValue(of({}));
+
+      const activeModal = fixture.debugElement.injector.get(NgbActiveModal);
+      const activeModalSpy = spyOn(activeModal, 'close');
+
+      component.onSubmit();
+
+      expect(createServiceSpy).toHaveBeenCalledTimes(1);
+      expect(activeModalSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should create', () => {
-        expect(component).toBeDefined();
+    it('sends error to messsage service if error returned', () => {
+      const error = TestHelper.buildError();
+      const createService = fixture.debugElement.injector.get(CreateProductCategoryService);
+      const createServiceSpy = spyOn(createService, 'handle').and.returnValue(throwError(error));
+
+      const messagesService = fixture.debugElement.injector.get(MessagesService);
+      const messagesSpy = spyOn(messagesService, 'addHttpResponseError');
+
+      component.onSubmit();
+
+      expect(createServiceSpy).toHaveBeenCalledTimes(1);
+      expect(messagesSpy).toHaveBeenCalledWith(error);
     });
-
-    describe('#onSubmit', () => {
-        it('closes modal when created successfully', () => {
-            component.supplierId = 1;
-            component.model = {
-                name: 'name'
-            };
-            const createService = fixture.debugElement.injector.get(CreateProductCategoryService);
-            const createServiceSpy = spyOn(createService, 'handle').and.returnValue( of({}) );
-
-            const activeModal = fixture.debugElement.injector.get(NgbActiveModal);
-            const activeModalSpy = spyOn(activeModal, 'close');
-
-            component.onSubmit();
-
-            expect(createServiceSpy).toHaveBeenCalledTimes(1);
-            expect(activeModalSpy).toHaveBeenCalledTimes(1);
-        });
-
-        it('sends error to messsage service if error returned', () => {
-            const error = TestHelper.buildError();
-            const createService = fixture.debugElement.injector.get(CreateProductCategoryService);
-            const createServiceSpy = spyOn(createService, 'handle').and.returnValue( throwError(error) );
-
-            const messagesService = fixture.debugElement.injector.get(MessagesService);
-            const messagesSpy = spyOn(messagesService, 'addHttpResponseError');
-
-            component.onSubmit();
-
-            expect(createServiceSpy).toHaveBeenCalledTimes(1);
-            expect(messagesSpy).toHaveBeenCalledWith(error);
-        });
-    });
+  });
 });

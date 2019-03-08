@@ -10,9 +10,9 @@ import { PaginationComponent } from './pagination/pagination.component';
 import { MessagesService } from './messages/messages.service';
 
 @NgModule({
-    imports: [CommonModule, RouterModule],
-    declarations: [MessagesComponent, NavLeftComponent, NavTopComponent, PaginationComponent],
-    exports: [MessagesComponent, NavLeftComponent, NavTopComponent, PaginationComponent],
-    providers: [MessagesService]
+  imports: [CommonModule, RouterModule],
+  declarations: [MessagesComponent, NavLeftComponent, NavTopComponent, PaginationComponent],
+  exports: [MessagesComponent, NavLeftComponent, NavTopComponent, PaginationComponent],
+  providers: [MessagesService]
 })
-export class SharedModule { }
+export class SharedModule {}

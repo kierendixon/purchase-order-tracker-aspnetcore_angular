@@ -6,19 +6,16 @@ import { purchaseOrderUrl } from '../../config/api.config';
 
 @Injectable()
 export class DeleteService {
-    constructor(private http: HttpClient) {
-    }
+  constructor(private http: HttpClient) {}
 
-    public handle(command: DeleteCommand): Observable<DeleteResult> {
-        return this.http.delete<DeleteResult>(purchaseOrderUrl(command.id));
-    }
+  public handle(command: DeleteCommand): Observable<DeleteResult> {
+    return this.http.delete<DeleteResult>(purchaseOrderUrl(command.id));
+  }
 }
 
 export class DeleteCommand {
-    constructor(readonly id: number) {
-    }
+  constructor(readonly id: number) {}
 }
 
 // tslint:disable-next-line:no-empty-interface
-export interface DeleteResult {
-}
+export interface DeleteResult {}

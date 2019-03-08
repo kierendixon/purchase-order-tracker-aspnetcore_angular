@@ -7,36 +7,32 @@ import { baseSupplierUrl } from '../../config/api.config';
 
 @Injectable()
 export class CreateService {
-    constructor(private http: HttpClient) {
-    }
+  constructor(private http: HttpClient) {}
 
-    public handleCommand(command: CreateCommand): Observable<CreateResult> {
-        return this.http.put<CreateResult>(basePurchaseOrderUrl, command);
-    }
+  public handleCommand(command: CreateCommand): Observable<CreateResult> {
+    return this.http.put<CreateResult>(basePurchaseOrderUrl, command);
+  }
 
-    public handleSuppliersQuery(query: SuppliersQuery): Observable<SuppliersResult> {
-        return this.http.get<SuppliersResult>(baseSupplierUrl);
-    }
+  public handleSuppliersQuery(query: SuppliersQuery): Observable<SuppliersResult> {
+    return this.http.get<SuppliersResult>(baseSupplierUrl);
+  }
 }
 
 export class CreateCommand {
-    constructor(readonly orderNo: string,
-        readonly supplierId: number) {
-    }
+  constructor(readonly orderNo: string, readonly supplierId: number) {}
 }
 
-export class SuppliersQuery {
-}
+export class SuppliersQuery {}
 
 export interface CreateResult {
-    orderId: number;
+  orderId: number;
 }
 
 export interface SuppliersResult {
-    suppliers: SuppliersResultSupplier[];
+  suppliers: SuppliersResultSupplier[];
 }
 
 export interface SuppliersResultSupplier {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
 }

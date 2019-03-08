@@ -13,8 +13,8 @@ import { MainSiteService } from './main-site.service';
 import { MainSiteLandingResolver } from './main-site-landing-resolver.service';
 
 @NgModule({
-    imports: [MainSiteRoutingModule, SharedModule, SupplierModule, ShipmentModule, PurchaseOrderModule],
-    declarations: [MainSiteComponent, MainSiteLandingComponent],
-    providers: [MainSiteService, MainSiteLandingResolver]
+  imports: [MainSiteRoutingModule, SharedModule, SupplierModule, ShipmentModule, PurchaseOrderModule],
+  declarations: [MainSiteComponent, MainSiteLandingComponent],
+  providers: [MainSiteService, MainSiteLandingResolver]
 })
-export class MainSiteModule { }
+export class MainSiteModule {}

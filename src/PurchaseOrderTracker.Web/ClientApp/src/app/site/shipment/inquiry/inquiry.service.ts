@@ -7,35 +7,32 @@ import { shipmentInquiryUrl } from '../../config/api.config';
 
 @Injectable()
 export class InquiryService {
-    constructor(private http: HttpClient) {
-    }
+  constructor(private http: HttpClient) {}
 
-    public handle(query: InquiryQuery): Observable<InquiryResult> {
-        const url = shipmentInquiryUrl(query.queryType, query.pageNumber.toString());
-        return this.http.get<InquiryResult>(url);
-    }
+  public handle(query: InquiryQuery): Observable<InquiryResult> {
+    const url = shipmentInquiryUrl(query.queryType, query.pageNumber.toString());
+    return this.http.get<InquiryResult>(url);
+  }
 }
 
 export class InquiryQuery {
-    constructor(readonly queryType: string,
-        readonly pageNumber: number) {
-    }
+  constructor(readonly queryType: string, readonly pageNumber: number) {}
 }
 
 export interface InquiryResult {
-    pagedList: PaginatedList<ResultShipment>;
+  pagedList: PaginatedList<ResultShipment>;
 }
 
 export interface ResultShipment {
-    id: number;
-    trackingId: string;
-    company: string;
-    estimatedArrivalDate: Date;
-    comments: string;
-    shippingCost: number;
-    status: string;
-    destinationAddress: string;
-    isDelayed: boolean;
-    isDelayedMoreThan7Days: boolean;
-    isScheduledForDeliveryToday: boolean;
+  id: number;
+  trackingId: string;
+  company: string;
+  estimatedArrivalDate: Date;
+  comments: string;
+  shippingCost: number;
+  status: string;
+  destinationAddress: string;
+  isDelayed: boolean;
+  isDelayedMoreThan7Days: boolean;
+  isScheduledForDeliveryToday: boolean;
 }

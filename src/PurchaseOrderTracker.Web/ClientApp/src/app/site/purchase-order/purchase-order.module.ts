@@ -25,11 +25,26 @@ import { DeleteLineItemService } from './edit-line-items/delete-line-item.servic
 import { CreateLineItemService } from './create-line-item/create-line-item.service';
 
 @NgModule({
-    imports: [CommonModule, FormsModule, HttpClientModule, NgbModule, SharedModule, PurchaseOrderRoutingModule],
-    declarations: [PurchaseOrderComponent, InquiryComponent, CreateComponent, EditComponent, EditLineItemsComponent,
-        CreateLineItemComponent],
-    entryComponents: [CreateLineItemComponent],
-    providers: [CreateService, EditService, EditStatusService, DeleteService, InquiryService,
-        EditLineItemsService, EditLineItemService, DeleteLineItemService, CreateLineItemService]
+  imports: [CommonModule, FormsModule, HttpClientModule, NgbModule, SharedModule, PurchaseOrderRoutingModule],
+  declarations: [
+    PurchaseOrderComponent,
+    InquiryComponent,
+    CreateComponent,
+    EditComponent,
+    EditLineItemsComponent,
+    CreateLineItemComponent
+  ],
+  entryComponents: [CreateLineItemComponent],
+  providers: [
+    CreateService,
+    EditService,
+    EditStatusService,
+    DeleteService,
+    InquiryService,
+    EditLineItemsService,
+    EditLineItemService,
+    DeleteLineItemService,
+    CreateLineItemService
+  ]
 })
-export class PurchaseOrderModule { }
+export class PurchaseOrderModule {}

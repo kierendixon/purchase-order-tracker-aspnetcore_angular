@@ -15,11 +15,7 @@ import { StubbedAuthService } from './infrastructure/security/stubbed-auth.servi
 import { RouteNotFoundComponent } from './route-not-found/route-not-found.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    AccountComponent,
-    RouteNotFoundComponent
-  ],
+  declarations: [AppComponent, AccountComponent, RouteNotFoundComponent],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
@@ -28,8 +24,7 @@ import { RouteNotFoundComponent } from './route-not-found/route-not-found.compon
     MainSiteModule,
     AppRoutingModule
   ],
-  providers: [{ provide: CONFIG.authServiceToken, useClass: StubbedAuthService },
-    AuthGuard],
+  providers: [{ provide: CONFIG.authServiceToken, useClass: StubbedAuthService }, AuthGuard],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

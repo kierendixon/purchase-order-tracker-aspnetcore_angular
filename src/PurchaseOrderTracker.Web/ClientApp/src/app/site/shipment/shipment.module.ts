@@ -19,9 +19,8 @@ import { EditStatusService } from './edit/edit-status.service';
 import { InquiryService } from './inquiry/inquiry.service';
 
 @NgModule({
-    imports: [CommonModule, FormsModule, HttpClientModule, NgbModule,
-        SharedModule, ShipmentRoutingModule],
-    declarations: [ShipmentComponent, InquiryComponent, CreateComponent, EditComponent],
-    providers: [CreateService, EditService, DeleteService, EditStatusService, InquiryService]
+  imports: [CommonModule, FormsModule, HttpClientModule, NgbModule, SharedModule, ShipmentRoutingModule],
+  declarations: [ShipmentComponent, InquiryComponent, CreateComponent, EditComponent],
+  providers: [CreateService, EditService, DeleteService, EditStatusService, InquiryService]
 })
-export class ShipmentModule { }
+export class ShipmentModule {}

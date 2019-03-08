@@ -5,38 +5,38 @@ import { AuthGuard } from './auth-guard';
 import { AuthService } from './auth.service';
 
 describe('AuthGuard', () => {
-    let authGuard: AuthGuard;
-    let authServiceSpy: AuthService;
+  let authGuard: AuthGuard;
+  let authServiceSpy: AuthService;
 
-    beforeEach(() => {
-        const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-        authServiceSpy = jasmine.createSpyObj('AuthService', ['isUserAuthenticated']);
-        authGuard = new AuthGuard(routerSpy, authServiceSpy);
+  beforeEach(() => {
+    const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    authServiceSpy = jasmine.createSpyObj('AuthService', ['isUserAuthenticated']);
+    authGuard = new AuthGuard(routerSpy, authServiceSpy);
+  });
+
+  describe('#canActivate', () => {
+    it('returns true if user is authenticated', () => {
+      const stubbedActivatedRouteSnapshot = {} as ActivatedRouteSnapshot;
+      const stubbedRouterStateSnapshot = {} as RouterStateSnapshot;
+      (authServiceSpy.isUserAuthenticated as jasmine.Spy).and.returnValue(of(true));
+      const canActivate = authGuard.canActivate(stubbedActivatedRouteSnapshot, stubbedRouterStateSnapshot);
+
+      expect(authServiceSpy.isUserAuthenticated).toHaveBeenCalledTimes(1);
+      expect(canActivate).toBe(true);
     });
 
-    describe('#canActivate', () => {
-        it('returns true if user is authenticated', () => {
-            const stubbedActivatedRouteSnapshot = {} as ActivatedRouteSnapshot;
-            const stubbedRouterStateSnapshot = {} as RouterStateSnapshot;
-            (authServiceSpy.isUserAuthenticated as jasmine.Spy).and.returnValue( of(true) );
-            const canActivate = authGuard.canActivate(stubbedActivatedRouteSnapshot, stubbedRouterStateSnapshot);
+    it('calls navigateToLoginPage to user is not authenticated', () => {
+      const stubbedActivatedRouteSnapshot = {} as ActivatedRouteSnapshot;
+      const stubbedRouterStateSnapshot = {} as RouterStateSnapshot;
 
-            expect(authServiceSpy.isUserAuthenticated).toHaveBeenCalledTimes(1);
-            expect(canActivate).toBe(true);
-        });
+      (authServiceSpy.isUserAuthenticated as jasmine.Spy).and.returnValue(of(false));
+      const navigateToLoginPageSpy = spyOn(authGuard, 'navigateToLoginPage');
 
-        it('calls navigateToLoginPage to user is not authenticated', () => {
-            const stubbedActivatedRouteSnapshot = {} as ActivatedRouteSnapshot;
-            const stubbedRouterStateSnapshot = {} as RouterStateSnapshot;
+      const canActivate = authGuard.canActivate(stubbedActivatedRouteSnapshot, stubbedRouterStateSnapshot);
 
-            (authServiceSpy.isUserAuthenticated as jasmine.Spy).and.returnValue( of(false) );
-            const navigateToLoginPageSpy = spyOn(authGuard, 'navigateToLoginPage');
-
-            const canActivate = authGuard.canActivate(stubbedActivatedRouteSnapshot, stubbedRouterStateSnapshot);
-
-            expect(authServiceSpy.isUserAuthenticated).toHaveBeenCalledTimes(1);
-            expect(navigateToLoginPageSpy).toHaveBeenCalledTimes(1);
-            expect(canActivate).toBe(false);
-        });
+      expect(authServiceSpy.isUserAuthenticated).toHaveBeenCalledTimes(1);
+      expect(navigateToLoginPageSpy).toHaveBeenCalledTimes(1);
+      expect(canActivate).toBe(false);
     });
+  });
 });

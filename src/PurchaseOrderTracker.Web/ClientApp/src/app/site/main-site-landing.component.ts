@@ -5,20 +5,18 @@ import { shipmentSummaryResultResolverDataKey } from './config/routing.config';
 import { ShipmentSummaryResult } from './main-site.service';
 
 @Component({
-    templateUrl: './main-site-landing.component.html'
+  templateUrl: './main-site-landing.component.html'
 })
 export class MainSiteLandingComponent implements OnInit {
-    model: ShipmentSummaryResult;
+  model: ShipmentSummaryResult;
 
-    constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute) {}
 
-    ngOnInit(): void {
-        this.route.data.subscribe(
-            (data) => {
-                if (data && data[shipmentSummaryResultResolverDataKey]) {
-                    this.model = data[shipmentSummaryResultResolverDataKey];
-                }
-            }
-        );
-    }
+  ngOnInit(): void {
+    this.route.data.subscribe(data => {
+      if (data && data[shipmentSummaryResultResolverDataKey]) {
+        this.model = data[shipmentSummaryResultResolverDataKey];
+      }
+    });
+  }
 }

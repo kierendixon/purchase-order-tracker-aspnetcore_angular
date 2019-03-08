@@ -5,15 +5,15 @@ export class TestHelper {
   public static NonErrorMessage = 'a non-error message';
 
   public static buildError(): Error {
-      return new Error(TestHelper.ErrorMessage);
+    return new Error(TestHelper.ErrorMessage);
   }
 
   public static buildHttpErrorResponse(): HttpErrorResponse {
-      return new HttpErrorResponse({
-          status: 500,
-          error: {
-              message: TestHelper.ErrorMessage
-          }
-      });
+    return new HttpErrorResponse({
+      status: 500,
+      error: {
+        message: TestHelper.ErrorMessage
+      }
+    });
   }
 }

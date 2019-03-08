@@ -6,22 +6,17 @@ import { supplierProductCategoryUrl } from '../../config/api.config';
 
 @Injectable()
 export class EditProductCategoryService {
-    constructor(private http: HttpClient) {
-    }
+  constructor(private http: HttpClient) {}
 
-    public handle(command: EditProductCategoryCommand): Observable<EditProductCategoryResult> {
-        const url = supplierProductCategoryUrl(command.supplierId, command.categoryId);
-        return this.http.post<EditProductCategoryResult>(url, command);
-    }
+  public handle(command: EditProductCategoryCommand): Observable<EditProductCategoryResult> {
+    const url = supplierProductCategoryUrl(command.supplierId, command.categoryId);
+    return this.http.post<EditProductCategoryResult>(url, command);
+  }
 }
 
 export class EditProductCategoryCommand {
-    constructor(readonly supplierId: number,
-        readonly categoryId: number,
-        readonly name: string) {
-    }
+  constructor(readonly supplierId: number, readonly categoryId: number, readonly name: string) {}
 }
 
 // tslint:disable-next-line:no-empty-interface
-export interface EditProductCategoryResult {
-}
+export interface EditProductCategoryResult {}

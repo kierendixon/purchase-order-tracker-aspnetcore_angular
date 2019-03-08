@@ -7,25 +7,22 @@ import { supplierInquiryUrl } from '../../config/api.config';
 
 @Injectable()
 export class InquiryService {
-    constructor(private http: HttpClient) {
-    }
+  constructor(private http: HttpClient) {}
 
-    public handle(query: InquiryQuery): Observable<InquiryResult> {
-        return this.http.get<InquiryResult>(supplierInquiryUrl(query.queryType, query.pageNumber.toString()));
-    }
+  public handle(query: InquiryQuery): Observable<InquiryResult> {
+    return this.http.get<InquiryResult>(supplierInquiryUrl(query.queryType, query.pageNumber.toString()));
+  }
 }
 
 export class InquiryQuery {
-    constructor(readonly queryType: string,
-        readonly pageNumber: number) {
-    }
+  constructor(readonly queryType: string, readonly pageNumber: number) {}
 }
 
 export interface InquiryResult {
-    pagedList: PaginatedList<ResultSupplier>;
+  pagedList: PaginatedList<ResultSupplier>;
 }
 
 export interface ResultSupplier {
-    id: string;
-    name: string;
+  id: string;
+  name: string;
 }

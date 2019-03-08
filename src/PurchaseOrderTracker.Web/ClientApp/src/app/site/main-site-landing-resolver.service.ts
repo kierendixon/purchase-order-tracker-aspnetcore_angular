@@ -9,22 +9,23 @@ import { MessagesService } from './shared/messages/messages.service';
 // TODO: add resolvers to all pages to prefetch data or use another mechanism such as displaying a spinner?
 @Injectable()
 export class MainSiteLandingResolver implements Resolve<ShipmentSummaryResult> {
-    constructor(private mainSiteService: MainSiteService,
-                private router: Router,
-                private messagesService: MessagesService) {
-    }
+  constructor(
+    private mainSiteService: MainSiteService,
+    private router: Router,
+    private messagesService: MessagesService
+  ) {}
 
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ShipmentSummaryResult> {
-        return this.mainSiteService.handleShipmentSummaryQuery().pipe(
-            map(
-                resp => {
-                    return resp;
-                },
-                err => {
-                    this.messagesService.addHttpResponseError(err);
-                    return null;
-                }
-            )
-        );
-    }
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ShipmentSummaryResult> {
+    return this.mainSiteService.handleShipmentSummaryQuery().pipe(
+      map(
+        resp => {
+          return resp;
+        },
+        err => {
+          this.messagesService.addHttpResponseError(err);
+          return null;
+        }
+      )
+    );
+  }
 }

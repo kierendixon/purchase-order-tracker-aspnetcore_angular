@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 
 @Component({
-    templateUrl: 'supplier.component.html'
+  templateUrl: 'supplier.component.html'
 })
-export class SupplierComponent {
-}
+export class SupplierComponent {}

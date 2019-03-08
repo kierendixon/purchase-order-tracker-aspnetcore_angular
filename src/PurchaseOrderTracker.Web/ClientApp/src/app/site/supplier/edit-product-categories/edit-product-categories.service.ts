@@ -7,27 +7,24 @@ import { supplierProductCategoriesUrl } from '../../config/api.config';
 
 @Injectable()
 export class EditProductCategoriesService {
-    constructor(private http: HttpClient) {
-    }
+  constructor(private http: HttpClient) {}
 
-    public handle(query: EditProductCategoriesQuery): Observable<EditProductCategoriesResult> {
-        const url = supplierProductCategoriesUrl(query.id, query.pageNumber.toString());
-        return this.http.get<EditProductCategoriesResult>(url);
-    }
+  public handle(query: EditProductCategoriesQuery): Observable<EditProductCategoriesResult> {
+    const url = supplierProductCategoriesUrl(query.id, query.pageNumber.toString());
+    return this.http.get<EditProductCategoriesResult>(url);
+  }
 }
 
 export class EditProductCategoriesQuery {
-    constructor(readonly id: number,
-        readonly pageNumber: number) {
-    }
+  constructor(readonly id: number, readonly pageNumber: number) {}
 }
 
 export interface EditProductCategoriesResult {
-    supplierName: string;
-    categories: PaginatedList<ProductCategoryResult>;
+  supplierName: string;
+  categories: PaginatedList<ProductCategoryResult>;
 }
 
 export class ProductCategoryResult {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
 }

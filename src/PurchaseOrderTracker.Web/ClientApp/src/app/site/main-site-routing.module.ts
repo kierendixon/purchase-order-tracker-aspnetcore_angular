@@ -7,26 +7,22 @@ import { MainSiteLandingComponent } from './main-site-landing.component';
 import { MainSiteLandingResolver } from './main-site-landing-resolver.service';
 
 const mainSiteRoutes: Routes = [
-    {
-        path: 'main-site',
-        component: MainSiteComponent,
-        canActivate: [AuthGuard],
-        children: [
-            {
-                path: '',
-                component: MainSiteLandingComponent,
-                resolve: { ShipmentSummaryResult: MainSiteLandingResolver }
-            }
-        ]
-    }
+  {
+    path: 'main-site',
+    component: MainSiteComponent,
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: '',
+        component: MainSiteLandingComponent,
+        resolve: { ShipmentSummaryResult: MainSiteLandingResolver }
+      }
+    ]
+  }
 ];
 
 @NgModule({
-    imports: [
-        RouterModule.forChild(mainSiteRoutes)
-    ],
-    exports: [
-        RouterModule
-    ]
+  imports: [RouterModule.forChild(mainSiteRoutes)],
+  exports: [RouterModule]
 })
-export class MainSiteRoutingModule { }
+export class MainSiteRoutingModule {}
