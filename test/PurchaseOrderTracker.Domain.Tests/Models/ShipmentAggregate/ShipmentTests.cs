@@ -22,7 +22,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
                 Assert.That(shipment.TrackingId, Is.EqualTo("shipmentTrackingId"));
                 Assert.That(shipment.Company, Is.EqualTo("shipmentCompany"));
                 // compare date component only (ignore time) to ensure this test always passes
-                // otherwise the property would need to be abstracted so that we can 
+                // otherwise the property would need to be abstracted so that we can
                 // always set the same value as part of this test case
                 Assert.That(shipment.EstimatedArrivalDate.Value.Date, Is.EqualTo(DateTime.Now.Date));
                 Assert.That(shipment.ShippingCost, Is.EqualTo(999));

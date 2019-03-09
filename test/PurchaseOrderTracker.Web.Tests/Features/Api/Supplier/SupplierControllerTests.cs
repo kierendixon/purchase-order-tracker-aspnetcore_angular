@@ -22,7 +22,7 @@ namespace PurchaseOrderTracker.Web.Tests.Features.Api.Supplier
                 response.EnsureSuccessStatusCode();
                 Assert.That(responseString, Is.EqualTo(expectedResult));
             }
-            
+
             [Test]
             [Ignore("Until fix UseContentRoot()")]
             public async Task ResultWithMultipleRecords_SerialisesToJson()

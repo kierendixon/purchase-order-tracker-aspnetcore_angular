@@ -99,7 +99,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
                     productsAreFiltered = true;
                     products = _context.Product
                         .Include(p => p.Category)
-                        .Where(p => p.SupplierId == query.SupplierId 
+                        .Where(p => p.SupplierId == query.SupplierId
                                 && p.ProdCode == query.ProductCodeFilter
                         ).AsQueryable();
                 }

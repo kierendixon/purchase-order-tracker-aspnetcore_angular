@@ -30,7 +30,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
                 var purchaseOrder = new PurchaseOrderBuilder().Build();
 
                 // compare date component only (ignore time) to ensure this test always passes
-                // otherwise the CreateDate property would need to be abstracted so that we can 
+                // otherwise the CreateDate property would need to be abstracted so that we can
                 // always set the same value as part of this test case
                 Assert.That(purchaseOrder.CreatedDate.Date, Is.EqualTo(DateTime.Today));
             }

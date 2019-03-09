@@ -416,7 +416,7 @@ namespace PurchaseOrderTracker.DAL
                         new Product("13527", "Xerox 214", opaperCategory, 6.48m),
                         new Product("13956", "Bravo II™ Megaboss® 12-Amp Hard Body Upright, Replacement Belts, 2 Belts per Pack2", oappCategory, 3.25m)
                     });
-            
+
                 context.SaveChanges();
 
                 var draftPo1 = new PurchaseOrder("POGH3261", fmSupplier);

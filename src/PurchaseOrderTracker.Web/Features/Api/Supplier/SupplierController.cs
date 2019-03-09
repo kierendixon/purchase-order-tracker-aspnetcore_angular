@@ -14,7 +14,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
         {
             _mediator = mediator;
         }
-        
+
         [HttpPut]
         public async Task<ActionResult> Create([FromBody] Create.Command command)
         {
@@ -70,7 +70,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
             var result = await _mediator.Send(command);
             return Ok(result);
         }
-        
+
         [HttpGet("{supplierId}/product-categories")]
         public async Task<IActionResult> EditProductCategories(EditProductCategories.Query query)
         {

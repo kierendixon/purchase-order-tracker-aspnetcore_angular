@@ -35,7 +35,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
             public int SupplierId { get; }
             public string SupplierName { get; }
             public PagedListExtensions.PagedListWebApiObject<CategoryViewModel> Categories { get; }
-            
+
             public class CategoryViewModel
             {
                 public CategoryViewModel(int id, string name)
@@ -66,7 +66,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
                     .Where(c => c.SupplierId == query.SupplierId)
                     .ProjectToPagedList<Result.CategoryViewModel>(_configuration, query.PageNumber, query.PageSize);
 
-                // System.ArgumentException: Type 'PurchaseOrderTracker.Web.Features.Api.Supplier.EditProductCategories+Result+CategoryViewModel' 
+                // System.ArgumentException: Type 'PurchaseOrderTracker.Web.Features.Api.Supplier.EditProductCategories+Result+CategoryViewModel'
                 // does not have a default constructor
                 //var paginatedCategories = await _context.Supplier
                 //    .Where(s => s.SupplierId == query.SupplierId)

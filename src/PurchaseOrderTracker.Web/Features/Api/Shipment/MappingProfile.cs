@@ -23,7 +23,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
             CreateMap<Domain.Models.ShipmentAggregate.Shipment, Create.Command>();
 
             // AutoMapper error when using ProjectTo():
-            // 
+            //
             // (when currentState param is named "currentState")
             // System.ArgumentException: Type 'PurchaseOrderTracker.Web.Features.Api.Shipment.Inquiry+Result+ShipmentViewModel' does not have a default constructor
             // Parameter name: type

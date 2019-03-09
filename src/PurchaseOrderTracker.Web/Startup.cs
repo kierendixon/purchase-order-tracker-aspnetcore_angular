@@ -32,7 +32,7 @@ namespace PurchaseOrderTracker.Web
             // This must be configured after services.AddMvc() in ASP.Net 2.1. It is fixed in ASP.Net 2.2
             // https://github.com/aspnet/Docs/issues/6881
             //
-            // When the new [ApiController] attribute in ASP.Net Core 2.1 is added to a controller 
+            // When the new [ApiController] attribute in ASP.Net Core 2.1 is added to a controller
             // it restricts binding of values from a single source based on a set of inference rules.
             // I.e., values are only bound from query params or only from request body, not both.
             // This breaks binding of values to mediator Command/Query objects which expect values from multiple sources

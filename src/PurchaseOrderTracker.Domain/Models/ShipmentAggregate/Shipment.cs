@@ -35,7 +35,7 @@ namespace PurchaseOrderTracker.Domain.Models.ShipmentAggregate
         public string Comments { get; set; }
         public decimal? ShippingCost { get; set; }
         public string DestinationAddress { get; set; }
-        public ShipmentStatus Status { get; private set; } 
+        public ShipmentStatus Status { get; private set; }
         public ICollection<PurchaseOrder> PurchaseOrders { get; private set; } = new List<PurchaseOrder>();
 
         // Business Logic

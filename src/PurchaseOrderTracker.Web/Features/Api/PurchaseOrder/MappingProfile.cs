@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate;
 using PurchaseOrderTracker.Domain.Models.SupplierAggregate;
 using PurchaseOrderTracker.Infrastructure;
@@ -28,9 +28,9 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
 
             // AutoMapper error when using ProjectTo():
             // (when status param is named "currentState")
-            // 
-            // AutoMapper.AutoMapperMappingException: Unable to generate the instantiation expression for the constructor 
-            // Void .ctor(Int32, System.String, System.DateTime, System.String, System.String): 
+            //
+            // AutoMapper.AutoMapperMappingException: Unable to generate the instantiation expression for the constructor
+            // Void .ctor(Int32, System.String, System.DateTime, System.String, System.String):
             // no expression could be mapped for constructor parameter 'System.String currentState'.
             //CreateMap<Domain.Models.PurchaseOrderAggregate.PurchaseOrder, Inquiry.Result.PurchaseOrderViewModel>()
             //    .ConstructUsing(src => new Inquiry.Result.PurchaseOrderViewModel(src.Id, src.OrderNo,

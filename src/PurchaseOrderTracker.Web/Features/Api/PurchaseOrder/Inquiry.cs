@@ -115,7 +115,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
                     new PagedList<Result.PurchaseOrderViewModel>(
                         _mapper.Map<IQueryable<Domain.Models.PurchaseOrderAggregate.PurchaseOrder>, IList<Result.PurchaseOrderViewModel>>(orders),
                         query.PageNumber, query.PageSize);
-               
+
                 return new Result(paginatedOrders.ToWebApiObject());
             }
         }

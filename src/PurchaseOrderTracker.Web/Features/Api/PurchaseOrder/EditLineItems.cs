@@ -25,7 +25,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
 
         public class Result
         {
-            public Result(int purchaseOrderId, string purchaseOrderOrderNo, 
+            public Result(int purchaseOrderId, string purchaseOrderOrderNo,
                 List<PurchaseOrderLineViewModel> lineItems, Dictionary<int, string> productOptions)
             {
                 PurchaseOrderId = purchaseOrderId;
@@ -66,7 +66,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
                 _context = context;
                 _mapper = mapper;
             }
-            
+
             public async Task<Result> Handle(Query query, CancellationToken cancellationToken)
             {
                 var purchaseOrder = await _context.PurchaseOrder
@@ -85,7 +85,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
                     _mapper.Map<IEnumerable<PurchaseOrderLine>, List<Result.PurchaseOrderLineViewModel>>(purchaseOrder.LineItems),
                     productOptions.ToDictionary(p => p.Id, p => p.Name));
 
-                
+
             }
         }
     }

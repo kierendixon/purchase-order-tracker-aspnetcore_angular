@@ -110,7 +110,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
                         shipments = shipments.Where(s => s.IsScheduledForDeliveryToday());
                         break;
                 }
-                
+
                 // Can't project with AutoMapper due to bugs. See notes in MappingProfile.cs
                 // var pageOfShipments = await shipmentsList.AsQueryable()
                 //    .ProjectToPagedList<Result.ShipmentViewModel>(_configuration, query.PageNumber, query.PageSize);
@@ -121,7 +121,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
                         query.PageNumber, query.PageSize);
 
                 return new Result(pageOfShipments.ToWebApiObject());
-            }       
+            }
         }
     }
 }
