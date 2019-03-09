@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -23,7 +23,7 @@ namespace PurchaseOrderTracker.DAL
             {
                 context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
 
-                //Techzon
+                // Techzon
                 var tzappCategory = new ProductCategory("Appliances");
                 var tzbinderCategory = new ProductCategory("Binders and Binder Accessories");
                 var tzenvelopeCategory = new ProductCategory("Envelopes");
@@ -34,13 +34,13 @@ namespace PurchaseOrderTracker.DAL
                 var tzscissorsCategory = new ProductCategory("Scissors, Rulers and Trimmers");
                 var tzstorageCategory = new ProductCategory("Storage & Organization");
 
-                //Furniture Max
+                // Furniture Max
                 var fmbookcaseCategory = new ProductCategory("Bookcases");
                 var fmchairCategory = new ProductCategory("Chairs & Chairmats");
                 var fmofficeFurnCategory = new ProductCategory("Office Furnishings");
                 var fmtablesCategory = new ProductCategory("Tables");
 
-                //Office A+
+                // Office A+
                 var oappCategory = new ProductCategory("Appliances");
                 var obinderCategory = new ProductCategory("Binders and Binder Accessories");
                 var oenvelopeCategory = new ProductCategory("Envelopes");

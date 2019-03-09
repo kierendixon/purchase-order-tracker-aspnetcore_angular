@@ -29,8 +29,8 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
                 _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
                 var supplier = await _context.Supplier.SingleAsync(s => s.Id == command.Id);
 
-                //TODO
-                //if (!supplier.CanBeDeleted)
+                // TODO
+                // if (!supplier.CanBeDeleted)
                 //    throw new PurchaseOrderTrackerException("Supplier cannot be deleted");
 
                 _context.Supplier.Remove(supplier);

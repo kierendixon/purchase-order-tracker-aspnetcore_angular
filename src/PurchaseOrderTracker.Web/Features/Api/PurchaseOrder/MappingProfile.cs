@@ -21,7 +21,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
             //
             // System.ArgumentException: Expression of type 'PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate.PurchaseOrderStatus+State' cannot be used for constructor parameter of type 'System.String'
             // Parameter name: arguments[4]
-            //CreateMap<Domain.Models.PurchaseOrderAggregate.PurchaseOrder, Inquiry.Result.PurchaseOrderViewModel>()
+            // CreateMap<Domain.Models.PurchaseOrderAggregate.PurchaseOrder, Inquiry.Result.PurchaseOrderViewModel>()
             //    .ConstructUsing(src => new Inquiry.Result.PurchaseOrderViewModel(src.Id, src.OrderNo,
             //        src.CreatedDate, src.Supplier.Name, src.Status.Status.ToString()))
             //    .ForCtorParam("statusCurrentState", opt => opt.MapFrom(src => src.Status.Status.ToString()));
@@ -32,7 +32,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
             // AutoMapper.AutoMapperMappingException: Unable to generate the instantiation expression for the constructor
             // Void .ctor(Int32, System.String, System.DateTime, System.String, System.String):
             // no expression could be mapped for constructor parameter 'System.String currentState'.
-            //CreateMap<Domain.Models.PurchaseOrderAggregate.PurchaseOrder, Inquiry.Result.PurchaseOrderViewModel>()
+            // CreateMap<Domain.Models.PurchaseOrderAggregate.PurchaseOrder, Inquiry.Result.PurchaseOrderViewModel>()
             //    .ConstructUsing(src => new Inquiry.Result.PurchaseOrderViewModel(src.Id, src.OrderNo,
             //        src.CreatedDate, src.Supplier.Name, src.Status.CurrentState.ToString()))
             //    .ForCtorParam("currentState", opt => opt.MapFrom(src => src.Status.CurrentState.ToString()));

@@ -197,7 +197,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
             public void StatusIsShipped_ReturnsFalse()
             {
                 var purchaseOrder = new PurchaseOrderBuilder().Build();
-                //TODO: Use UpdateStatus instead of returning state machine and changing status on it
+                // TODO: Use UpdateStatus instead of returning state machine and changing status on it
                 purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.Approved);
                 purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.Shipped);
 

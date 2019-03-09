@@ -42,7 +42,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
 
             // AutoMapper error when using ProjectTo():
             // System.ArgumentException: Static method requires null instance, non-static method requires non-null instance.
-            //CreateMap<Domain.Models.ShipmentAggregate.Shipment, Inquiry.Result.ShipmentViewModel>()
+            // CreateMap<Domain.Models.ShipmentAggregate.Shipment, Inquiry.Result.ShipmentViewModel>()
             //    .ForCtorParam(nameof(Inquiry.Result.ShipmentViewModel.Status).FirstCharacterToLower(),
             //        opt => opt.MapFrom(src => src.Status.Status));
         }

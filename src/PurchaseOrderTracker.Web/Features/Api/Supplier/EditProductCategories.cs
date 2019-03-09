@@ -68,7 +68,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
 
                 // System.ArgumentException: Type 'PurchaseOrderTracker.Web.Features.Api.Supplier.EditProductCategories+Result+CategoryViewModel'
                 // does not have a default constructor
-                //var paginatedCategories = await _context.Supplier
+                // var paginatedCategories = await _context.Supplier
                 //    .Where(s => s.SupplierId == query.SupplierId)
                 //    .Select(s => s.ProductCategories)
                 //    .ProjectToPagedList<Result.CategoryViewModel>(_configuration, query.PageNumber, query.PageSize);

@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-//https://github.com/rmaziarka/MediatR.Examples
+// https://github.com/rmaziarka/MediatR.Examples
 namespace PurchaseOrderTracker.Web.Infrastructure
 {
     public class HandleValidationExceptionAttribute : ExceptionFilterAttribute
@@ -17,10 +17,10 @@ namespace PurchaseOrderTracker.Web.Infrastructure
             if (context.Exception is ValidationException)
             {
                 var apiException = context.Exception as ValidationException;
-                //TODO:
+                // TODO:
                 throw new NotImplementedException("handle validation exception");
                 throw new Exception("not yet implemented");
-//                context.Result = new HttpResponseMessage(HttpStatusCode.BadRequest)
+// context.Result = new HttpResponseMessage(HttpStatusCode.BadRequest)
 //                {
 //                    Content = new StringContent(apiException.Message)
 //                };
