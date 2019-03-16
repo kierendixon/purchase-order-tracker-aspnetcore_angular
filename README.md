@@ -17,47 +17,52 @@ This project is built using ASP.NET Core MVC v2 and Angular. Some of the key lib
 
 C# libraries:
 
-  * [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/)
-  * [Mediator](https://github.com/jbogard/MediatR)
-  * [AutoMapper](https://github.com/AutoMapper/AutoMapper)
-  * [Feature Folders](https://github.com/OdeToCode/AddFeatureFolders)
-  * [Stateless](https://github.com/dotnet-state-machine/stateless)
+-   [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/)
+-   [Mediator](https://github.com/jbogard/MediatR)
+-   [AutoMapper](https://github.com/AutoMapper/AutoMapper)
+-   [Feature Folders](https://github.com/OdeToCode/AddFeatureFolders)
+-   [Stateless](https://github.com/dotnet-state-machine/stateless)
 
 Javascript/CSS libraries:
 
-  * [Angular](https://angular.io/)
-  * [Angular CLI](https://angular.io/cli)
-  * [Bootstrap](https://getbootstrap.com/)
-  * [NG Bootstrap](https://ng-bootstrap.github.io)
-  * [Webpack](https://webpack.js.org)
-  * [Font Awesome](http://fontawesome.io)
-  * [lodash](https://lodash.com)
+-   [Angular](https://angular.io/)
+-   [Angular CLI](https://angular.io/cli)
+-   [Bootstrap](https://getbootstrap.com/)
+-   [NG Bootstrap](https://ng-bootstrap.github.io)
+-   [Webpack](https://webpack.js.org)
+-   [Font Awesome](http://fontawesome.io)
+-   [lodash](https://lodash.com)
 
 Testing libraries:
 
-  * [NUnit3](https://github.com/nunit/docs/wiki)
-  * [Moq](https://github.com/moq/moq4)
-  * [Entity Framework Core InMemory Provider](https://docs.microsoft.com/en-us/ef/core/providers/in-memory/)
-  * [ASP.NET Core Test Host](https://www.nuget.org/packages/Microsoft.AspNetCore.TestHost)
-  * [Jasmine](https://jasmine.github.io/)
-  * [Karma](https://karma-runner.github.io)
+-   [NUnit3](https://github.com/nunit/docs/wiki)
+-   [Moq](https://github.com/moq/moq4)
+-   [Entity Framework Core InMemory Provider](https://docs.microsoft.com/en-us/ef/core/providers/in-memory/)
+-   [ASP.NET Core Test Host](https://www.nuget.org/packages/Microsoft.AspNetCore.TestHost)
+-   [Jasmine](https://jasmine.github.io/)
+-   [Karma](https://karma-runner.github.io)
 
 # Development Environment Setup
 
-  * Install SQL Server 2017 (CU3 or higher)
-  * Install NodeJs (v10.15 or higher)
-  * Install Visual Studio 2017 (v15.8.4 or higher)
-  * Install Visual Studio Code (v1.31 or higher)
-  * Install these VS Code extensions:
-    * Prettier
-    * stylelint
-    * TSlint
-  * Clone git repository
+-   Install SQL Server 2017 (CU3 or higher)
+-   Install NodeJs (v10.15 or higher)
+-   Install Visual Studio 2017 (v15.8.4 or higher)
+-   Install these Visual Studio IDE extensions:
+    -   [Project PowerTools](https://marketplace.visualstudio.com/items?itemName=ms-madsk.ProjectFileTools)
+    -   [Double-Click Maximise](https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.Double-ClickMaximize)
+    -   [Solution Error Visualizer](https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.SolutionErrorVisualizer)
+    -   [Output Enhancer](https://marketplace.visualstudio.com/items?itemName=NikolayBalakin.Outputenhancer)
+-   Install Visual Studio Code (v1.31 or higher)
+-   Install these VS Code extensions:
+    -   [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+    -   [stylelint](https://marketplace.visualstudio.com/items?itemName=shinnn.stylelint)
+    -   [TSlint](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-tslint-plugin)
+-   Clone git repository
 
 # Running in Docker for Windows
 
-  * Install Docker for Windows (v18.09.0 or higher)
-  * From within the root source folder run the command `docker-compose up`. This will download the base images, build a new Purchase Order Tracker image, and create and startup the containers.
+-   Install Docker for Windows (v18.09.0 or higher)
+-   From within the root source folder run the command `docker-compose up`. This will download the base images, build a new Purchase Order Tracker image, and create and startup the containers.
 
 # Documentation
 
