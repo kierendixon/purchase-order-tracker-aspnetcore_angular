@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PurchaseOrderTracker.Web.Identity
 {
-    public class IdentityContext : IdentityDbContext<IdentityUser>
+    public class IdentityDbContext : IdentityDbContext<IdentityUser>
     {
-        public IdentityContext(DbContextOptions<IdentityContext> options)
+        public IdentityDbContext(DbContextOptions<IdentityDbContext> options)
             : base(options)
         {
         }

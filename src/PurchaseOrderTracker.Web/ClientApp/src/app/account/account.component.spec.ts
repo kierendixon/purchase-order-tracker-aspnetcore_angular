@@ -5,8 +5,8 @@ import { of, throwError } from 'rxjs';
 import { BasePage } from '../../test/base-page';
 import { TestHelper } from '../../test/test-helper';
 import { AppModule } from '../app.module';
-import * as CONFIG from '../config/app.config';
 import { mainSiteUrl, returnUrlQueryParam } from '../config/routing.config';
+import { AuthService, LoginCommand } from '../infrastructure/security/auth.service';
 import { AccountComponent } from './account.component';
 
 describe('AccountComponent', () => {
@@ -15,13 +15,13 @@ describe('AccountComponent', () => {
   let authService: any;
 
   beforeEach(async(() => {
-    authService = jasmine.createSpyObj('AuthService', ['isUserAuthenticated', 'authenticate']);
+    authService = jasmine.createSpyObj('AuthService', ['isUserAuthenticated', 'handleLoginCommand']);
 
     TestBed.configureTestingModule({
       imports: [AppModule],
       providers: [
         {
-          provide: CONFIG.authServiceToken,
+          provide: AuthService,
           useValue: authService
         }
       ]
@@ -106,34 +106,31 @@ describe('AccountComponent', () => {
 
   describe('#onSubmit', () => {
     it('should call navigateToNextUrl if authentication is successful', () => {
-      const isUserAuthenticatedSpy = authService.authenticate.and.returnValue(of());
+      const handleLoginCommandSpy = authService.handleLoginCommand.and.returnValue(of());
       const navigateToNextUrlSpy = spyOn(component, 'navigateToNextUrl');
       component.onSubmit();
 
-      expect(isUserAuthenticatedSpy).toHaveBeenCalledTimes(1);
+      expect(handleLoginCommandSpy).toHaveBeenCalledTimes(1);
       expect(navigateToNextUrlSpy.calls.count()).toBe(0);
     });
 
     it('should set error message if authentication service returns error', () => {
-      const isUserAuthenticatedSpy = authService.authenticate.and.returnValue(throwError('an error ocurred'));
+      const handleLoginCommandSpy = authService.handleLoginCommand.and.returnValue(throwError('an error ocurred'));
       component.onSubmit();
 
       expect(component.errorMessage).toBe('an error ocurred');
-      expect(isUserAuthenticatedSpy).toHaveBeenCalledTimes(1);
-      expect(isUserAuthenticatedSpy).toHaveBeenCalledTimes(1);
+      expect(handleLoginCommandSpy).toHaveBeenCalledTimes(1);
+      expect(handleLoginCommandSpy).toHaveBeenCalledTimes(1);
     });
 
     it('should authenticate using provided username and password', () => {
-      const username = 'a-username';
-      const password = 'a-password';
-      component.model.username = username;
-      component.model.password = password;
+      const loginCommand = new LoginCommand(component.model.username, component.model.password);
       const subscriptionSpy = jasmine.createSpyObj('Subscription', ['subscribe']);
-      const isUserAuthenticatedSpy = authService.authenticate.and.returnValue(subscriptionSpy);
+      const handleLoginCommandSpy = authService.handleLoginCommand.and.returnValue(subscriptionSpy);
 
       component.onSubmit();
 
-      expect(isUserAuthenticatedSpy).toHaveBeenCalledWith(username, password);
+      expect(handleLoginCommandSpy).toHaveBeenCalledWith(loginCommand);
       expect(subscriptionSpy.subscribe).toHaveBeenCalledTimes(1);
     });
   });

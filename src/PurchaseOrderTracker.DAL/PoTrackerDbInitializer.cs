@@ -1,8 +1,6 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Threading;
 using Microsoft.EntityFrameworkCore;
 using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate;
 using PurchaseOrderTracker.Domain.Models.ShipmentAggregate;
@@ -10,14 +8,13 @@ using PurchaseOrderTracker.Domain.Models.SupplierAggregate;
 
 namespace PurchaseOrderTracker.DAL
 {
-    public static class DbInitializer
+    public static class PoTrackerDbInitializer
     {
         public static void Initialize(PoTrackerDbContext context)
         {
             // uncomment to delete database on every startup
             // context.Database.EnsureDeleted();
-
-            var created = EnsureDatabaseCreated(context);
+            var created = DbInitializerHelper.EnsureDatabaseCreated(context);
 
             if (created)
             {
@@ -506,25 +503,6 @@ namespace PurchaseOrderTracker.DAL
                 foreach (var s in new[] {shipment1, shipment2})
                     context.Shipment.Add(s);
                 context.SaveChanges();
-            }
-        }
-
-        private static bool EnsureDatabaseCreated(PoTrackerDbContext context)
-        {
-            while (true)
-            {
-                try
-                {
-                    return context.Database.EnsureCreated();
-                }
-                catch (SqlException ex)
-                {
-                    if (ex.Number != 53)
-                        throw;
-
-                    Console.WriteLine("Could not connect to database. Retrying...");
-                    Thread.Sleep(3000);
-                }
             }
         }
     }

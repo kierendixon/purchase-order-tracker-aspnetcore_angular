@@ -1,3 +1,4 @@
+import { async, fakeAsync, tick } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { of } from 'rxjs';
 
@@ -8,35 +9,43 @@ describe('AuthGuard', () => {
   let authGuard: AuthGuard;
   let authServiceSpy: AuthService;
 
-  beforeEach(() => {
+  beforeEach(async(() => {
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
     authServiceSpy = jasmine.createSpyObj('AuthService', ['isUserAuthenticated']);
     authGuard = new AuthGuard(routerSpy, authServiceSpy);
-  });
+  }));
 
   describe('#canActivate', () => {
-    it('returns true if user is authenticated', () => {
+    it('returns true if user is authenticated', fakeAsync(() => {
       const stubbedActivatedRouteSnapshot = {} as ActivatedRouteSnapshot;
       const stubbedRouterStateSnapshot = {} as RouterStateSnapshot;
       (authServiceSpy.isUserAuthenticated as jasmine.Spy).and.returnValue(of(true));
-      const canActivate = authGuard.canActivate(stubbedActivatedRouteSnapshot, stubbedRouterStateSnapshot);
+      authGuard.canActivate(stubbedActivatedRouteSnapshot, stubbedRouterStateSnapshot).subscribe(
+        result => {
+          expect(authServiceSpy.isUserAuthenticated).toHaveBeenCalledTimes(1);
+          expect(result).toBe(true);
+        },
+        err => fail()
+      );
+      tick();
+    }));
 
-      expect(authServiceSpy.isUserAuthenticated).toHaveBeenCalledTimes(1);
-      expect(canActivate).toBe(true);
-    });
-
-    it('calls navigateToLoginPage to user is not authenticated', () => {
+    it('calls navigateToLoginPage to user is not authenticated', fakeAsync(() => {
       const stubbedActivatedRouteSnapshot = {} as ActivatedRouteSnapshot;
       const stubbedRouterStateSnapshot = {} as RouterStateSnapshot;
 
       (authServiceSpy.isUserAuthenticated as jasmine.Spy).and.returnValue(of(false));
       const navigateToLoginPageSpy = spyOn(authGuard, 'navigateToLoginPage');
 
-      const canActivate = authGuard.canActivate(stubbedActivatedRouteSnapshot, stubbedRouterStateSnapshot);
-
-      expect(authServiceSpy.isUserAuthenticated).toHaveBeenCalledTimes(1);
-      expect(navigateToLoginPageSpy).toHaveBeenCalledTimes(1);
-      expect(canActivate).toBe(false);
-    });
+      authGuard.canActivate(stubbedActivatedRouteSnapshot, stubbedRouterStateSnapshot).subscribe(
+        result => {
+          expect(authServiceSpy.isUserAuthenticated).toHaveBeenCalledTimes(1);
+          expect(navigateToLoginPageSpy).toHaveBeenCalledTimes(1);
+          expect(result).toBe(false);
+        },
+        err => fail()
+      );
+      tick();
+    }));
   });
 });

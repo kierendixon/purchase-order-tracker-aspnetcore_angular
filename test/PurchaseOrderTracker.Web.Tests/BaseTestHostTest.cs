@@ -42,7 +42,7 @@ namespace PurchaseOrderTracker.Web.Tests
                 try
                 {
                     var context = services.GetRequiredService<PoTrackerDbContext>();
-                    DbInitializer.Initialize(context);
+                    PoTrackerDbInitializer.Initialize(context);
                 }
                 catch (Exception ex)
                 {

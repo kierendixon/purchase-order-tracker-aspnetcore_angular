@@ -32,7 +32,7 @@ namespace PurchaseOrderTracker.Web.Tests.Features.Api.Reporting
                     var options = TestHelper.GetDbOptions(nameof(HappyPath_CorrectResultsReturned));
                     using (var context = new PoTrackerDbContext(options))
                     {
-                        DbInitializer.Initialize(context);
+                        PoTrackerDbInitializer.Initialize(context);
                         var handler = new ShipmentsSummary.Handler(context);
                         return await handler.Handle(query, CancellationToken.None);
                     }

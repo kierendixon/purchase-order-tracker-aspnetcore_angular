@@ -1,11 +1,13 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PurchaseOrderController : ControllerBase
     {
         private readonly IMediator _mediator;

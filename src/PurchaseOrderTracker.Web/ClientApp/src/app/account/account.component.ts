@@ -1,9 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { authServiceToken } from '../config/app.config';
 import { mainSiteUrl, returnUrlQueryParam } from '../config/routing.config';
-import { AuthService } from '../infrastructure/security/auth.service';
+import { AuthService, LoginCommand } from '../infrastructure/security/auth.service';
 
 @Component({
   templateUrl: './account.component.html',
@@ -16,7 +15,7 @@ export class AccountComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    @Inject(authServiceToken) private authService: AuthService
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -24,13 +23,15 @@ export class AccountComponent implements OnInit {
   }
 
   skipLoginIfAlreadyAuthenticated() {
+    const that = this;
+
     this.authService.isUserAuthenticated().subscribe(
-      isAuthenticated => {
-        if (isAuthenticated) {
-          this.navigateToNextUrl();
+      result => {
+        if (result) {
+          that.navigateToNextUrl();
         }
       },
-      err => (this.errorMessage = err)
+      err => that.errorMessage = err
     );
   }
 
@@ -40,8 +41,8 @@ export class AccountComponent implements OnInit {
   }
 
   onSubmit() {
-    this.authService
-      .authenticate(this.model.username, this.model.password)
+    const command = new LoginCommand(this.model.username, this.model.password);
+    this.authService.handleLoginCommand(command)
       .subscribe(result => this.navigateToNextUrl(), err => (this.errorMessage = err));
   }
 }

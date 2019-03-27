@@ -9,9 +9,8 @@ import { MainSiteModule } from './site/main-site.module';
 
 import { AccountComponent } from './account/account.component';
 import { AppComponent } from './app.component';
-import * as CONFIG from './config/app.config';
 import { AuthGuard } from './infrastructure/security/auth-guard';
-import { StubbedAuthService } from './infrastructure/security/stubbed-auth.service';
+import { AuthService } from './infrastructure/security/auth.service';
 import { RouteNotFoundComponent } from './route-not-found/route-not-found.component';
 
 @NgModule({
@@ -24,7 +23,7 @@ import { RouteNotFoundComponent } from './route-not-found/route-not-found.compon
     MainSiteModule,
     AppRoutingModule
   ],
-  providers: [{ provide: CONFIG.authServiceToken, useClass: StubbedAuthService }, AuthGuard],
+  providers: [AuthService, AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
