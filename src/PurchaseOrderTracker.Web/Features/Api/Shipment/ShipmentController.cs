@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PurchaseOrderTracker.Web.Features.Api.Shipment
@@ -18,34 +20,42 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
         }
 
         [HttpPut]
-        public async Task<ActionResult> Create([FromBody] Create.Command command)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<Create.Result>> Create([FromBody] Create.Command command)
         {
             var result = await _mediator.Send(command);
-            return new ObjectResult(result);
+            return StatusCode(StatusCodes.Status201Created, result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Edit.Query query)
+        [HttpGet("{ShipmentId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<Edit.QueryResult>> Get(Edit.Query query)
         {
-            var result = await _mediator.Send(query);
-            return new ObjectResult(result);
+            return await _mediator.Send(query);
         }
 
-        [HttpPost("{id}")]
-        public async Task<ActionResult> Update([FromBody] Edit.Command command)
+        [HttpPost("{ShipmentId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<Edit.QueryResult>> Update([FromBody] Edit.Command command)
         {
-            var result = await _mediator.Send(command);
-            return Ok(result);
+            return await _mediator.Send(command);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{ShipmentId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Delete(Delete.Command command)
         {
             await _mediator.Send(command);
             return Ok();
         }
 
-        [HttpPost("{id}/status")]
+        [HttpPost("{ShipmentId}/status")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> UpdateStatus([FromBody]EditStatus.Command command)
         {
             await _mediator.Send(command);
@@ -53,10 +63,11 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> Inquiry(Inquiry.Query query)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<Inquiry.Result>> Inquiry([FromQuery] Inquiry.Query query)
         {
-            var result = await _mediator.Send(query);
-            return new ObjectResult(result);
+            return await _mediator.Send(query);
         }
     }
 }

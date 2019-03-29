@@ -20,10 +20,14 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
     {
         public class Query : IRequest<Result>
         {
+            [FromQuery]
             public int PageNumber { get; set; } = 1;
+
+            [FromQuery]
             public int PageSize { get; set; } = 15;
 
             [Required]
+            [FromRoute]
             public int? SupplierId { get; set; }
 
             [FromQuery]

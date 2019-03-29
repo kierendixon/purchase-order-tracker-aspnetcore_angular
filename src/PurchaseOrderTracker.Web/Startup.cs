@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Linq;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PurchaseOrderTracker.DAL;
 using PurchaseOrderTracker.Web.Identity;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace PurchaseOrderTracker.Web
 {
@@ -29,6 +32,8 @@ namespace PurchaseOrderTracker.Web
 
             AddIdentityServices(services);
 
+            AddSwaggerServices(services);
+
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddFeatureFolders();
@@ -44,13 +49,13 @@ namespace PurchaseOrderTracker.Web
             // https://github.com/aspnet/Mvc/issues/8111
             services.Configure<ApiBehaviorOptions>(opt => opt.SuppressInferBindingSourcesForParameters = true);
 
-            services.AddSpaStaticFiles(configuration =>
+            services.AddSpaStaticFiles(opt =>
             {
-                configuration.RootPath = "ClientApp/dist";
+                opt.RootPath = "ClientApp/dist";
             });
 
-            services.AddDbContext<PoTrackerDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("PoTrackerDatabase")));
+            services.AddDbContext<PoTrackerDbContext>(opt =>
+                opt.UseSqlServer(Configuration.GetConnectionString("PoTrackerDatabase")));
 
             services.AddMemoryCache();
         }
@@ -62,6 +67,12 @@ namespace PurchaseOrderTracker.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                app.UseSwagger();
+                app.UseSwaggerUI(opt =>
+                {
+                    opt.SwaggerEndpoint("/swagger/v1/swagger.json", "Purchase Order Tracker API");
+                });
             }
             else
             {
@@ -109,6 +120,49 @@ namespace PurchaseOrderTracker.Web
 
             services.AddDbContext<IdentityDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("IdentityDatabase")));
+        }
+
+        private void AddSwaggerServices(IServiceCollection services)
+        {
+            services.AddSwaggerGen(opt =>
+            {
+                opt.SwaggerDoc("v1", new Info
+                {
+                    Version = "v1",
+                    Title = "Purchase Order Tracker API"
+                });
+
+                opt.CustomOperationIds(apiDesc =>
+                    apiDesc.ActionDescriptor.RouteValues["controller"]
+                    + "_"
+                    + (apiDesc.ActionDescriptor.RouteValues["action"] ?? string.Empty)
+                    + apiDesc.HttpMethod);
+
+                // Fix names for generic types
+                // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/752#issuecomment-467817189
+                opt.CustomSchemaIds(type => DefaultSchemaIdSelector(type));
+            });
+        }
+
+        private string DefaultSchemaIdSelector(Type modelType)
+        {
+            string schemaId;
+
+            if (!modelType.IsConstructedGenericType)
+            {
+                schemaId = modelType.FullName;
+            }
+            else
+            {
+
+                var prefix = modelType.GetGenericArguments()
+                    .Select(genericArg => DefaultSchemaIdSelector(genericArg))
+                    .Aggregate((previous, current) => previous + current);
+
+                schemaId = prefix + modelType.Name.Split('`').First();
+            }
+
+            return schemaId.Replace("+", string.Empty);
         }
     }
 }

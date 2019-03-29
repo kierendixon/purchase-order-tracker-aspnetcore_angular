@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PurchaseOrderTracker.Web.Features.Api.Reporting
@@ -18,10 +19,13 @@ namespace PurchaseOrderTracker.Web.Features.Api.Reporting
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> ShipmentsSummary(ShipmentsSummary.Query query)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ShipmentsSummary.Result>> ShipmentsSummary()
         {
-            var result = await _mediator.Send(query);
-            return new ObjectResult(result);
+            // Build the query here instead of as a parameter to avoid Swagger generating a parameter with:
+            // "type":"object"
+            var query = new ShipmentsSummary.Query();
+            return await _mediator.Send(query);
         }
     }
 }

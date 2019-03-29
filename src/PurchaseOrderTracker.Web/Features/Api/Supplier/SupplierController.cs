@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PurchaseOrderTracker.Web.Features.Api.Supplier
@@ -18,94 +20,114 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
         }
 
         [HttpPut]
-        public async Task<ActionResult> Create([FromBody] Create.Command command)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<Create.CommandResult>> Create([FromBody] Create.Command command)
         {
             var result = await _mediator.Send(command);
-            return new ObjectResult(result);
+            return StatusCode(StatusCodes.Status201Created, result);
         }
 
-        [HttpGet("{supplierId?}")]
-        public async Task<IActionResult> Get(Edit.Query query)
+        [HttpGet("{SupplierId?}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<Edit.QueryResult>> Get([FromRoute] Edit.Query query)
         {
-            var result = await _mediator.Send(query);
-            return new ObjectResult(result);
+            return await _mediator.Send(query);
         }
 
-        [HttpPost("{supplierId}")]
-        public async Task<ActionResult> Update([FromBody] Edit.Command command)
+        [HttpPost("{SupplierId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<Edit.QueryResult>> Update([FromBody] Edit.Command command)
         {
-            var result = await _mediator.Send(command);
-            return Ok(result);
+            return await _mediator.Send(command);
         }
 
-        [HttpDelete("{supplierId}")]
+        [HttpDelete("{SupplierId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Delete(Delete.Command command)
         {
             await _mediator.Send(command);
             return Ok();
         }
 
-        [HttpPut("{supplierId}/products")]
-        public async Task<IActionResult> CreateProduct([FromBody] CreateProduct.Command command)
+        [HttpPut("{SupplierId}/products")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CreateProduct.CommandResult>> CreateProduct([FromBody] CreateProduct.Command command)
         {
             var result = await _mediator.Send(command);
-            return Ok(result);
+            return StatusCode(StatusCodes.Status201Created, result);
         }
 
-        [HttpGet("{supplierId}/products")]
-        public async Task<IActionResult> GetProducts(EditProducts.Query query)
+        [HttpGet("{SupplierId}/products")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<EditProducts.Result>> GetProducts(EditProducts.Query query)
+        {
+            return await _mediator.Send(query);
+        }
+
+        [HttpPost("{SupplierId}/products/{ProductId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<EditProduct.Result>> EditProduct([FromBody] EditProduct.Command command)
+        {
+            return await _mediator.Send(command);
+        }
+
+        [HttpDelete("{SupplierId}/products/{ProductId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<DeleteProduct.Result>> DeleteProduct([FromRoute] DeleteProduct.Command command)
+        {
+            return await _mediator.Send(command);
+        }
+
+        [HttpGet("{SupplierId}/product-categories")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<EditProductCategories.Result>> EditProductCategories(EditProductCategories.Query query)
         {
             var result = await _mediator.Send(query);
-            return new ObjectResult(result);
+            return result;
         }
 
-        [HttpPost("{supplierId}/products/{productId}")]
-        public async Task<IActionResult> EditProduct([FromBody] EditProduct.Command command)
-        {
-            var result = await _mediator.Send(command);
-            return Ok(result);
-        }
-
-        [HttpDelete("{supplierId}/products/{productId}")]
-        public async Task<IActionResult> DeleteProduct(DeleteProduct.Command command)
-        {
-            var result = await _mediator.Send(command);
-            return Ok(result);
-        }
-
-        [HttpGet("{supplierId}/product-categories")]
-        public async Task<IActionResult> EditProductCategories(EditProductCategories.Query query)
-        {
-            var result = await _mediator.Send(query);
-            return new ObjectResult(result);
-        }
-
-        [HttpPut("{supplierId}/product-categories")]
+        [HttpPut("{SupplierId}/product-categories")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateProductCategory([FromBody] CreateProductCategory.Command command)
         {
             await _mediator.Send(command);
-            return Ok();
+            return StatusCode(StatusCodes.Status201Created);
         }
 
-        [HttpPost("{supplierId}/product-categories/{categoryId}")]
+        [HttpPost("{SupplierId}/product-categories/{CategoryId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> EditProductCategory([FromBody] EditProductCategory.Command command)
         {
             await _mediator.Send(command);
             return Ok();
         }
 
-        [HttpDelete("{supplierId}/product-categories/{categoryId}")]
-        public async Task<IActionResult> DeleteProductCategory(DeleteProductCategory.Command command)
+        [HttpDelete("{SupplierId}/product-categories/{CategoryId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteProductCategory([FromRoute] DeleteProductCategory.Command command)
         {
             await _mediator.Send(command);
             return Ok();
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> Inquiry(Inquiry.Query query)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<Inquiry.Result>> Inquiry([FromQuery] Inquiry.Query query)
         {
-            var result = await _mediator.Send(query);
-            return new ObjectResult(result);
+            return await _mediator.Send(query);
         }
     }
 }

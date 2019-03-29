@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PurchaseOrderTracker.DAL;
 using PurchaseOrderTracker.Web.Infrastructure;
@@ -15,10 +16,13 @@ namespace PurchaseOrderTracker.Web.Features.Api.Supplier
     {
         public class Query : IRequest<Result>
         {
+            [FromQuery]
             public int PageNumber { get; set; } = 1;
+            [FromQuery]
             public int PageSize { get; set; } = 5;
 
             [Required]
+            [FromRoute]
             public int? SupplierId { get; set; }
         }
 

@@ -14,7 +14,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
         public class Query : IRequest<QueryResult>
         {
             [Required]
-            public int? Id { get; set; }
+            public int? ShipmentId { get; set; }
         }
 
         public class QueryResult
@@ -47,14 +47,14 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
 
             public async Task<QueryResult> Handle(Query query, CancellationToken cancellationToken)
             {
-                var shipment = await _context.Shipment.SingleAsync(s => s.Id == query.Id);
+                var shipment = await _context.Shipment.SingleAsync(s => s.Id == query.ShipmentId);
                 return _mapper.Map<Domain.Models.ShipmentAggregate.Shipment, QueryResult>(shipment);
             }
         }
 
         public class Command : IRequest<QueryResult>
         {
-            public int? Id { get; set; }
+            public int? ShipmentId { get; set; }
 
             [Required]
             public string TrackingId { get; set; }
@@ -82,7 +82,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
             public async Task<QueryResult> Handle(Command command, CancellationToken cancellationToken)
             {
                 _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
-                var shipment = await _context.Shipment.SingleAsync(s => s.Id == command.Id);
+                var shipment = await _context.Shipment.SingleAsync(s => s.Id == command.ShipmentId);
 
                 _mapper.Map(command, shipment);
                 await _context.SaveChangesAsync();

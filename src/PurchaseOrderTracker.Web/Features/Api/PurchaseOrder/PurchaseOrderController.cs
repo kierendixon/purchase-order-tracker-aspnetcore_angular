@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
@@ -18,69 +20,83 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
         }
 
         [HttpPut]
-        public async Task<ActionResult> Create([FromBody]Create.Command command)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<Create.CommandResult>> Create([FromBody]Create.Command command)
         {
             var result = await _mediator.Send(command);
-            return new ObjectResult(result);
+            return StatusCode(StatusCodes.Status201Created, result);
         }
 
         [HttpGet]
-        public async Task<ActionResult> Create([FromBody]Create.Query query)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<Create.QueryResult>> Create()
         {
-            var result = await _mediator.Send(query);
-            return new ObjectResult(result);
+            var query = new Create.Query();
+            return await _mediator.Send(query);
         }
 
-        [HttpGet("{purchaseOrderId}")]
-        public async Task<ActionResult> Edit(Edit.Query query)
+        [HttpGet("{PurchaseOrderId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<Edit.QueryResult>> Edit([FromRoute] Edit.Query query)
         {
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await _mediator.Send(query);
         }
 
-        [HttpPost("{purchaseOrderId}")]
-        public async Task<ActionResult> Edit([FromBody]Edit.Command command)
+        [HttpPost("{PurchaseOrderId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<Edit.QueryResult>> Edit([FromBody]Edit.Command command)
         {
-            var result = await _mediator.Send(command);
-            return Ok(result);
+            return await _mediator.Send(command);
         }
 
-        [HttpDelete("{purchaseOrderId}")]
-        public async Task<ActionResult> Delete(Delete.Command command)
+        [HttpDelete("{PurchaseOrderId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> Delete([FromRoute] Delete.Command command)
         {
             await _mediator.Send(command);
             return Ok();
         }
 
-        [HttpGet("{purchaseOrderId}/line-items")]
-        public async Task<IActionResult> EditLineItems(EditLineItems.Query query)
+        [HttpGet("{PurchaseOrderId}/line-items")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<EditLineItems.Result>> EditLineItems([FromRoute] EditLineItems.Query query)
         {
-            var result = await _mediator.Send(query);
-            return new ObjectResult(result);
+            return await _mediator.Send(query);
         }
 
-        [HttpPut("{purchaseOrderId}/line-items")]
-        public async Task<IActionResult> CreateLineItem([FromBody]CreateLineItem.Command command)
+        [HttpPut("{PurchaseOrderId}/line-items")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CreateLineItem.Result>> CreateLineItem([FromBody]CreateLineItem.Command command)
         {
             var result = await _mediator.Send(command);
-            return Ok(result);
+            return StatusCode(StatusCodes.Status201Created, result);
         }
 
-        [HttpPost("{purchaseOrderId}/line-items/{lineItemId}")]
-        public async Task<IActionResult> EditLineItem([FromBody]EditLineItem.Command command)
+        [HttpPost("{PurchaseOrderId}/line-items/{LineItemId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<EditLineItem.Result>> EditLineItem([FromBody]EditLineItem.Command command)
         {
-            var result = await _mediator.Send(command);
-            return Ok(result);
+            return await _mediator.Send(command);
         }
 
-        [HttpDelete("{purchaseOrderId}/line-items/{lineItemId}")]
-        public async Task<IActionResult> DeleteLineItem(DeleteLineItem.Command command)
+        [HttpDelete("{PurchaseOrderId}/line-items/{LineItemId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<DeleteLineItem.Result>> DeleteLineItem([FromRoute] DeleteLineItem.Command command)
         {
-            var result = await _mediator.Send(command);
-            return Ok(result);
+            return await _mediator.Send(command);
         }
 
         [HttpPost("{purchaseOrderId}/status")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> UpdateStatus([FromBody]EditStatus.Command command)
         {
             await _mediator.Send(command);
@@ -88,10 +104,11 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> Inquiry(Inquiry.Query query)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<Inquiry.Result>> Inquiry([FromQuery] Inquiry.Query query)
         {
-            var result = await _mediator.Send(query);
-            return new ObjectResult(result);
+            return await _mediator.Send(query);
         }
     }
 }

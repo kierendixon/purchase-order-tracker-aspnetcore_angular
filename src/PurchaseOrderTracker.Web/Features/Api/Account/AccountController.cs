@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,9 +24,13 @@ namespace PurchaseOrderTracker.Web.Features.Api.Account
 
         [HttpPost("[action]")]
         [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login([FromBody]Login.Command command)
         {
             var result = await _mediator.Send(command);
+
             if (result.Succeeded)
             {
                 return Ok();
@@ -36,6 +42,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Account
         }
 
         [HttpPost("[action]")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
@@ -44,9 +51,9 @@ namespace PurchaseOrderTracker.Web.Features.Api.Account
 
         [HttpGet("[action]")]
         [AllowAnonymous]
-        public IActionResult IsAuthenticated()
+        public ActionResult<IsAuthenticatedQueryResult> IsAuthenticated()
         {
-            return new ObjectResult(new { User.Identity.IsAuthenticated });
+            return new IsAuthenticatedQueryResult(User.Identity.IsAuthenticated);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
         {
             [Required]
             [FromRoute]
-            public int? Id { get; set; }
+            public int? ShipmentId { get; set; }
 
             [Required]
             [FromBody]
@@ -37,7 +37,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
                 _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
                 var shipment = await _context.Shipment
                     .Include(s => s.PurchaseOrders)
-                    .SingleAsync(s => s.Id == command.Id);
+                    .SingleAsync(s => s.Id == command.ShipmentId);
 
                 if (command.UpdatedStatus == ShipmentStatus.Trigger.AwaitingShipping.ToString())
                     shipment.UpdateStatus(ShipmentStatus.Trigger.AwaitingShipping);

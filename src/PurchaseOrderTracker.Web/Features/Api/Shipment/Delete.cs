@@ -13,7 +13,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
         public class Command : IRequest
         {
             [Required]
-            public int? Id { get; set; }
+            public int? ShipmentId { get; set; }
         }
 
         public class Handler : AsyncRequestHandler<Command>
@@ -28,7 +28,7 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
             protected override async Task Handle(Command command, CancellationToken cancellationToken)
             {
                 _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
-                var shipment = await _context.Shipment.SingleAsync(s => s.Id == command.Id);
+                var shipment = await _context.Shipment.SingleAsync(s => s.Id == command.ShipmentId);
 
                 if (!shipment.CanBeDeleted)
                     throw new PurchaseOrderTrackerException("Shipment cannot be deleted");

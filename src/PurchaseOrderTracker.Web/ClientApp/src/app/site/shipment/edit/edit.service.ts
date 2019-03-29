@@ -13,7 +13,7 @@ export class EditService {
   }
 
   public handleCommand(command: EditCommand): Observable<EditCommandResult> {
-    return this.http.post<EditCommandResult>(shipmentUrl(command.id), command);
+    return this.http.post<EditCommandResult>(shipmentUrl(command.shipmentId), command);
   }
 }
 
@@ -37,7 +37,7 @@ export interface EditQueryResult {
 
 export class EditCommand {
   constructor(
-    readonly id: number,
+    readonly shipmentId: number,
     readonly trackingId: string,
     readonly company: string,
     readonly estimatedArrivalDate: Date,

@@ -11,7 +11,8 @@ namespace PurchaseOrderTracker.Web.Features.Api.Shipment
                 .ForMember(dest => dest.CurrentState, opt => opt.MapFrom(src => src.Status.CurrentState));
 
             CreateMap<Edit.Command, Domain.Models.ShipmentAggregate.Shipment>()
-                .ForSourceMember(src => src.Id, opt => opt.Ignore())
+                .ForSourceMember(src => src.ShipmentId, opt => opt.Ignore())
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Status, opt => opt.Ignore())
                 .ForMember(dest => dest.PurchaseOrders, opt => opt.Ignore());
 

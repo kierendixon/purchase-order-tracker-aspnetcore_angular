@@ -22,6 +22,7 @@ C# libraries:
 -   [AutoMapper](https://github.com/AutoMapper/AutoMapper)
 -   [Feature Folders](https://github.com/OdeToCode/AddFeatureFolders)
 -   [Stateless](https://github.com/dotnet-state-machine/stateless)
+-   [Swagger](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
 
 Javascript/CSS libraries:
 
@@ -58,6 +59,8 @@ Testing libraries:
     -   [stylelint](https://marketplace.visualstudio.com/items?itemName=shinnn.stylelint)
     -   [TSlint](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-tslint-plugin)
 -   Clone git repository
+
+[Swagger UI](https://swagger.io/tools/swagger-ui/) can be viewed after starting the application. The URL is http://localhost:4200/swagger/index.html
 
 # Running in Docker for Windows
 
