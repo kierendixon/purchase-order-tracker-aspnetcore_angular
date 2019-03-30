@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { RouteNotFoundComponent } from './route-not-found.component';
 
 describe('RouteNotFoundComponent', () => {
-  it('should create', () => {
+  it('constructs', () => {
     TestBed.configureTestingModule({
       declarations: [RouteNotFoundComponent]
     });

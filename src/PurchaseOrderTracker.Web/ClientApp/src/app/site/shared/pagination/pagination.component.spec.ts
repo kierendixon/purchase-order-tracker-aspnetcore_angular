@@ -27,7 +27,7 @@ describe('PaginationComponent', () => {
     component.paginatedList = paginatedList;
   });
 
-  it('should create', () => {
+  it('constructs', () => {
     expect(component).toBeDefined();
   });
 

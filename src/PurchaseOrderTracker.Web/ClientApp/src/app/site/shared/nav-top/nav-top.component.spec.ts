@@ -32,12 +32,12 @@ describe('NavTopComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('should create', () => {
+  it('constructs', () => {
     expect(component).toBeDefined();
   });
 
   describe('#onLogout', () => {
-    it('should call router.navigate if logout is successful', () => {
+    it('call router.navigate if logout is successful', () => {
       const router = fixture.debugElement.injector.get(Router);
       const navigateSpy = spyOn(router, 'navigate');
       const handleLogoutCommandSpy = authService.handleLogoutCommand.and.returnValue(of({}));

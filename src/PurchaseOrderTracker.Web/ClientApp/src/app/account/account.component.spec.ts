@@ -33,12 +33,12 @@ describe('AccountComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('should create', () => {
+  it('constructs', () => {
     expect(component).toBeDefined();
   });
 
   describe('#ngOnInit', () => {
-    it('should call skipLoginIfAlreadyAuthenticated', () => {
+    it('call skipLoginIfAlreadyAuthenticated', () => {
       const skipLoginSpy = spyOn(component, 'skipLoginIfAlreadyAuthenticated');
       component.ngOnInit();
       expect(skipLoginSpy).toHaveBeenCalledTimes(1);
@@ -46,7 +46,7 @@ describe('AccountComponent', () => {
   });
 
   describe('#skipLoginIfAlreadyAuthenticated', () => {
-    it('should set error message if authentication service returns error', () => {
+    it('set error message if authentication service returns error', () => {
       const isUserAuthenticatedSpy = authService.isUserAuthenticated.and.returnValue(
         throwError(TestHelper.ErrorMessage)
       );
@@ -56,7 +56,7 @@ describe('AccountComponent', () => {
       expect(isUserAuthenticatedSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should call navigateToNextUrl if user authenticated', () => {
+    it('call navigateToNextUrl if user authenticated', () => {
       const isUserAuthenticatedSpy = authService.isUserAuthenticated.and.returnValue(of(true));
       const navigateToNextUrlSpy = spyOn(component, 'navigateToNextUrl');
       component.skipLoginIfAlreadyAuthenticated();
@@ -65,7 +65,7 @@ describe('AccountComponent', () => {
       expect(navigateToNextUrlSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should not call navigateToNextUrl if user not authenticated', () => {
+    it('not call navigateToNextUrl if user not authenticated', () => {
       const isUserAuthenticatedSpy = authService.isUserAuthenticated.and.returnValue(of(false));
       const navigateToNextUrlSpy = spyOn(component, 'navigateToNextUrl');
       component.skipLoginIfAlreadyAuthenticated();
@@ -76,7 +76,7 @@ describe('AccountComponent', () => {
   });
 
   describe('#navigateToNextUrl', () => {
-    it('should navigate to query param url', () => {
+    it('navigate to query param url', () => {
       const returnUrlQueryParamValue = 'a-return-url';
       const queryParams: Params = {};
       queryParams[returnUrlQueryParam] = returnUrlQueryParamValue;
@@ -92,7 +92,7 @@ describe('AccountComponent', () => {
       expect(navigateByUrlSpy).toHaveBeenCalledWith(returnUrlQueryParamValue);
     });
 
-    it('should navigate to default url if no query param provided', () => {
+    it('navigate to default url if no query param provided', () => {
       const activatedRoute = fixture.debugElement.injector.get(ActivatedRoute);
       const router = fixture.debugElement.injector.get(Router);
       const navigateByUrlSpy = spyOn(router, 'navigateByUrl');
@@ -105,7 +105,7 @@ describe('AccountComponent', () => {
   });
 
   describe('#onSubmit', () => {
-    it('should call navigateToNextUrl if authentication is successful', () => {
+    it('call navigateToNextUrl if authentication is successful', () => {
       const handleLoginCommandSpy = authService.handleLoginCommand.and.returnValue(of());
       const navigateToNextUrlSpy = spyOn(component, 'navigateToNextUrl');
       component.onSubmit();
@@ -114,7 +114,7 @@ describe('AccountComponent', () => {
       expect(navigateToNextUrlSpy.calls.count()).toBe(0);
     });
 
-    it('should set error message if authentication service returns error', () => {
+    it('set error message if authentication service returns error', () => {
       const handleLoginCommandSpy = authService.handleLoginCommand.and.returnValue(throwError('an error ocurred'));
       component.onSubmit();
 
@@ -123,7 +123,7 @@ describe('AccountComponent', () => {
       expect(handleLoginCommandSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should authenticate using provided username and password', () => {
+    it('authenticate using provided username and password', () => {
       const loginCommand = new LoginCommand(component.model.username, component.model.password);
       const subscriptionSpy = jasmine.createSpyObj('Subscription', ['subscribe']);
       const handleLoginCommandSpy = authService.handleLoginCommand.and.returnValue(subscriptionSpy);

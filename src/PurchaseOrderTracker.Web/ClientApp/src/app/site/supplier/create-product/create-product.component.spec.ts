@@ -26,7 +26,7 @@ describe('CreateProductComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('should create', () => {
+  it('constructs', () => {
     expect(component).toBeDefined();
   });
 
