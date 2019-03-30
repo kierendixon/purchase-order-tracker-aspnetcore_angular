@@ -1,5 +1,5 @@
 ﻿import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { purchaseOrdersUrl, shipmentsUrl, suppliersUrl } from '../../config/routing.config';
 
@@ -9,8 +9,7 @@ import { purchaseOrdersUrl, shipmentsUrl, suppliersUrl } from '../../config/rout
   styleUrls: ['./nav-left.component.scss']
 })
 export class NavLeftComponent {
-  // TODO: use activeROute instead of router ?
-  constructor(private activeRoute: ActivatedRoute, private router: Router) {}
+  constructor(private router: Router) {}
 
   public isDisplayPurchaseOrdersNav(): boolean {
     return this.router.url.toLowerCase().indexOf(purchaseOrdersUrl) === 0;
