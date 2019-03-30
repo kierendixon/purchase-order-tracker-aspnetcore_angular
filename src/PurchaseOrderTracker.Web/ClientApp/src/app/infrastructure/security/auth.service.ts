@@ -22,14 +22,11 @@ export class AuthService {
   public handleLogoutCommand(): Observable<null> {
     const that = this;
 
-
-    //test
     return this.http.post<null>(logoutAccountUrl, {}).pipe(
       tap(val => (that.isAuthenticated = false))
     );
   }
 
-  // TODO: change to query syntax
   public isUserAuthenticated(): Observable<boolean> {
     if (this.isAuthenticated == undefined) {
       var that = this;
