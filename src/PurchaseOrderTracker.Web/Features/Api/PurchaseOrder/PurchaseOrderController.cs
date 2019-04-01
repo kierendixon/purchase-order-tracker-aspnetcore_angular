@@ -9,7 +9,6 @@ namespace PurchaseOrderTracker.Web.Features.Api.PurchaseOrder
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class PurchaseOrderController : ControllerBase
     {
         private readonly IMediator _mediator;

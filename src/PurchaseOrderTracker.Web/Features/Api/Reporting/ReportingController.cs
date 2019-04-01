@@ -8,7 +8,6 @@ namespace PurchaseOrderTracker.Web.Features.Api.Reporting
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class ReportingController : ControllerBase
     {
         private readonly IMediator _mediator;

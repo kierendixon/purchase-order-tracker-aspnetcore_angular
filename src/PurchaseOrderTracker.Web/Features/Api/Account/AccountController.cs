@@ -10,7 +10,6 @@ namespace PurchaseOrderTracker.Web.Features.Api.Account
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class AccountController : ControllerBase
     {
         private readonly SignInManager<IdentityUser> _signInManager;
