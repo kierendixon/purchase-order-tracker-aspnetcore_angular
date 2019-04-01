@@ -14,29 +14,26 @@ export class AuthService {
   public handleLoginCommand(command: LoginCommand): Observable<string> {
     const that = this;
 
-    return this.http.post<null>(loginAccountUrl, command).pipe(
-      tap(val => (that.isAuthenticated = true))
-    );
+    return this.http.post<null>(loginAccountUrl, command)
+      .pipe(tap(val => (that.isAuthenticated = true)));
   }
 
   public handleLogoutCommand(): Observable<null> {
     const that = this;
 
-    return this.http.post<null>(logoutAccountUrl, {}).pipe(
-      tap(val => (that.isAuthenticated = false))
-    );
+    return this.http.post<null>(logoutAccountUrl, {})
+      .pipe(tap(val => (that.isAuthenticated = false)));
   }
 
   public isUserAuthenticated(): Observable<boolean> {
     if (this.isAuthenticated == undefined) {
-      var that = this;
+      const that = this;
 
       return this.http.get<IsAuthenticatedQueryResult>(isAuthenticatedUrl).pipe(
-        tap(val => that.isAuthenticated = val.isAuthenticated),
+        tap(val => (that.isAuthenticated = val.isAuthenticated)),
         map(val => val.isAuthenticated)
       );
-    }
-    else {
+    } else {
       return of(this.isAuthenticated);
     }
   }
@@ -47,5 +44,5 @@ export class LoginCommand {
 }
 
 interface IsAuthenticatedQueryResult {
-  isAuthenticated: boolean
+  isAuthenticated: boolean;
 }
