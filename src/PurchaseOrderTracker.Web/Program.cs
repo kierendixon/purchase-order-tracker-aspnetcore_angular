@@ -31,18 +31,19 @@ namespace PurchaseOrderTracker.Web
 
                 try
                 {
-                    logger.LogInformation("Initializing the database...");
+                    logger.LogInformation("Initializing the application database...");
 
                     var poTrackerDbContext = services.GetRequiredService<PoTrackerDbContext>();
                     PoTrackerDbInitializer.Initialize(poTrackerDbContext);
 
+                    logger.LogInformation("Initializing the identity database...");
                     var context = services.GetRequiredService<IdentityDbContext>();
                     var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
                     IdentityDbInitializer.Initialize(context, userManager);
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError(ex, "An error occurred initializing the database.");
+                    logger.LogError(ex, "An error occurred initializing the database");
                     throw;
                 }
             }
