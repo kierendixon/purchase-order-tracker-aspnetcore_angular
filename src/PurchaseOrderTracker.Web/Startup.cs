@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PurchaseOrderTracker.DAL;
+using PurchaseOrderTracker.Web.Cache;
 using PurchaseOrderTracker.Web.Identity;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -66,6 +67,7 @@ namespace PurchaseOrderTracker.Web
                 opt.UseSqlServer(Configuration.GetConnectionString("PoTrackerDatabase")));
 
             services.AddMemoryCache();
+            services.AddSingleton(typeof(ICacheManager), typeof(MemoryCacheManager));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, AutoMapper.IConfigurationProvider autoMapper)

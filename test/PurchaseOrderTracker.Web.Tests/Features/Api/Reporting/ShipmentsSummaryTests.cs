@@ -2,12 +2,17 @@
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using Moq;
 using PurchaseOrderTracker.DAL;
 using PurchaseOrderTracker.Web.Features.Api.Reporting;
+using PurchaseOrderTracker.Web.Cache;
+using System;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace PurchaseOrderTracker.Web.Tests.Features.Api.Reporting
 {
-    public class ShipmentsSummaryTests: BaseAutomapperTest
+    public class ShipmentsSummaryTests : BaseAutomapperTest
     {
         public class Handler
         {
@@ -29,11 +34,15 @@ namespace PurchaseOrderTracker.Web.Tests.Features.Api.Reporting
 
                 private async Task<ShipmentsSummary.Result> GetResult_HappyPath_CorrectResultsReturned(ShipmentsSummary.Query query)
                 {
+                    var logger = new Mock<ILogger<MemoryCacheManager>>();
+                    var cache = new MemoryCache(new MemoryCacheOptions());
+                    var cacheManager = new MemoryCacheManager(cache, logger.Object);
+
                     var options = TestHelper.GetDbOptions(nameof(HappyPath_CorrectResultsReturned));
                     using (var context = new PoTrackerDbContext(options))
                     {
                         PoTrackerDbInitializer.Initialize(context);
-                        var handler = new ShipmentsSummary.Handler(context);
+                        var handler = new ShipmentsSummary.Handler(context, cacheManager);
                         return await handler.Handle(query, CancellationToken.None);
                     }
                 }
