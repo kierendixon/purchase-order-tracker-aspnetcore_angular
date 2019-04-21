@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PurchaseOrderTracker.DAL;
 using PurchaseOrderTracker.Web.Cache;
 using PurchaseOrderTracker.Web.Identity;
+using PurchaseOrderTracker.Web.Logging;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace PurchaseOrderTracker.Web
@@ -32,6 +33,7 @@ namespace PurchaseOrderTracker.Web
             services.AddAutoMapper(typeof(Startup));
 
             services.AddMediatR(typeof(Startup));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(MediatrElapsedTimeLogger<,>));
 
             AddIdentityServices(services);
 
