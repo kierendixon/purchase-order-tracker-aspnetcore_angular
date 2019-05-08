@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using PurchaseOrderTracker.Domain.Exceptions;
 using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate;
+using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate.ValueObjects;
+using PurchaseOrderTracker.Domain.Models.ShipmentAggregate.ValueObjects;
 
 namespace PurchaseOrderTracker.Domain.Models.ShipmentAggregate
 {
@@ -38,7 +40,7 @@ namespace PurchaseOrderTracker.Domain.Models.ShipmentAggregate
         public ShipmentStatus Status { get; private set; }
         public ICollection<PurchaseOrder> PurchaseOrders { get; private set; } = new List<PurchaseOrder>();
 
-        // Business Logic
+        /* Business Logic */
 
         public bool CanBeDeleted => Status.CurrentState != ShipmentStatus.State.Delivered;
         public bool IsDelivered => Status.CurrentState == ShipmentStatus.State.Delivered;
@@ -52,12 +54,16 @@ namespace PurchaseOrderTracker.Domain.Models.ShipmentAggregate
         public void AddPurchaseOrder(PurchaseOrder order)
         {
             if (order.Shipment != null)
+            {
                 throw new PurchaseOrderTrackerException(
                     $"Purchase order already assigned to a shipment. Shipment id: {order.Shipment.Id}");
+            }
 
             if (order.Status.CurrentState != PurchaseOrderStatus.State.Approved)
+            {
                 throw new PurchaseOrderTrackerException(
                     $"Only approved purchase orders can be added to a shipment. Purchase order status: '{order.Status.CurrentState}'");
+            }
 
             PurchaseOrders.Add(order);
         }
@@ -65,12 +71,14 @@ namespace PurchaseOrderTracker.Domain.Models.ShipmentAggregate
         public void AddPurchaseOrders(List<PurchaseOrder> orders)
         {
             foreach (var order in orders)
+            {
                 AddPurchaseOrder(order);
+            }
         }
 
         public bool IsDelayed()
         {
-            return Status.CurrentState!= ShipmentStatus.State.Delivered
+            return Status.CurrentState != ShipmentStatus.State.Delivered
                    && EstimatedArrivalDate.HasValue && EstimatedArrivalDate.Value.Date < DateTime.Today;
         }
 
@@ -103,13 +111,17 @@ namespace PurchaseOrderTracker.Domain.Models.ShipmentAggregate
         private void HandleShippedStatusChange()
         {
             foreach (var order in PurchaseOrders)
+            {
                 order.UpdateStatus(PurchaseOrderStatus.Trigger.Shipped);
+            }
         }
 
         private void HandleDeliveredStatusChange()
         {
             foreach (var order in PurchaseOrders)
+            {
                 order.UpdateStatus(PurchaseOrderStatus.Trigger.Delivered);
+            }
         }
     }
 }

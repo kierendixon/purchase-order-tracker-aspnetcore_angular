@@ -1,0 +1,94 @@
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using AutoMapper;
+using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using PurchaseOrderTracker.Application.Features.Shipment;
+using PurchaseOrderTracker.Application.Features.Shipment.Commands;
+using PurchaseOrderTracker.Application.Features.Shipment.Queries;
+using PurchaseOrderTracker.Application.PagedList;
+using PurchaseOrderTracker.WebApi.Features.Shipment.Models;
+using X.PagedList;
+using static PurchaseOrderTracker.WebApi.Features.Shipment.Models.InquiryQueryResultDto;
+
+namespace PurchaseOrderTracker.WebApi.Features.Shipment
+{
+    public class ShipmentController : BaseController
+    {
+        public ShipmentController(IMediator mediator, IMapper mapper)
+            : base(mediator, mapper)
+        {
+        }
+
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CreateCommand.Result>> Create(CreateCommandDto dto)
+        {
+            var command = _mapper.Map<CreateCommand>(dto);
+            var result = await _mediator.Send(command);
+
+            return StatusCode(StatusCodes.Status201Created, result);
+        }
+
+        [HttpGet("{shipmentId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<EditQuery.Result>> Get([FromRoute]int shipmentId)
+        {
+            return await _mediator.Send(new EditQuery(shipmentId));
+        }
+
+        [HttpPost("{shipmentId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<EditQuery.Result>> Update(
+            [FromRoute]int shipmentId,
+            EditCommandDto dto)
+        {
+            var command = new EditCommand(shipmentId, dto.TrackingId, dto.Company, dto.EstimatedArrivalDate,
+                dto.Comments, dto.ShippingCost, dto.DestinationAddress);
+
+            return await _mediator.Send(command);
+        }
+
+        [HttpDelete("{shipmentId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> Delete([Required]int? shipmentId)
+        {
+            await _mediator.Send(new DeleteCommand(shipmentId.Value));
+            return Ok();
+        }
+
+        [HttpPost("{shipmentId}/status")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> UpdateStatus(
+            [FromRoute] int shipmentId,
+            EditStatusCommandDto dto)
+        {
+            var command = new EditStatusCommand(shipmentId, dto.UpdatedStatus.Value);
+            await _mediator.Send(command);
+
+            return Ok();
+        }
+
+        [HttpGet("[action]")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<InquiryQueryResultDto>> Inquiry(
+            [FromQuery] int? pageSize,
+            [FromQuery] int? pageNumber,
+            [FromQuery][Required] InquiryQuery.QueryType? queryType)
+        {
+            var result = await _mediator.Send(new InquiryQuery(pageSize, pageNumber, queryType.Value));
+            var pagedListDto = new StaticPagedList<ShipmentDto>(
+                _mapper.Map<List<ShipmentDto>>(result.PagedList), result.PagedList);
+
+            return new InquiryQueryResultDto(pagedListDto.ToMinimal());
+        }
+    }
+}

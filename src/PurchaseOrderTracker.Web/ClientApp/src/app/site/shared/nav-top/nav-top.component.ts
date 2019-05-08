@@ -10,17 +10,13 @@ import { MessagesService } from '../messages/messages.service';
   templateUrl: './nav-top.component.html'
 })
 export class NavTopComponent {
-  constructor(private authService: AuthService, private router: Router,
-    private messageService: MessagesService) {}
+  constructor(private authService: AuthService, private router: Router, private messageService: MessagesService) {}
 
   public onLogout() {
     const that = this;
 
     this.authService
       .handleLogoutCommand()
-      .subscribe(
-        () => that.router.navigate([accountUrl]),
-        err => this.messageService.addHttpResponseError(err)
-      );
+      .subscribe(() => that.router.navigate([accountUrl]), err => this.messageService.addHttpResponseError(err));
   }
 }

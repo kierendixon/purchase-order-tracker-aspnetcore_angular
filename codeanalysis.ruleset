@@ -31,6 +31,15 @@
     <!-- The parameters must all be placed on the same line or each parameter must be placed on its own line
          Reasoning: Personal preference -->
     <Rule Id="SA1117" Action="None" />
+    <!-- File may not end with a newline character
+         Reasoning: Keep consistent with front-end code -->
+    <Rule Id="SA1518" Action="None" />
+    <!-- 'public' members must come before 'private'
+         Reasoning: Private memebers should be defined closest to where they are used -->
+    <Rule Id="SA1202" Action="None" />
+    <!-- The documentation for type parameter 'T' is missing
+         Reasoning: Not necessary for this project -->
+    <Rule Id="SA1618" Action="None" />
   </Rules>
   <Rules AnalyzerId="Microsoft.CodeQuality" RuleNamespace="Microsoft.CodeQuality.Analyzers">
     <!-- Do not nest type Constructor
@@ -45,5 +54,8 @@
     <!-- The behavior of 'string.ToLower()' could vary based on the current user's locale settings
          Reasoning: Not necessary for this project -->
     <Rule Id="CA1304" Action="None" />
+    <!-- The behavior of 'string.Contains(string)' could vary based on the current user's locale settings.
+         Reasoning: Not necessary for this project -->
+    <Rule Id="CA1307" Action="None" />
   </Rules>
 </RuleSet>

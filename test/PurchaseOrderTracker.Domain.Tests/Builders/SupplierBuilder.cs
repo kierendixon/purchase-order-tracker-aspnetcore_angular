@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using PurchaseOrderTracker.Domain.Models.SupplierAggregate;
+using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
 
 namespace PurchaseOrderTracker.Domain.Tests.Builders
 {
@@ -7,7 +8,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Builders
     {
         private List<ProductCategory> _categories = new List<ProductCategory>();
         private int? _id;
-        private string _name = "supplierName";
+        private SupplierName _name = new SupplierName("supplierName");
         private List<Product> _products = new List<Product>();
 
         public SupplierBuilder Id(int id)
@@ -18,7 +19,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Builders
 
         public SupplierBuilder Name(string name)
         {
-            _name = name;
+            _name = new SupplierName(name);
             return this;
         }
 

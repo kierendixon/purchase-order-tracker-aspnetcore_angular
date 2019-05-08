@@ -9,7 +9,7 @@ import { EditComponent } from './edit/edit.component';
 import { InquiryComponent } from './inquiry/inquiry.component';
 import { SupplierComponent } from './supplier.component';
 
-import { AuthGuard } from '../../infrastructure/security/auth-guard';
+import { AuthGuard } from '../../infrastructure/security/auth.guard';
 
 const supplierRoutes: Routes = [
   {

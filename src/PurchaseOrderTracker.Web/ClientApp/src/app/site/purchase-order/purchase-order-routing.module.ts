@@ -8,7 +8,7 @@ import { EditComponent } from './edit/edit.component';
 import { InquiryComponent } from './inquiry/inquiry.component';
 import { PurchaseOrderComponent } from './purchase-order.component';
 
-import { AuthGuard } from '../../infrastructure/security/auth-guard';
+import { AuthGuard } from '../../infrastructure/security/auth.guard';
 
 const poRoutes: Routes = [
   {

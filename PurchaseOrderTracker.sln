@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.15
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{37D7D12E-DB01-4972-B41D-9CE9B8224C17}"
 EndProject
@@ -13,20 +13,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		codeanalysis-test.ruleset = codeanalysis-test.ruleset
 		codeanalysis.ruleset = codeanalysis.ruleset
-		docker-compose.yml = docker-compose.yml
-		Dockerfile = Dockerfile
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.Domain", "src\PurchaseOrderTracker.Domain\PurchaseOrderTracker.Domain.csproj", "{6ABE78A0-DB47-4BEE-82B1-DA6C598128D4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.DAL", "src\PurchaseOrderTracker.DAL\PurchaseOrderTracker.DAL.csproj", "{B9BB28B5-03AA-4771-A0F9-2CF4E14A2D83}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.Persistence", "src\PurchaseOrderTracker.Persistence\PurchaseOrderTracker.Persistence.csproj", "{B9BB28B5-03AA-4771-A0F9-2CF4E14A2D83}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.Web", "src\PurchaseOrderTracker.Web\PurchaseOrderTracker.Web.csproj", "{AA9F2CBF-E535-461D-A3E2-D6A2809A79A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.WebUI.Angular", "src\PurchaseOrderTracker.Web\PurchaseOrderTracker.WebUI.Angular.csproj", "{AA9F2CBF-E535-461D-A3E2-D6A2809A79A4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.Domain.Tests", "test\PurchaseOrderTracker.Domain.Tests\PurchaseOrderTracker.Domain.Tests.csproj", "{9F3BDA19-7F19-4F9D-81DA-22EA0EF19D8B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.Web.Tests", "test\PurchaseOrderTracker.Web.Tests\PurchaseOrderTracker.Web.Tests.csproj", "{677994CD-F436-4C39-A4DC-7B50289771A8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{AC729062-9A12-4114-80EE-0062C743DD83}"
 EndProject
@@ -68,13 +64,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Suppliers", "Suppliers", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Design", "Design", "{37119DA9-8739-4CF6-B882-003D8FE4D89C}"
 	ProjectSection(SolutionItems) = preProject
-		docs\Design\Architecture View - Three Tiers.png = docs\Design\Architecture View - Three Tiers.png
 		docs\Design\Architecture Views.vsdx = docs\Design\Architecture Views.vsdx
+		docs\Design\Deployment Topology.png = docs\Design\Deployment Topology.png
 		docs\Design\UML Class Diagram - Purchase Order Bound Context.png = docs\Design\UML Class Diagram - Purchase Order Bound Context.png
 		docs\Design\UML Class Diagram - Shipment Bounded Context.png = docs\Design\UML Class Diagram - Shipment Bounded Context.png
 		docs\Design\UML Class Diagram - Supplier Bounded Context.png = docs\Design\UML Class Diagram - Supplier Bounded Context.png
 		docs\Design\UML Class Diagrams.vsdx = docs\Design\UML Class Diagrams.vsdx
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.Application", "src\PurchaseOrderTracker.Application\PurchaseOrderTracker.Application.csproj", "{44169B97-673B-402B-9A77-28A67BDD91DD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.Application.Tests", "test\PurchaseOrderTracker.Application.Tests\PurchaseOrderTracker.Application.Tests.csproj", "{1512BEF1-1220-4CEE-9F79-F2B583C6AB50}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.WebApi", "src\PurchaseOrderTracker.WebApi\PurchaseOrderTracker.WebApi.csproj", "{72A23DD2-C2CC-4DFC-80B4-A049DF1B8A17}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.Cache", "src\PurchaseOrderTracker.Cache\PurchaseOrderTracker.Cache.csproj", "{1240F5D0-8951-48E9-A9F5-9CD444B4F307}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -98,10 +102,22 @@ Global
 		{9F3BDA19-7F19-4F9D-81DA-22EA0EF19D8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F3BDA19-7F19-4F9D-81DA-22EA0EF19D8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F3BDA19-7F19-4F9D-81DA-22EA0EF19D8B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{677994CD-F436-4C39-A4DC-7B50289771A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{677994CD-F436-4C39-A4DC-7B50289771A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{677994CD-F436-4C39-A4DC-7B50289771A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{677994CD-F436-4C39-A4DC-7B50289771A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44169B97-673B-402B-9A77-28A67BDD91DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44169B97-673B-402B-9A77-28A67BDD91DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44169B97-673B-402B-9A77-28A67BDD91DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44169B97-673B-402B-9A77-28A67BDD91DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1512BEF1-1220-4CEE-9F79-F2B583C6AB50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1512BEF1-1220-4CEE-9F79-F2B583C6AB50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1512BEF1-1220-4CEE-9F79-F2B583C6AB50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1512BEF1-1220-4CEE-9F79-F2B583C6AB50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72A23DD2-C2CC-4DFC-80B4-A049DF1B8A17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72A23DD2-C2CC-4DFC-80B4-A049DF1B8A17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72A23DD2-C2CC-4DFC-80B4-A049DF1B8A17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72A23DD2-C2CC-4DFC-80B4-A049DF1B8A17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1240F5D0-8951-48E9-A9F5-9CD444B4F307}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1240F5D0-8951-48E9-A9F5-9CD444B4F307}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1240F5D0-8951-48E9-A9F5-9CD444B4F307}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1240F5D0-8951-48E9-A9F5-9CD444B4F307}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -111,12 +127,15 @@ Global
 		{B9BB28B5-03AA-4771-A0F9-2CF4E14A2D83} = {37D7D12E-DB01-4972-B41D-9CE9B8224C17}
 		{AA9F2CBF-E535-461D-A3E2-D6A2809A79A4} = {37D7D12E-DB01-4972-B41D-9CE9B8224C17}
 		{9F3BDA19-7F19-4F9D-81DA-22EA0EF19D8B} = {C13C7971-DB1F-472E-BE96-1BB3B504DB2F}
-		{677994CD-F436-4C39-A4DC-7B50289771A8} = {C13C7971-DB1F-472E-BE96-1BB3B504DB2F}
 		{7A38BB36-04BC-49E1-93FF-5B1A4FA0D222} = {AC729062-9A12-4114-80EE-0062C743DD83}
 		{57333EDD-EA65-435D-A559-5DB899B6B42B} = {7A38BB36-04BC-49E1-93FF-5B1A4FA0D222}
 		{98395513-C2D8-49ED-A1F8-EE5DA6116223} = {7A38BB36-04BC-49E1-93FF-5B1A4FA0D222}
 		{489C2294-08BB-49F6-90E9-A0B09FA9D20E} = {7A38BB36-04BC-49E1-93FF-5B1A4FA0D222}
 		{37119DA9-8739-4CF6-B882-003D8FE4D89C} = {AC729062-9A12-4114-80EE-0062C743DD83}
+		{44169B97-673B-402B-9A77-28A67BDD91DD} = {37D7D12E-DB01-4972-B41D-9CE9B8224C17}
+		{1512BEF1-1220-4CEE-9F79-F2B583C6AB50} = {C13C7971-DB1F-472E-BE96-1BB3B504DB2F}
+		{72A23DD2-C2CC-4DFC-80B4-A049DF1B8A17} = {37D7D12E-DB01-4972-B41D-9CE9B8224C17}
+		{1240F5D0-8951-48E9-A9F5-9CD444B4F307} = {37D7D12E-DB01-4972-B41D-9CE9B8224C17}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B6E7C413-6700-4DF6-AD36-160A45525FE8}

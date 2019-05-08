@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using NUnit.Framework;
 using PurchaseOrderTracker.Domain.Models.SupplierAggregate;
 using PurchaseOrderTracker.Domain.Tests.Builders;
@@ -14,7 +14,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
             public void Always_AssignsValues()
             {
                 var category = new ProductCategoryBuilder().Build();
-                Assert.That(category.Name, Is.EqualTo("furniture"));
+                Assert.That(category.Name.Value, Is.EqualTo("furniture"));
             }
 
             [Test]

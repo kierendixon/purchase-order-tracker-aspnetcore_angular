@@ -1,15 +1,16 @@
 ﻿using PurchaseOrderTracker.Domain.Models.SupplierAggregate;
+using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
 
 namespace PurchaseOrderTracker.Domain.Tests.Builders
 {
     public class ProductCategoryBuilder
     {
-        private string _name = "furniture";
+        private ProductCategoryName _name = new ProductCategoryName("furniture");
         private int? _supplierId;
 
         public ProductCategoryBuilder Name(string name)
         {
-            _name = name;
+            _name = new ProductCategoryName(name);
             return this;
         }
 

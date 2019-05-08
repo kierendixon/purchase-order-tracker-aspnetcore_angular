@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { mainSiteUrl, returnUrlQueryParam } from '../config/routing.config';
@@ -12,27 +12,17 @@ export class AccountComponent implements OnInit {
   errorMessage: string;
   model = new AccountViewModel();
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private authService: AuthService
-  ) {}
+  constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService) {}
 
   ngOnInit() {
     this.skipLoginIfAlreadyAuthenticated();
   }
 
+  // TODO: this causes the account page to display momentarily
   skipLoginIfAlreadyAuthenticated() {
-    const that = this;
-
-    this.authService.isUserAuthenticated().subscribe(
-      result => {
-        if (result) {
-          that.navigateToNextUrl();
-        }
-      },
-      err => that.errorMessage = err
-    );
+    if (this.authService.currentUser != null) {
+      this.navigateToNextUrl();
+    }
   }
 
   navigateToNextUrl(): void {
@@ -42,8 +32,16 @@ export class AccountComponent implements OnInit {
 
   onSubmit() {
     const command = new LoginCommand(this.model.username, this.model.password);
-    this.authService.handleLoginCommand(command)
-      .subscribe(result => this.navigateToNextUrl(), err => (this.errorMessage = err));
+    this.authService.handleLoginCommand(command).subscribe(
+      result => this.navigateToNextUrl(),
+      err => {
+        if (err.status == 401) {
+          this.errorMessage = 'Username or password is invalid';
+        } else {
+          this.errorMessage = 'Unknown error';
+        }
+      }
+    );
   }
 }
 

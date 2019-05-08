@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using PurchaseOrderTracker.Domain.Exceptions;
 using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate;
-using PurchaseOrderTracker.Domain.Models.ShipmentAggregate;
+using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate.ValueObjects;
+using PurchaseOrderTracker.Domain.Models.ShipmentAggregate.ValueObjects;
 using PurchaseOrderTracker.Domain.Tests.Builders;
 
 namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
@@ -237,7 +238,6 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
                 Assert.That(shipment.IsDelayedMoreThan7Days(), Is.False);
             }
 
-
             [Test]
             public void DelayedLessThan7Days_ReturnsFalse()
             {
@@ -258,7 +258,6 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
                 Assert.That(shipment.IsDelayedMoreThan7Days(), Is.False);
             }
         }
-
 
         [TestFixture]
         public class IsScheduledForDeliveryTodayMethod
@@ -315,7 +314,8 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
 
                 shipment.UpdateStatus(ShipmentStatus.Trigger.Delivered);
 
-                Assert.That(shipment.PurchaseOrders.All(p => p.Status.CurrentState == PurchaseOrderStatus.State.Delivered),
+                Assert.That(
+                    shipment.PurchaseOrders.All(p => p.Status.CurrentState == PurchaseOrderStatus.State.Delivered),
                     Is.True);
             }
 
@@ -336,7 +336,8 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
 
                 shipment.UpdateStatus(ShipmentStatus.Trigger.Shipped);
 
-                Assert.That(shipment.PurchaseOrders.All(p => p.Status.CurrentState == PurchaseOrderStatus.State.Shipped),
+                Assert.That(
+                    shipment.PurchaseOrders.All(p => p.Status.CurrentState == PurchaseOrderStatus.State.Shipped),
                     Is.True);
             }
         }

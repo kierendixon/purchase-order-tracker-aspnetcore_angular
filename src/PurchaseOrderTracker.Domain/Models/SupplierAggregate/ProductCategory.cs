@@ -1,4 +1,5 @@
 ﻿using System;
+using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
 
 namespace PurchaseOrderTracker.Domain.Models.SupplierAggregate
 {
@@ -9,13 +10,13 @@ namespace PurchaseOrderTracker.Domain.Models.SupplierAggregate
         {
         }
 
-        public ProductCategory(string name)
+        public ProductCategory(ProductCategoryName name)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
         }
 
         public int? SupplierId { get; private set; }
-        public string Name { get; set; }
+        public ProductCategoryName Name { get; set; }
 
         public override string ToString()
         {

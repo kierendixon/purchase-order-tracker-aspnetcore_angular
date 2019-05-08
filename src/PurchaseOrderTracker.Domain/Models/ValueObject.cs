@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace PurchaseOrderTracker.Domain.Models
 {
+    // https://github.com/dotnet-architecture/eShopOnContainers
     public abstract class ValueObject
     {
         protected static bool EqualOperator(ValueObject left, ValueObject right)
@@ -19,13 +21,20 @@ namespace PurchaseOrderTracker.Domain.Models
 
         protected abstract IEnumerable<object> GetAtomicValues();
 
+        protected void ThrowExceptionIfValidationFails()
+        {
+            Validator.ValidateObject(this, new ValidationContext(this), true);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj == null || obj.GetType() != GetType())
                 return false;
-            var other = (ValueObject) obj;
+
+            var other = (ValueObject)obj;
             var thisValues = GetAtomicValues().GetEnumerator();
             var otherValues = other.GetAtomicValues().GetEnumerator();
+
             while (thisValues.MoveNext() && otherValues.MoveNext())
             {
                 if (ReferenceEquals(thisValues.Current, null) ^ ReferenceEquals(otherValues.Current, null))
@@ -33,6 +42,7 @@ namespace PurchaseOrderTracker.Domain.Models
                 if (thisValues.Current != null && !thisValues.Current.Equals(otherValues.Current))
                     return false;
             }
+
             return !thisValues.MoveNext() && !otherValues.MoveNext();
         }
 

@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate;
+using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate.ValueObjects;
 using PurchaseOrderTracker.Domain.Models.ShipmentAggregate;
 using PurchaseOrderTracker.Domain.Models.SupplierAggregate;
+using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
 
 namespace PurchaseOrderTracker.Domain.Tests.Builders
 {
@@ -38,7 +40,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Builders
 
         public PurchaseOrder Build()
         {
-            var purchaseOrder = new PurchaseOrder(_orderNo, _supplier);
+            var purchaseOrder = new PurchaseOrder(new OrderNo(_orderNo), _supplier);
             purchaseOrder.AddLineItems(_lineItems);
 
             if (_shipment != null)

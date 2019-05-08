@@ -1,41 +1,83 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
 
-import { isAuthenticatedUrl, loginAccountUrl, logoutAccountUrl } from '../../config/api.config';
+import { loginAccountUrl, logoutAccountUrl, refreshAccountUrl } from '../../config/api.config';
 
 @Injectable()
 export class AuthService {
-  private isAuthenticated?: boolean = undefined;
+  private readonly _currentUserKey = 'currentUser';
+  private _currentUser?: CurrentUser = undefined;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    const storedUser = localStorage.getItem(this._currentUserKey);
+    if (storedUser != null) {
+      this._currentUser = JSON.parse(storedUser);
+    }
+  }
 
-  public handleLoginCommand(command: LoginCommand): Observable<string> {
+  public get currentUser(): CurrentUser {
+    return this._currentUser;
+  }
+
+  public handleLoginCommand(command: LoginCommand): Observable<CurrentUser> {
     const that = this;
 
-    return this.http.post<null>(loginAccountUrl, command)
-      .pipe(tap(val => (that.isAuthenticated = true)));
+    return this.http.post<JwtToken>(loginAccountUrl, command).pipe(
+      tap(val => {
+        that._currentUser = {
+          username: 'TODO',
+          jwtToken: val
+        };
+        // TODO: dependency inject
+        localStorage.setItem(this._currentUserKey, JSON.stringify(that._currentUser));
+      }),
+      map(val => that.currentUser)
+    );
+  }
+
+  public handleRefreshCommand(): Observable<CurrentUser> {
+    const that = this;
+
+    return this.http.post<JwtToken>(refreshAccountUrl, {}).pipe(
+      // TODO: duplicated code
+      tap(val => {
+        that._currentUser = {
+          username: 'TODO',
+          jwtToken: val
+        };
+        localStorage.setItem(this._currentUserKey, JSON.stringify(that._currentUser));
+      }),
+      map(val => that.currentUser),
+      catchError((err: HttpErrorResponse) => {
+        if (err.status == 401) {
+          that.clearCurrentUser();
+        }
+        return throwError(err);
+      })
+    );
   }
 
   public handleLogoutCommand(): Observable<null> {
     const that = this;
 
-    return this.http.post<null>(logoutAccountUrl, {})
-      .pipe(tap(val => (that.isAuthenticated = false)));
+    return this.http.post<null>(logoutAccountUrl, {}).pipe(
+      tap(val => {
+        that.clearCurrentUser();
+      }),
+      catchError((err: HttpErrorResponse) => {
+        if (err.status == 401) {
+          that.clearCurrentUser();
+        }
+        return throwError(err);
+      })
+    );
   }
 
-  public isUserAuthenticated(): Observable<boolean> {
-    if (this.isAuthenticated == undefined) {
-      const that = this;
-
-      return this.http.get<IsAuthenticatedQueryResult>(isAuthenticatedUrl).pipe(
-        tap(val => (that.isAuthenticated = val.isAuthenticated)),
-        map(val => val.isAuthenticated)
-      );
-    } else {
-      return of(this.isAuthenticated);
-    }
+  clearCurrentUser(): void {
+    this._currentUser = null;
+    localStorage.removeItem(this._currentUserKey);
   }
 }
 
@@ -43,6 +85,14 @@ export class LoginCommand {
   constructor(readonly username: string, readonly password: string) {}
 }
 
-interface IsAuthenticatedQueryResult {
-  isAuthenticated: boolean;
+export interface CurrentUser {
+  username: string;
+  jwtToken: JwtToken;
+}
+
+interface JwtToken {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  token_type: string;
 }

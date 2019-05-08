@@ -1,24 +1,25 @@
 ﻿using PurchaseOrderTracker.Domain.Models.SupplierAggregate;
+using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
 
 namespace PurchaseOrderTracker.Domain.Tests.Builders
 {
     public class ProductBuilder
     {
         private ProductCategory _category = new ProductCategoryBuilder().Build();
-        private string _name = "productName";
+        private ProductName _name = new ProductName("productName");
         private decimal _price = 20;
-        private string _prodCode = "productCode";
+        private ProductCode _prodCode = new ProductCode("productCode");
         private int? _supplierId;
 
         public ProductBuilder ProdCode(string prodCode)
         {
-            _prodCode = prodCode;
+            _prodCode = new ProductCode(prodCode);
             return this;
         }
 
         public ProductBuilder Name(string name)
         {
-            _name = name;
+            _name = new ProductName(name);
             return this;
         }
 

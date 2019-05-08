@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using PurchaseOrderTracker.Domain.Exceptions;
+using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate.ValueObjects;
 using PurchaseOrderTracker.Domain.Models.ShipmentAggregate;
+using PurchaseOrderTracker.Domain.Models.ShipmentAggregate.ValueObjects;
 using PurchaseOrderTracker.Domain.Models.SupplierAggregate;
 
 namespace PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate
@@ -14,12 +16,7 @@ namespace PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate
     {
         private readonly ICollection<PurchaseOrderLine> _lineItems = new List<PurchaseOrderLine>();
 
-        // Required for EntityFramework
-        private PurchaseOrder()
-        {
-        }
-
-        public PurchaseOrder(string orderNo, Supplier supplier)
+        public PurchaseOrder(OrderNo orderNo, Supplier supplier)
         {
             OrderNo = orderNo ?? throw new ArgumentNullException(nameof(orderNo));
             Supplier = supplier ?? throw new ArgumentNullException(nameof(supplier));
@@ -27,7 +24,12 @@ namespace PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate
             Status = new PurchaseOrderStatus();
         }
 
-        public string OrderNo { get; set; }
+        // Required for EntityFramework
+        private PurchaseOrder()
+        {
+        }
+
+        public OrderNo OrderNo { get; set; }
         public DateTime CreatedDate { get; private set; } = DateTime.Now;
         public Supplier Supplier { get; private set; }
         public Shipment Shipment { get; set; }
@@ -61,8 +63,10 @@ namespace PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate
         public void AddLineItem(PurchaseOrderLine line)
         {
             if (!ProductIsFromSameSupplier(line.Product))
+            {
                 throw new PurchaseOrderTrackerException(
                     $"Line item product must be from the same supplier: {line.Product}");
+            }
 
             _lineItems.Add(line);
         }
@@ -70,13 +74,17 @@ namespace PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate
         public void AddLineItems(IEnumerable<PurchaseOrderLine> lineItems)
         {
             foreach (var lineItem in lineItems)
+            {
                 AddLineItem(lineItem);
+            }
         }
 
         public void RemoveLineItem(PurchaseOrderLine line)
         {
             if (!_lineItems.Contains(line))
+            {
                 throw new PurchaseOrderTrackerException($"Line item is not part of this purchase order: {line}");
+            }
 
             _lineItems.Remove(line);
         }
@@ -89,8 +97,10 @@ namespace PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate
         public void ChangeSupplier(Supplier supplier)
         {
             if (!Status.IsStateBeforeApproved)
+            {
                 throw new PurchaseOrderTrackerException(
                     $"Supplier can only be changed if purchase order status is before {PurchaseOrderStatus.State.Approved} status");
+            }
 
             _lineItems.Clear();
             Supplier = supplier;
@@ -110,7 +120,7 @@ namespace PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate
 
         private void HandleCancelledStatusChange()
         {
-            this.Shipment = null;
+            Shipment = null;
         }
     }
 }

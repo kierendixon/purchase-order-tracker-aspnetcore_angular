@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using PurchaseOrderTracker.Domain.Exceptions;
 using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate;
-using PurchaseOrderTracker.Domain.Models.ShipmentAggregate;
+using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate.ValueObjects;
+using PurchaseOrderTracker.Domain.Models.ShipmentAggregate.ValueObjects;
 using PurchaseOrderTracker.Domain.Tests.Builders;
 
 namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
@@ -18,9 +19,9 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
             public void Always_AssignsValues()
             {
                 var supplier = new SupplierBuilder().Build();
-                var purchaseOrder = new PurchaseOrder("orderNo", supplier);
+                var purchaseOrder = new PurchaseOrder(new OrderNo("orderNo"), supplier);
 
-                Assert.That(purchaseOrder.OrderNo, Is.EqualTo("orderNo"));
+                Assert.That(purchaseOrder.OrderNo.Value, Is.EqualTo("orderNo"));
                 Assert.That(purchaseOrder.Supplier, Is.SameAs(supplier));
             }
 
@@ -79,7 +80,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
             {
                 try
                 {
-                    var product = new PurchaseOrder("orderNo", null);
+                    var product = new PurchaseOrder(new OrderNo("orderNo"), null);
                     Assert.Fail("Expected exception to be thrown");
                 }
                 catch (Exception ex)
@@ -151,8 +152,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
                             new PurchaseOrderLineBuilder().Product(product).Build(),
                             new PurchaseOrderLineBuilder().Product(product).Build(),
                             new PurchaseOrderLineBuilder().Product(product).Build()
-                        }
-                    )
+                        })
                     .Build();
                 var newSupplier = new SupplierBuilder().Id(222).Build();
 

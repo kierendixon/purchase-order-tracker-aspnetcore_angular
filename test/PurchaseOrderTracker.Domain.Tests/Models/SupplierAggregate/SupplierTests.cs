@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using NUnit.Framework;
 using PurchaseOrderTracker.Domain.Exceptions;
@@ -18,7 +19,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
             {
                 var supplier = new SupplierBuilder().Build();
 
-                Assert.That(supplier.Name, Is.EqualTo("supplierName"));
+                Assert.That(supplier.Name.Value, Is.EqualTo("supplierName"));
             }
 
             [Test]
@@ -48,16 +49,8 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
             [Test]
             public void NullName_ThrowsArgumentNullException()
             {
-                try
-                {
-                    var supplier = new SupplierBuilder().Name(null).Build();
-                    Assert.Fail("Expected exception to be thrown");
-                }
-                catch (Exception ex)
-                {
-                    Assert.That(ex, Is.InstanceOf<ArgumentNullException>());
-                    Assert.That(ex.Message.ToLower(), Contains.Substring("name"));
-                }
+                Assert.Throws<ValidationException>(() =>
+                    new SupplierBuilder().Name(null).Build());
             }
         }
 
@@ -86,7 +79,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
                     .Build();
                 var supplier = new SupplierBuilder()
                     .Id(123)
-                    .ProductCategories(new List<ProductCategory>(new[] {category}))
+                    .ProductCategories(new List<ProductCategory>(new[] { category }))
                     .Build();
                 var product = new ProductBuilder().Category(category).Build();
 
@@ -123,8 +116,8 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
                     .Build();
                 var supplier = new SupplierBuilder()
                     .Id(123)
-                    .ProductCategories(new List<ProductCategory>(new[] {productCategory}))
-                    .Products(new List<Product>(new[] {product}))
+                    .ProductCategories(new List<ProductCategory>(new[] { productCategory }))
+                    .Products(new List<Product>(new[] { product }))
                     .Build();
 
                 supplier.RemoveProduct(product);

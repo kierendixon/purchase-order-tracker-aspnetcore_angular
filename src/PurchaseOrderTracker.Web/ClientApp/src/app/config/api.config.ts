@@ -1,8 +1,8 @@
-﻿const baseApiUrl = '/api';
+const baseApiUrl = 'http://localhost:4202/api';
 
 // account
 
 export const baseAccountUrl = `${baseApiUrl}/account`;
 export const loginAccountUrl = `${baseAccountUrl}/login`;
 export const logoutAccountUrl = `${baseAccountUrl}/logout`;
-export const isAuthenticatedUrl = `${baseAccountUrl}/isAuthenticated`;
+export const refreshAccountUrl = `${baseAccountUrl}/refresh`;
