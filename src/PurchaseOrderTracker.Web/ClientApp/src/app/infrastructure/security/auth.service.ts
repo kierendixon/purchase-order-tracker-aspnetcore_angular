@@ -8,7 +8,7 @@ import { loginAccountUrl, logoutAccountUrl, refreshAccountUrl } from '../../conf
 @Injectable()
 export class AuthService {
   private readonly _currentUserKey = 'currentUser';
-  private _currentUser?: CurrentUser = undefined;
+  private _currentUser?: currentUser = undefined;
 
   constructor(private http: HttpClient) {
     const storedUser = localStorage.getItem(this._currentUserKey);
@@ -17,11 +17,11 @@ export class AuthService {
     }
   }
 
-  public get currentUser(): CurrentUser {
+  public get currentUser(): currentUser {
     return this._currentUser;
   }
 
-  public handleLoginCommand(command: LoginCommand): Observable<CurrentUser> {
+  public handleLoginCommand(command: LoginCommand): Observable<currentUser> {
     const that = this;
 
     return this.http.post<JwtToken>(loginAccountUrl, command).pipe(
@@ -37,7 +37,7 @@ export class AuthService {
     );
   }
 
-  public handleRefreshCommand(): Observable<CurrentUser> {
+  public handleRefreshCommand(): Observable<currentUser> {
     const that = this;
 
     return this.http.post<JwtToken>(refreshAccountUrl, {}).pipe(
@@ -85,7 +85,7 @@ export class LoginCommand {
   constructor(readonly username: string, readonly password: string) {}
 }
 
-export interface CurrentUser {
+export interface currentUser {
   username: string;
   jwtToken: JwtToken;
 }
