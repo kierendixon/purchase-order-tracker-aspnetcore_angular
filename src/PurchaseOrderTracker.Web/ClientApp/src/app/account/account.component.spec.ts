@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
@@ -12,17 +13,18 @@ import { AccountComponent } from './account.component';
 describe('AccountComponent', () => {
   let component: AccountComponent;
   let fixture: ComponentFixture<AccountComponent>;
-  let authService: any;
+  let testAuthService: AuthService;
 
   beforeEach(async(() => {
-    authService = jasmine.createSpyObj('AuthService', ['isUserAuthenticated', 'handleLoginCommand']);
+    const httpClientSpy: HttpClient = jasmine.createSpyObj('HttpClient', ['get']);
+    testAuthService = new AuthService(httpClientSpy);
 
     TestBed.configureTestingModule({
       imports: [AppModule],
       providers: [
         {
           provide: AuthService,
-          useValue: authService
+          useValue: testAuthService
         }
       ]
     }).compileComponents();
@@ -46,31 +48,20 @@ describe('AccountComponent', () => {
   });
 
   describe('#skipLoginIfAlreadyAuthenticated', () => {
-    it('set error message if authentication service returns error', () => {
-      const isUserAuthenticatedSpy = authService.isUserAuthenticated.and.returnValue(
-        throwError(TestHelper.ErrorMessage)
-      );
-      component.skipLoginIfAlreadyAuthenticated();
-
-      expect(component.errorMessage).toBe(TestHelper.ErrorMessage);
-      expect(isUserAuthenticatedSpy).toHaveBeenCalledTimes(1);
-    });
-
     it('call navigateToNextUrl if user authenticated', () => {
-      const isUserAuthenticatedSpy = authService.isUserAuthenticated.and.returnValue(of(true));
+      spyOnProperty(testAuthService, 'currentUser', 'get').and.returnValue({});
       const navigateToNextUrlSpy = spyOn(component, 'navigateToNextUrl');
       component.skipLoginIfAlreadyAuthenticated();
 
-      expect(isUserAuthenticatedSpy).toHaveBeenCalledTimes(1);
       expect(navigateToNextUrlSpy).toHaveBeenCalledTimes(1);
+      expect(testAuthService.currentUser).not.toBeUndefined();
     });
 
-    it('not call navigateToNextUrl if user not authenticated', () => {
-      const isUserAuthenticatedSpy = authService.isUserAuthenticated.and.returnValue(of(false));
+    it('do not call navigateToNextUrl if user not authenticated', () => {
       const navigateToNextUrlSpy = spyOn(component, 'navigateToNextUrl');
       component.skipLoginIfAlreadyAuthenticated();
 
-      expect(isUserAuthenticatedSpy).toHaveBeenCalledTimes(1);
+      expect(testAuthService.currentUser).toBeUndefined();
       expect(navigateToNextUrlSpy.calls.count()).toBe(0);
     });
   });
@@ -106,7 +97,7 @@ describe('AccountComponent', () => {
 
   describe('#onSubmit', () => {
     it('call navigateToNextUrl if authentication is successful', () => {
-      const handleLoginCommandSpy = authService.handleLoginCommand.and.returnValue(of());
+      const handleLoginCommandSpy = spyOn(testAuthService, 'handleLoginCommand').and.returnValue(of());
       const navigateToNextUrlSpy = spyOn(component, 'navigateToNextUrl');
       component.onSubmit();
 
@@ -115,10 +106,11 @@ describe('AccountComponent', () => {
     });
 
     it('set error message if authentication service returns error', () => {
-      const handleLoginCommandSpy = authService.handleLoginCommand.and.returnValue(throwError('an error ocurred'));
+      const error = TestHelper.buildError();
+      const handleLoginCommandSpy = spyOn(testAuthService, 'handleLoginCommand').and.returnValue(throwError(error));
       component.onSubmit();
 
-      expect(component.errorMessage).toBe('an error ocurred');
+      expect(component.errorMessage).toBe(error.message);
       expect(handleLoginCommandSpy).toHaveBeenCalledTimes(1);
       expect(handleLoginCommandSpy).toHaveBeenCalledTimes(1);
     });
@@ -126,7 +118,7 @@ describe('AccountComponent', () => {
     it('authenticate using provided username and password', () => {
       const loginCommand = new LoginCommand(component.model.username, component.model.password);
       const subscriptionSpy = jasmine.createSpyObj('Subscription', ['subscribe']);
-      const handleLoginCommandSpy = authService.handleLoginCommand.and.returnValue(subscriptionSpy);
+      const handleLoginCommandSpy = spyOn(testAuthService, 'handleLoginCommand').and.returnValue(subscriptionSpy);
 
       component.onSubmit();
 

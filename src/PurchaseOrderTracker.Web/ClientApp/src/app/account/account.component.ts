@@ -3,12 +3,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { mainSiteUrl, returnUrlQueryParam } from '../config/routing.config';
 import { AuthService, LoginCommand } from '../infrastructure/security/auth.service';
+import { MessagesHelper } from '../site/shared/messages/messages.helper';
 
 @Component({
   templateUrl: './account.component.html',
   styleUrls: ['./account.component.scss']
 })
 export class AccountComponent implements OnInit {
+  private static invalidCredentialsUserMsg = 'Username or password is invalid';
+
   errorMessage: string;
   model = new AccountViewModel();
 
@@ -36,9 +39,9 @@ export class AccountComponent implements OnInit {
       result => this.navigateToNextUrl(),
       err => {
         if (err.status == 401) {
-          this.errorMessage = 'Username or password is invalid';
+          this.errorMessage = AccountComponent.invalidCredentialsUserMsg;
         } else {
-          this.errorMessage = 'Unknown error';
+          this.errorMessage = MessagesHelper.ConvertErrorToFriendlyMessage(err);
         }
       }
     );

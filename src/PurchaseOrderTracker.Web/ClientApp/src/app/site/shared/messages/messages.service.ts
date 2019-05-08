@@ -1,9 +1,9 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
 import { Message } from './message';
+import { MessagesHelper } from './messages.helper';
 
 @Injectable()
 export class MessagesService {
@@ -24,18 +24,7 @@ export class MessagesService {
   }
 
   public addHttpResponseError(err: any): void {
-    if (err) {
-      if (err.error instanceof Error) {
-        // A client-side or network error occurred
-        this.addErrorMessage(err.error.message);
-      } else {
-        // The backend returned an unsuccessful response code
-        const httpErr = err as HttpErrorResponse;
-        this.addErrorMessage(
-          `Error returned from server. Code: ${httpErr.status}, body: ${JSON.stringify(httpErr.error)}`
-        );
-      }
-    }
+    this.addErrorMessage(MessagesHelper.ConvertErrorToFriendlyMessage(err));
   }
 
   public getMessages(): Message[] {
