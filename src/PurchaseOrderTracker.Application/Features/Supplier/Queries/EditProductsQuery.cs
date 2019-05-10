@@ -99,7 +99,6 @@ namespace PurchaseOrderTracker.Application.Features.Supplier.Queries
                     products = _context.Product
                         .Include(p => p.Category)
                         .Where(p => p.SupplierId == request.SupplierId
-                        // TODO: how does vlaueobject work for queryable?
                                 && p.ProductCode == request.ProductCodeFilter).AsQueryable();
                 }
                 else
