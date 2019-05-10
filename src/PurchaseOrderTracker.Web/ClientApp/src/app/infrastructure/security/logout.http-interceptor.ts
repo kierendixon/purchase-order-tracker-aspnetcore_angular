@@ -6,7 +6,7 @@ import { catchError } from 'rxjs/operators';
 
 import { loginAccountUrl, logoutAccountUrl } from '../../config/api.config';
 import { accountUrl } from '../../config/routing.config';
-import { AuthService } from './auth.service';
+import { AuthService, RefreshCommand } from './auth.service';
 
 @Injectable()
 export class LogoutHttpInterceptor implements HttpInterceptor {
@@ -26,7 +26,8 @@ export class LogoutHttpInterceptor implements HttpInterceptor {
               err.headers.get('WWW-Authenticate').includes('The token is expired');
 
             if (tokenIsExpired) {
-              this.authService.handleRefreshCommand().subscribe(result => {}, err => that.handleLogout());
+              const command = new RefreshCommand(this.authService.currentUser.token.refresh_token);
+              this.authService.handleRefreshCommand(command).subscribe(result => {}, err => that.handleLogout());
             } else {
               that.handleLogout();
             }

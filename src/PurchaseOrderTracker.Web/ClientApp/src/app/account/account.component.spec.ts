@@ -3,10 +3,12 @@ import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
+import { FakeBrowserStorage } from 'src/test/fake-browser-storage';
 import { BasePage } from '../../test/base-page';
 import { TestHelper } from '../../test/test-helper';
 import { AppModule } from '../app.module';
 import { mainSiteUrl, returnUrlQueryParam } from '../config/routing.config';
+import { LocalStorageService } from '../infrastructure/browser-storage/local-storage.service';
 import { AuthService, LoginCommand } from '../infrastructure/security/auth.service';
 import { AccountComponent } from './account.component';
 
@@ -17,7 +19,7 @@ describe('AccountComponent', () => {
 
   beforeEach(async(() => {
     const httpClientSpy: HttpClient = jasmine.createSpyObj('HttpClient', ['get']);
-    testAuthService = new AuthService(httpClientSpy);
+    testAuthService = new AuthService(httpClientSpy, new LocalStorageService(new FakeBrowserStorage()));
 
     TestBed.configureTestingModule({
       imports: [AppModule],

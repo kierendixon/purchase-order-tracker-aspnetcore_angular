@@ -30,6 +30,7 @@ import { RouteNotFoundComponent } from './route-not-found/route-not-found.compon
     AuthService,
     AuthGuard,
     { provide: HTTP_INTERCEPTORS, useClass: JwtHttpInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: JwtHttpInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: LogoutHttpInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]

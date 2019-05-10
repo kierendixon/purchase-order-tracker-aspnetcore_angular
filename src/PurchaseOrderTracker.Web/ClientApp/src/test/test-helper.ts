@@ -8,9 +8,9 @@ export class TestHelper {
     return new Error(TestHelper.ErrorMessage);
   }
 
-  public static buildHttpErrorResponse(): HttpErrorResponse {
+  public static buildHttpErrorResponse(status = 500): HttpErrorResponse {
     return new HttpErrorResponse({
-      status: 500,
+      status,
       error: {
         message: TestHelper.ErrorMessage
       }
