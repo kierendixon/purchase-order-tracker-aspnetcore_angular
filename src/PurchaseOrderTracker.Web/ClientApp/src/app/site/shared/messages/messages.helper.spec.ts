@@ -13,7 +13,6 @@ describe('MessagesHelper', () => {
       const error = TestHelper.buildHttpErrorResponse();
       const friendlyMessage = MessagesHelper.ConvertErrorToFriendlyMessage(error);
       expect(friendlyMessage).toContain(error.status.toString());
-      expect(friendlyMessage).toContain('AAAAAA');
     });
   });
 });
