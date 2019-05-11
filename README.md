@@ -53,7 +53,7 @@ This solution follows a [Clean Architecture](https://www.amazon.com/dp/013449416
 - **PurchaseOrderTracker.Domain** - enterprise business rules (rules that would exist even if this software system did not)
 - **PurchaseOrderTracker.Application** - application business rules (rules that define or constrain the way that an automated system works, i.e., workflow logic)
 - **PurchaseOrderTracker.WebUI.Angular** - a website user interface
-- **PurchaseOrderTracker.WebApi** - a web API user interface
+- **PurchaseOrderTracker.WebApi** - an rpc-style web API
 - **PurchaseOrderTracker.Persistence** - persistence related infrastructure details
 - **PurchaseOrderTracker.Cache** - cache related infrastructure details
 
