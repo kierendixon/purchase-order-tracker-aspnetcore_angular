@@ -20,7 +20,7 @@ describe('AuthService', () => {
 
   describe('constructor', () => {
     it('loads session from storage when it exists', () => {
-      const currentUser = AuthTestHelper.buildJsonWebToken();
+      const currentUser = AuthTestHelper.buildCurrentUser();
       storage.set(_storageKey, JSON.stringify(currentUser));
 
       const service = new AuthService(httpSpy, storage);
