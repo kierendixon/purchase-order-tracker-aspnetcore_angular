@@ -20,7 +20,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.Domain
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.Persistence", "src\PurchaseOrderTracker.Persistence\PurchaseOrderTracker.Persistence.csproj", "{B9BB28B5-03AA-4771-A0F9-2CF4E14A2D83}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.WebUI.Angular", "src\PurchaseOrderTracker.Web\PurchaseOrderTracker.WebUI.Angular.csproj", "{AA9F2CBF-E535-461D-A3E2-D6A2809A79A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.WebUI.Angular", "src\PurchaseOrderTracker.WebUI.Angular\PurchaseOrderTracker.WebUI.Angular.csproj", "{AA9F2CBF-E535-461D-A3E2-D6A2809A79A4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.Domain.Tests", "test\PurchaseOrderTracker.Domain.Tests\PurchaseOrderTracker.Domain.Tests.csproj", "{9F3BDA19-7F19-4F9D-81DA-22EA0EF19D8B}"
 EndProject
