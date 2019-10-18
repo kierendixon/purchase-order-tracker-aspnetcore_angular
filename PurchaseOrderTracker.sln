@@ -80,6 +80,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.WebApi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.Cache", "src\PurchaseOrderTracker.Cache\PurchaseOrderTracker.Cache.csproj", "{1240F5D0-8951-48E9-A9F5-9CD444B4F307}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PurchaseOrderTracker.WebUI.Admin", "src\PurchaseOrderTracker.WebUI.Admin\PurchaseOrderTracker.WebUI.Admin.csproj", "{EAAEC912-8E65-4400-80E2-1AD54F3123DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -118,6 +120,10 @@ Global
 		{1240F5D0-8951-48E9-A9F5-9CD444B4F307}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1240F5D0-8951-48E9-A9F5-9CD444B4F307}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1240F5D0-8951-48E9-A9F5-9CD444B4F307}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAAEC912-8E65-4400-80E2-1AD54F3123DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAAEC912-8E65-4400-80E2-1AD54F3123DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAAEC912-8E65-4400-80E2-1AD54F3123DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAAEC912-8E65-4400-80E2-1AD54F3123DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -136,6 +142,7 @@ Global
 		{1512BEF1-1220-4CEE-9F79-F2B583C6AB50} = {C13C7971-DB1F-472E-BE96-1BB3B504DB2F}
 		{72A23DD2-C2CC-4DFC-80B4-A049DF1B8A17} = {37D7D12E-DB01-4972-B41D-9CE9B8224C17}
 		{1240F5D0-8951-48E9-A9F5-9CD444B4F307} = {37D7D12E-DB01-4972-B41D-9CE9B8224C17}
+		{EAAEC912-8E65-4400-80E2-1AD54F3123DF} = {37D7D12E-DB01-4972-B41D-9CE9B8224C17}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B6E7C413-6700-4DF6-AD36-160A45525FE8}

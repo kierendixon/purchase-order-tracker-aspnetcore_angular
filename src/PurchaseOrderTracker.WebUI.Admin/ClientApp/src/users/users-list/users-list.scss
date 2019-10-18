@@ -1,0 +1,37 @@
+table {
+  max-width: 600px;
+  background-color: #fafafa;
+}
+
+.menu{
+  background-color: #0052ac; //rgb(1,94,147);
+}
+
+button {
+  border-radius: none;
+  color: white !important;
+  background-color: #015e93;
+}
+
+.divider {
+  width: 1px;
+  margin: 6px 0;
+  background: rgb(97, 158, 193);
+}
+
+.input-group-text{
+  background-color: white;
+}
+
+input.form-control {
+  border-right: none;
+}
+
+// move to bootstrap overrides
+.form-control:focus{
+  outline: 3;
+  box-shadow: none;
+  }
+  .input-group-text, .form-control {
+    border-radius: none;
+    }
