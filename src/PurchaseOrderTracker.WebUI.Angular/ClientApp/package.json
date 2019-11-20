@@ -24,7 +24,6 @@
     "@angular/platform-browser-dynamic": "^7.2.0",
     "@angular/router": "^7.2.0",
     "@ng-bootstrap/ng-bootstrap": "^4.0.1",
-    "@nguniversal/module-map-ngfactory-loader": "^5.0.0-beta.5",
     "aspnet-prerendering": "^3.0.1",
     "bootstrap": "^4.0.0",
     "core-js": "^2.5.4",
