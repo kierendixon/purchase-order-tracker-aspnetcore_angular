@@ -83,3 +83,6 @@ import 'zone.js/dist/zone'; // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+/* import angular 9 localize function for ng-bootstrap 8 */
+import '@angular/localize/init';
