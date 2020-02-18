@@ -3,7 +3,7 @@
 
 # Purchase Order Tracker (ASP.NET Core + Angular)
 
-Purchase Order Tracker is a line-of-business CRUD (create/read/update/delete) system used to track the delivery of purchase orders.
+Purchase Order Tracker is a line-of-business system used to track the delivery of purchase orders.
 
 You can maintain **Suppliers** and their **Products**, create **Purchase Orders** with **Line Items**, and assign orders to **Shipments**.
 
@@ -14,6 +14,12 @@ The purpose of building this system is to learn more about designing software an
 # Documentation
 
 Application user guides and technical design documentation is available in this project's [Wiki](https://github.com/kierendixon/purchase-order-tracker-aspnetcore_angular/wiki).
+
+# Running the App
+
+If you have Docker installed you can run the app using `docker-compose up` from the project root directory.
+This will pull the required images, build a new image of the Purchase Order Tracker, and start them all.
+Once this is completed you can access the application via docker at http://localhost:80
 
 # Technology Stack
 
@@ -48,28 +54,47 @@ Testing libraries:
 
 # Solution Structure
 
-This solution follows a [Clean Architecture](https://www.amazon.com/dp/0134494164) style. To support this, the codebase is structured into the following components:
+The solution structure is influenced by the [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) pattern and structured into the following components:
 
 - **PurchaseOrderTracker.Domain** - enterprise business rules (rules that would exist even if this software system did not)
 - **PurchaseOrderTracker.Application** - application business rules (rules that define or constrain the way that an automated system works, i.e., workflow logic)
-- **PurchaseOrderTracker.WebUI.Angular** - a website user interface
-- **PurchaseOrderTracker.WebApi** - an rpc-style web API
-- **PurchaseOrderTracker.Persistence** - persistence related infrastructure details
-- **PurchaseOrderTracker.Cache** - cache related infrastructure details
+- **PurchaseOrderTracker.WebUI.Angular** - the website user interface
+- **PurchaseOrderTracker.WebApi** - an rpc-style web API the website uses
+- **PurchaseOrderTracker.Persistence** - data persistence
+- **PurchaseOrderTracker.Cache** - data caching
 
-# Development Environment Setup
+# Developer Environment Setup
 
-- Install SQL Server 2017 (CU3 or higher)
-- Install NodeJs (v10.15 or higher)
-- Install Visual Studio 2017 (v15.8.4 or higher)
-- Optionally, install these Visual Studio IDE extensions:
-  - [Project PowerTools](https://marketplace.visualstudio.com/items?itemName=ms-madsk.ProjectFileTools)
-  - [Double-Click Maximise](https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.Double-ClickMaximize)
-  - [Solution Error Visualizer](https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.SolutionErrorVisualizer)
-  - [Output Enhancer](https://marketplace.visualstudio.com/items?itemName=NikolayBalakin.Outputenhancer)
-- Install Visual Studio Code (v1.31 or higher)
-- Install these VS Code extensions:
-  - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-  - [stylelint](https://marketplace.visualstudio.com/items?itemName=shinnn.stylelint)
-  - [TSlint](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-tslint-plugin)
-- Clone git repository
+1. Install Visual Studio IDE (2019 or higher)
+1. Optionally, install these Visual Studio IDE extensions:
+   1. [Project PowerTools](https://marketplace.visualstudio.com/items?itemName=ms-madsk.ProjectFileTools)
+   1. [Double-Click Maximise](https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.Double-ClickMaximize)
+   1. [Solution Error Visualizer](https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.SolutionErrorVisualizer)
+   1. [Output Enhancer](https://marketplace.visualstudio.com/items?itemName=NikolayBalakin.Outputenhancer)
+1. Install NodeJs (v10.15 or higher)
+1. Install Visual Studio Code (v1.42 or higher)
+1. Install these VS Code extensions:
+   1. [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+   1. [stylelint](https://marketplace.visualstudio.com/items?itemName=shinnn.stylelint)
+   1. [TSlint](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-tslint-plugin)
+1. Install Docker
+1. Clone the repo
+
+## SQL Server Setup
+
+The **PurchaseOrderTracker.WebApi** project requires access to an instance of SQL Server 2017 CU3. You can either run an instance locally or startup a container and connect to it. If it doesn't already exist, the application will create the database schema and populate it with sample data.
+
+To start a docker instance:
+
+`docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=PoTracker001" -p 1433:1433 -d microsoft/mssql-server-windows-developer:2017-CU3`
+
+## Running the App
+
+To run the application in debug mode:
+
+1. Start your SQL Server instance (see SQL Server Setup instructions)
+2. Update the WebApi project's SQL connection string to point to your SQL Server instance
+3. Start the app through Visual Studio. This will run both the WebUI (port 4200) and WebAPI (port 4202) projects
+4. Serve the angular app by running `ng serve` from within the ClientApp folder of the WebUI project. This runs on port 4201.
+
+You can then access the website at http://localhost:4200/
