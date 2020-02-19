@@ -35,7 +35,6 @@ namespace PurchaseOrderTracker.WebApi
                 try
                 {
                     logger.LogInformation("Initializing the application database...");
-
                     var poTrackerDbContext = services.GetRequiredService<PoTrackerDbContext>();
                     PoTrackerDbInitializer.Initialize(poTrackerDbContext);
 

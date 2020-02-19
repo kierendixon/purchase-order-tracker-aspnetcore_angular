@@ -1,6 +1,6 @@
 ﻿import { Component } from '@angular/core';
 
 @Component({
-  template: '404 Not Found'
+  template: '<div id="page-not-found">404 Not Found</div>'
 })
 export class RouteNotFoundComponent {}

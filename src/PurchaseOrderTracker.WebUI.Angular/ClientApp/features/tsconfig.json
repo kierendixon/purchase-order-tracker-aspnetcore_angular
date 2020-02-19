@@ -1,0 +1,15 @@
+{
+  "comment": "this file must be named tsconfig.json instead of tsconfig.e2e.json so that it is used by",
+  "comment": "VSCode when editing classes within e2e directory, otherwise the main tsconfig.json is used",
+  "comment": "which cuases the 'expect' fn to be interpreted as jasmine's expect instead of jest's expect",
+  "comment": "https://github.com/Microsoft/vscode/issues/12463",
+
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../out-tsc/acceptance-tests",
+    "module": "commonjs",
+    "target": "es6",
+    "esModuleInterop": true,
+    "types": ["cucumber", "node", "puppeteer", "jest"]
+  }
+}

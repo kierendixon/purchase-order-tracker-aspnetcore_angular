@@ -71,7 +71,7 @@ The solution structure is influenced by the [Clean Architecture](https://blog.cl
    1. [Double-Click Maximise](https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.Double-ClickMaximize)
    1. [Solution Error Visualizer](https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.SolutionErrorVisualizer)
    1. [Output Enhancer](https://marketplace.visualstudio.com/items?itemName=NikolayBalakin.Outputenhancer)
-1. Install NodeJs (v10.15 or higher)
+1. Install NodeJs (v12.14 or higher)
 1. Install Visual Studio Code (v1.42 or higher)
 1. Install these VS Code extensions:
    1. [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
