@@ -1,42 +1,26 @@
-import { Given, Then, When } from 'cucumber';
-import expect = require('expect');
-import { AccountPage } from '../pages/account.po';
-import { Page } from 'puppeteer';
-import { pageForUrl, PotPage } from '../support/page-identifier';
+// import { Ensure, equals } from '@serenity-js/assertions';
+// import { actorCalled, actorInTheSpotlight } from '@serenity-js/core';
+// import { Given, Then, When } from 'cucumber';
+// import { EnterOperand, RequestANewCalculation, ResultOfCalculation, UseOperator } from '../support/screenplay';
 
-// // debugging:
-// // https://sylvain.pontoreau.com/2018/04/30/typescript-cucumber-getting-started/
-// // https://github.com/hdorgeval/cucumber-ts-starter
-// // pptr debugging tips: https://pptr.dev/
+// Given(/^(.*) has requested a new calculation/, (actorName: string) =>
+//   actorCalled(actorName).attemptsTo(RequestANewCalculation())
+// );
 
-When('a user enters username {word}', async function(username: string) {
-  // await this.pageObject.enterUsername(username);
-});
+// When(/^(.*) enters (\d+)$/, (actorName: string, operandValue: string) => {
+//   const actor = !isPronoun(actorName) ? actorCalled(actorName) : actorInTheSpotlight();
 
-When('they enter password {word}', async function(password: string) {
-  // await this.pageObject.enterPassword(password);
-});
-
-// When('they submit the login form', async function() {
-//   await this.pageObject.submit();
+//   return actor.attemptsTo(EnterOperand(new Operand(parseFloat(operandValue))));
 // });
 
-// Then('they should be shown a login error message {string}', async function(errorMessage: string) {
-//   const alertText = await this.pageObject.getAlertText();
-//   if (errorMessage != alertText) {
-//     throw new Error(`Unexpected alert text: ${alertText}`);
-//   }
-// });
+// When(/(?:he|she|they) uses? the (.) operator/, (operatorSymbol: string) =>
+//   actorInTheSpotlight().attemptsTo(UseOperator(Operator.fromString(operatorSymbol)))
+// );
 
-// When('they login', async function() {
-//   await this.pageObject.enterUsername('basic');
-//   await this.pageObject.enterPassword('basic');
-//   await this.pageObject.submit();
-// });
+// Then(/(?:he|she|they) should get a result of (\d+)/, (expectedResult: string) =>
+//   actorInTheSpotlight().attemptsTo(Ensure.that(ResultOfCalculation(), equals(parseFloat(expectedResult))))
+// );
 
-// Given('they are asked to login', async function() {
-//   // TODO: can we add these helper functions to world instead?
-//   if (pageForUrl(this.pptrPage.url()) != PotPage.Login) {
-//     throw new Error('not on login apge');
-//   }
-// });
+// function isPronoun(actorName: string) {
+//   return !!~['he', 'she', 'they'].indexOf(actorName);
+// }
