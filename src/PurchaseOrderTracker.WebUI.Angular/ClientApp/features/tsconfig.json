@@ -4,6 +4,8 @@
     "outDir": "../out-tsc/feature-tests",
     "module": "commonjs",
     "target": "es6",
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "types": ["cucumber", "node", "jest"]
+  },
+  "include": ["./**/*"]
 }

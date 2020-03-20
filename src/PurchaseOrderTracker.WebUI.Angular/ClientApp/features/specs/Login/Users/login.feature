@@ -1,17 +1,18 @@
+@only
 Feature: Login
   IN order to protect the system from unauthorised access
   AS a product owner
   I want users to authenticate before they use the system
 
   Background:
-    Given a user navigates to the Login page
+    Given Alexa navigates to the Login page
 
   @only
   Scenario Outline: Authenticate using username and password
-    When a user enters username <username>
-    And they enter password <password>
-    And they submit the login form
-    Then they should be shown the MainSiteLanding page
+    When she enters username <username>
+    And she enters password <password>
+    And she submits the login form
+    Then she should be shown the default landing page
 
     Examples:
       | username | password |
@@ -19,10 +20,10 @@ Feature: Login
       | basic    | basic    |
 
   Scenario Outline: Authenticate using username and password fails
-    When a user enters username <username>
-    And they enter password <password>
-    And they submit the login form
-    Then they should be shown a login error message "<message>"
+    When she enters username <username>
+    And she enters password <password>
+    And she submits the login form
+    Then she should be shown a login error message "<message>"
 
     Examples:
       | username | password | message                         |

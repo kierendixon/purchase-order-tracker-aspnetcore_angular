@@ -3,33 +3,26 @@
 // });
 
 // // https://github.com/cucumber/cucumber-js/blob/master/docs/cli.md
-
-// // different formatter for ci/tty
-// // `--format ${
-// //   process.env.CI || !process.stdout.isTTY ? 'progress' : 'progress-bar'
-// // }`,
-
-// // customer formatter
-// // '--format progress-bar', // Load custom formatter
-// // '--format node_modules/cucumber-pretty' // Load custom formatter
-
 // var common = [
-//   './features/specs/*.feature',
-//   // '--require-module ts-node/register',
+//   './features/specs/**/*.feature',
 //   '--require ./features/**/*.ts',
-//   `--format-options '{"snippetInterface": "synchronous"}'`,
+//   `--format-options '{"snippetInterface": "async-await"}'`,
+//   //'--format json:./features/reports/cucumber-report.json' // TODO
 //   `--world-parameters '{"pageTimeout": 30000}'`,
-//   `--world-parameters '{"baseUrl": "http://localhost:4200"}'`,
-//   '--tags @only',
-//   //'--format-options "{\\"snippetInterface\\": \\"async-await\\"}"',
-//   '--format json:reports/cucumber-report.json'
+//   `--world-parameters '{"baseUrl": "http://localhost:4200"}'`
+// ];
 
-//   // --format summary --format progress-bar
-//   // --format node_modules/cucumber-pretty",
-//   //   "snippets": "./node_modules/cucumber/bin/cucumber-js
-// ].join(' ');
+// var local = common.concat(['--format progress-bar']);
+// var ciServer = common.concat(['--format usage']);
 
+// // Using the `--dry-run` or `-d` flag gives you a way to quickly scan your features without actually running them.
+// var dryRun = local.concat(['--dry-run']);
+
+// // Run only features tagged with @only
+// var only = local.concat(['--tags "@only"']);
 // module.exports = {
-//   default: common
-//   //dryRyn: '--dry-run' // TODO add this param to common
+//   default: local.join(' '),
+//   dryRun: dryRun.join(' '),
+//   only: only.join(' '),
+//   ciServer: ciServer.join(' ')
 // };

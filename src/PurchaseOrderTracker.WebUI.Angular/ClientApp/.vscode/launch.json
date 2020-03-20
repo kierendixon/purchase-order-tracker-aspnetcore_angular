@@ -16,6 +16,15 @@
       // "outFiles": [
       //     "${workspaceFolder}/dist/out-tsc/**/*.js"
       // ]
+    },
+
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Protractor",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/node_modules/protractor/bin/protractor",
+      "args": ["./protractor.conf.js"]
     }
   ]
 }
