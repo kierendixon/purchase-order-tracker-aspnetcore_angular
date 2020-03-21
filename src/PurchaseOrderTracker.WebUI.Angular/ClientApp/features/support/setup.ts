@@ -52,13 +52,6 @@ BeforeAll({ timeout: 60 * 1000 }, async () => {
 });
 
 Before({ tags: 'not @manual' }, async function() {
-  // this fails on the first execution
-  try {
-    // the same browser instance is used for all tests
-    await protractor.browser.executeScript('window.sessionStorage.clear();');
-    await protractor.browser.executeScript('window.localStorage.clear();');
-  } catch (ex) {}
-
   console.log('Cucumber :: scenario-level before');
   return engage(new Actors());
 });
@@ -72,6 +65,10 @@ After({ tags: 'not @manual' }, async function(scenario) {
     // this.attach(screenshot, 'image/png' as never); // TODO
   }
   // reset database
+
+  // the same browser instance is used for all tests
+  await protractor.browser.executeScript('window.sessionStorage.clear();');
+  await protractor.browser.executeScript('window.localStorage.clear();');
 });
 
 AfterAll({ timeout: 60 * 1000 }, async () => {

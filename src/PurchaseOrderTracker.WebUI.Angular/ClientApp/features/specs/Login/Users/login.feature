@@ -1,4 +1,3 @@
-@only
 Feature: Login
   IN order to protect the system from unauthorised access
   AS a product owner
@@ -7,7 +6,6 @@ Feature: Login
   Background:
     Given Alexa navigates to the Login page
 
-  @only
   Scenario Outline: Authenticate using username and password
     When she enters username <username>
     And she enters password <password>
