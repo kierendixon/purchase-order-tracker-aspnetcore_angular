@@ -1,7 +1,7 @@
 import { Ensure, startsWith, endsWith, equals } from '@serenity-js/assertions';
 import { actorCalled, actorInTheSpotlight, Duration } from '@serenity-js/core';
 import { Navigate, Website, Enter, Target, Click, Wait, Text } from '@serenity-js/protractor';
-import { Then, When, Given } from 'cucumber';
+import { Then, When, Given, TableDefinition } from 'cucumber';
 import { by, protractor } from 'protractor';
 import { User } from '../support/screenplay/questions/User';
 
@@ -84,6 +84,15 @@ Given(/^(.*) is logged in$/, function(actorName: string) {
     Wait.for(Duration.ofMilliseconds(500))
   );
 });
+Given(/^(.*) logs in$/, function(actorName: string) {
+  return actorCalled(actorName).attemptsTo(
+    Navigate.to('http://localhost:4200/account'),
+    Enter.theValue('basic').into(Target.the('username field').located(by.name('username'))),
+    Enter.theValue('basic').into(Target.the('password field').located(by.name('password'))),
+    Click.on(Target.the('submit button').located(by.css('button[type="submit"]'))),
+    Wait.for(Duration.ofMilliseconds(500))
+  );
+});
 
 When(/^s?he logs out$/, function() {
   return actorInTheSpotlight().attemptsTo(
@@ -117,6 +126,35 @@ Then(/^s?he should be (?:redirected to|shown) the default landing page$/, functi
   return actorInTheSpotlight().attemptsTo(
     Wait.for(Duration.ofMilliseconds(500)),
     Ensure.that(Website.url(), endsWith('/main-site'))
+  );
+});
+
+Then(/^s?he should see the following purchase order summary$/, (dataTable: TableDefinition) => {
+  interface DataTable {
+    OpenOrders: string;
+    DeliveriesToday: string;
+    LateDeliveries: string;
+    VeryLateDeliveries: string;
+  }
+  const expectedValues: DataTable = (dataTable.hashes()[0] as unknown) as DataTable;
+
+  return actorInTheSpotlight().attemptsTo(
+    Ensure.that(
+      Text.of(Target.the('total open orders').located(by.css('main span:nth-child(3)'))),
+      equals(`Total open orders: ${expectedValues.OpenOrders}`)
+    ),
+    Ensure.that(
+      Text.of(Target.the('deliveries for today').located(by.css('main span:nth-child(5)'))),
+      equals(`Shipments scheduled for delivered today: ${expectedValues.DeliveriesToday}`)
+    ),
+    Ensure.that(
+      Text.of(Target.the('late deliveries').located(by.css('main span:nth-child(7)'))),
+      equals(`Shipments past delivery due date: ${expectedValues.LateDeliveries}`)
+    ),
+    Ensure.that(
+      Text.of(Target.the('very late deliveries').located(by.css('main span:nth-child(9)'))),
+      equals(`Shipments past delivery due date more than 7 days: ${expectedValues.VeryLateDeliveries}`)
+    )
   );
 });
 

@@ -1,4 +1,3 @@
-@only
 Feature: User guide
 
   The Purchase Order Tracker user guide is published as a Wiki in its GitHub repository.
