@@ -1,21 +1,45 @@
+# docker build -t purchase-order-tracker .
 version: "3.7"
 services:
-  web:
-    build: .
+  website:
+    image: "purchase-order-tracker"
+    entrypoint: ["dotnet", "PurchaseOrderTracker.WebUI.Angular.dll"]
+    working_dir: "/app/WebUI"
     depends_on:
       - db
-    ports:
+      - webapi
+      - envoy
+    networks:
+      - network
+    expose:
+      - "80"
+  webapi:
+    image: "purchase-order-tracker"
+    entrypoint: ["dotnet", "PurchaseOrderTracker.WebApi.dll"]
+    working_dir: "/app/WebApi"
+    depends_on:
+      - db
+    expose:
       - "80"
     networks:
       - network
   db:
-    image: "microsoft/mssql-server-windows-developer:2017-CU3"
+    image: "mcr.microsoft.com/mssql/server"
     environment:
         SA_PASSWORD: "PoTracker001"
         ACCEPT_EULA: "Y"
     # Expose connectivity to host machine for debugging purposes
     ports:
       - "1433:1433"
+    networks:
+      - network
+  envoy:
+    image: envoyproxy/envoy:v1.14.4
+    volumes:
+      - ./:/etc/envoy
+    ports:
+      - "4202:80"
+      - "15200:8001"
     networks:
       - network
 
