@@ -8,6 +8,9 @@ FROM microsoft/dotnet:2.1-sdk AS build
 WORKDIR /nodejs
 ENV NODE_VERSION 10.15.0
 ENV NODE_DOWNLOAD_SHA c1dbc9372ad789cd21727cb5f63b4a44ed3eae216763959cff8e68e68c6fcfe1
+# if this step fails with `curl: (6) Could not resolve host: nodejs.org`
+# then add "dns": ["8.8.8.8"] to your Docker daemon configuration
+# see: https://github.com/docker/for-win/issues/3810#issuecomment-586045818
 RUN curl https://nodejs.org/dist/v%NODE_VERSION%/node-v%NODE_VERSION%-win-x64.zip -o nodejs.zip &&`
     tar -xf nodejs.zip --strip-components=1 &&`
     del nodejs.zip &&`
