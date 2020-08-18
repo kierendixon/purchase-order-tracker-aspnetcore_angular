@@ -1,5 +1,3 @@
-# escape=`
-
 FROM microsoft/dotnet:2.1-sdk AS build
 
 # setup node
@@ -7,14 +5,12 @@ FROM microsoft/dotnet:2.1-sdk AS build
 # https://github.com/dotnet/dotnet-docker/issues/360 (Please support PowerShell core on SDK images)
 WORKDIR /nodejs
 ENV NODE_VERSION 10.15.0
-ENV NODE_DOWNLOAD_SHA c1dbc9372ad789cd21727cb5f63b4a44ed3eae216763959cff8e68e68c6fcfe1
-# if this step fails with `curl: (6) Could not resolve host: nodejs.org`
-# then add "dns": ["8.8.8.8"] to your Docker daemon configuration
-# see: https://github.com/docker/for-win/issues/3810#issuecomment-586045818
-RUN curl https://nodejs.org/dist/v%NODE_VERSION%/node-v%NODE_VERSION%-win-x64.zip -o nodejs.zip &&`
-    tar -xf nodejs.zip --strip-components=1 &&`
-    del nodejs.zip &&`
-    setx PATH "%PATH%;C:\nodejs"
+ENV NODE_DOWNLOAD_SHA f0b4ff9a74cbc0106bbf3ee7715f970101ac5b1bbe814404d7a0673d1da9f674
+RUN curl -SL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz" --output nodejs.tar.gz \
+    && echo "$NODE_DOWNLOAD_SHA nodejs.tar.gz" | sha256sum -c - \
+    && tar -xzf "nodejs.tar.gz" -C /usr/local --strip-components=1 \
+    && rm nodejs.tar.gz \
+    && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
 # copy files which don't change often and then 'dotnet restore' to cache as image layers
 WORKDIR /app
@@ -43,8 +39,9 @@ COPY test/PurchaseOrderTracker.Application.Tests/. ./test/PurchaseOrderTracker.A
 RUN dotnet publish -c Release -o out
 
 # build runtime container
-FROM microsoft/dotnet:2.1-aspnetcore-runtime AS runtime
+# AS runtime
+FROM microsoft/dotnet:2.1-aspnetcore-runtime
 WORKDIR /app
-COPY --from=build /app/src/PurchaseOrderTracker.WebApi/out ./
-ENTRYPOINT ["dotnet", "PurchaseOrderTracker.Web.dll"]
-EXPOSE 80
+COPY --from=build /app/src/PurchaseOrderTracker.WebApi/out ./WebApi
+COPY --from=build /app/src/PurchaseOrderTracker.WebUI.Angular/out ./WebUI
+RUN mv ./WebUI/ClientApp/dist/purchase-order-tracker/* ./WebUI/wwwroot

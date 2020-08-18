@@ -15,11 +15,14 @@ The purpose of building this system is to learn more about designing software an
 
 Application user guides and technical design documentation are available in the [Wiki](https://github.com/kierendixon/purchase-order-tracker-aspnetcore_angular/wiki).
 
-# Running the App
+# Running the App using Docker
 
-If you have Docker installed you can run the app using `docker-compose up` from the project root directory.
-This will pull the required images, build a new image of the Purchase Order Tracker, and start the containers.
-Once the containers are started you can access the application at http://localhost:80
+To run the app using Docker:
+
+1. Run `docker build --tag purchase-order-tracker .` to build an image containing the website and webapi
+1. Run `docker-compose up` to start the environment
+
+Once the containers are started you can access the application at http://localhost:4202
 
 # Technology Stack
 
@@ -77,7 +80,7 @@ The solution structure is influenced by the [Clean Architecture](https://blog.cl
    1. [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
    1. [stylelint](https://marketplace.visualstudio.com/items?itemName=shinnn.stylelint)
    1. [TSlint](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-tslint-plugin)
-1. Install Docker and switch to Windows containers
+1. Install Docker and switch to Linux containers
 1. Clone the repo
 
 ## SQL Server Setup
