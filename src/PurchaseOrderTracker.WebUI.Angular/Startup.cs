@@ -21,9 +21,10 @@ namespace PurchaseOrderTracker.Web
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddFeatureFolders();
 
+            // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(opt =>
             {
-                opt.RootPath = "ClientApp/dist";
+                opt.RootPath = "ClientApp/dist/purchase-order-tracker";
             });
         }
 
