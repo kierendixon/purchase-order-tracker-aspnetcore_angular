@@ -60,7 +60,7 @@
     "@types/jasminewd2": "^2.0.8",
     "@types/jest": "^24.0.23",
     "@types/node": "^12.11.1",
-    "chromedriver": "^80.0.1",
+    "chromedriver": "^84.0.1",
     "codelyzer": "^5.1.2",
     "cucumber": "^6.0.5",
     "expect": "^24.9.0",

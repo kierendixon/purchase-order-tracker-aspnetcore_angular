@@ -17,12 +17,13 @@ namespace PurchaseOrderTracker.Persistence.Initialization
                 }
                 catch (SqlException ex)
                 {
-                    if (ex.Number != 53)
+                    if (ex.Number != 53 && ex.Number != 18456)
                     {
                         throw;
                     }
 
-                    Console.WriteLine("Could not connect to database. Retrying after 3 seconds...");
+                    Console.WriteLine($"Could not connect to database. {ex.Message}");
+                    Console.WriteLine("Retrying after 3 seconds...");
                     Thread.Sleep(3000);
                 }
             }
