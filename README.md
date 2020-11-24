@@ -13,13 +13,13 @@ The purpose of building this system is to learn more about designing software an
 
 # Documentation
 
-Application user guides and technical design documentation is available in this project's [Wiki](https://github.com/kierendixon/purchase-order-tracker-aspnetcore_angular/wiki).
+Application user guides and technical design documentation are available in the [Wiki](https://github.com/kierendixon/purchase-order-tracker-aspnetcore_angular/wiki).
 
 # Running the App
 
 If you have Docker installed you can run the app using `docker-compose up` from the project root directory.
-This will pull the required images, build a new image of the Purchase Order Tracker, and start them all.
-Once this is completed you can access the application via docker at http://localhost:80
+This will pull the required images, build a new image of the Purchase Order Tracker, and start the containers.
+Once the containers are started you can access the application at http://localhost:80
 
 # Technology Stack
 
@@ -71,13 +71,13 @@ The solution structure is influenced by the [Clean Architecture](https://blog.cl
    1. [Double-Click Maximise](https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.Double-ClickMaximize)
    1. [Solution Error Visualizer](https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.SolutionErrorVisualizer)
    1. [Output Enhancer](https://marketplace.visualstudio.com/items?itemName=NikolayBalakin.Outputenhancer)
-1. Install NodeJs (v10.15 or higher)
+1. Install NodeJs (v10.15.0 or higher)
 1. Install Visual Studio Code (v1.42 or higher)
 1. Install these VS Code extensions:
    1. [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
    1. [stylelint](https://marketplace.visualstudio.com/items?itemName=shinnn.stylelint)
    1. [TSlint](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-tslint-plugin)
-1. Install Docker
+1. Install Docker and switch to Windows containers
 1. Clone the repo
 
 ## SQL Server Setup
