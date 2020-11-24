@@ -1,3 +1,4 @@
+@only
 Feature: Login
   IN order to protect the system from unauthorised access
   AS a product owner

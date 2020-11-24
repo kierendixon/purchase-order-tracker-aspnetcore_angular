@@ -80,8 +80,11 @@ The solution structure is influenced by the [Clean Architecture](https://blog.cl
    1. [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
    1. [stylelint](https://marketplace.visualstudio.com/items?itemName=shinnn.stylelint)
    1. [TSlint](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-tslint-plugin)
+   1. [Cucumber Support](https://marketplace.visualstudio.com/items?itemName=alexkrechik.cucumberautocomplete)
 1. Install Docker and switch to Linux containers
 1. Clone the repo
+
+JRE/JDK v8 to run SerenityJS tests + Chrome Browser
 
 ## SQL Server Setup
 

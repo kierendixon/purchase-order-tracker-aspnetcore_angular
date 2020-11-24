@@ -1,14 +1,14 @@
 const { ConsoleReporter } = require('@serenity-js/console-reporter'),
   { ArtifactArchiver, StreamReporter } = require('@serenity-js/core'),
+  { Photographer, TakePhotosOfInteractions } = require('@serenity-js/protractor'),
   { SerenityBDDReporter } = require('@serenity-js/serenity-bdd');
 //  isCI = require('is-ci');
 
-require('ts-node').register({
-  project: 'features/tsconfig.json'
-});
+require('ts-node').register({ project: 'features/tsconfig.json' });
 
 exports.config = {
   chromeDriver: require('chromedriver/lib/chromedriver').path,
+
   SELENIUM_PROMISE_MANAGER: false,
 
   // restartBrowserBetweenTests: true,
@@ -26,9 +26,9 @@ exports.config = {
     crew: [
       ArtifactArchiver.storingArtifactsAt('./target/site/serenity'),
       new SerenityBDDReporter(),
-      ConsoleReporter.forDarkTerminals()
-      // Photographer.whoWill(TakePhotosOfInteractions) // or Photographer.whoWill(TakePhotosOfFailures),
-      // new StreamReporter(),
+      ConsoleReporter.forDarkTerminals(),
+      Photographer.whoWill(TakePhotosOfInteractions) // or
+      // Photographer.whoWill(TakePhotosOfFailures), new StreamReporter(),
     ]
   },
 
@@ -37,14 +37,12 @@ exports.config = {
    * uncomment the below onPrepare section,
    * which disables Angular-specific test synchronisation.
    */
-  onPrepare: function() {
-    browser.waitForAngularEnabled(false);
-  },
+  // onPrepare: function () {   browser.waitForAngularEnabled(false); },
 
   cucumberOpts: {
-    require: ['features/step_definitions/**/*.ts', 'features/support/setup.ts'],
+    require: ['features/step_definitions/**/*.ts', 'features/support/setup.ts']
     // 'require-module': ['ts-node/register']
-    tags: ['@only']
+    //tags: ['@only']
   },
 
   capabilities: {

@@ -3,9 +3,10 @@ Feature: Purchase order summary landing page
   As a product owner
   I want users to see a snapshot of the current state right after they login
 
+  @only
   Scenario: Purchase order summary
     When Alexa logs in
     Then she should be shown the default landing page
     And she should see the following purchase order summary
       | OpenOrders | DeliveriesToday | LateDeliveries | VeryLateDeliveries |
-      | 9          | 0               | 2              | 1                  |
+      | 9          | 1               | 0              | 0                  |

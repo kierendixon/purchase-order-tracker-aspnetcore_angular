@@ -1,4 +1,4 @@
-import { AttachFn, WorldParameters, World, WorldConstructorArgs } from 'cucumber';
+import { AttachFn, World, WorldConstructorArgs, WorldParameters } from 'cucumber';
 import { Stream } from 'stream';
 import { CliArgs } from './cliargs';
 
