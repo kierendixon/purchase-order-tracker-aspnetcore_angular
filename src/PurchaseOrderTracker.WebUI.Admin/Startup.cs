@@ -1,16 +1,36 @@
+﻿using System;
+using System.Net;
+using System.Linq;
+using System.Net.Http;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Primitives;
+using Microsoft.Net.Http.Headers;
+using PurchaseOrderTracker.WebUI.Admin.Controllers;
+using PurchaseOrderTracker.WebUI.Admin.Logging;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace PurchaseOrderTracker.WebUI.Admin
 {
     public class Startup
     {
+        private static readonly string _executingAssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -18,9 +38,9 @@ namespace PurchaseOrderTracker.WebUI.Admin
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // TODO cleanup default config
             services.AddControllersWithViews();
 
             // In production, the React files will be served from this directory
@@ -28,11 +48,47 @@ namespace PurchaseOrderTracker.WebUI.Admin
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            services.AddHeaderPropagation(opt =>
+            {
+                opt.Headers.Add(HeaderNames.Referer);
+                opt.Headers.Add("X-Correlation-ID", ctx => new StringValues(Guid.NewGuid().ToString())); // use Activity class instead
+            });
+
+            services.AddHttpClient<PurchaseOrderTrackerHttpClient>(c =>
+            {
+                c.BaseAddress = new Uri("http://localhost:8080/api/");
+                c.DefaultRequestHeaders.Add(HeaderNames.UserAgent, _executingAssemblyName);
+            }).AddHeaderPropagation();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(opt =>
+                {
+                    opt.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidIssuer = "PurchaseOrderTracker.WebApi",
+                        ValidAudience = "po-tracker-web-server",
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("insecure-key-128-bits"))
+                    };
+                });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Administrators", new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    //.RequireClaim("role", "Administrators")
+                    .RequireClaim(ClaimTypes.NameIdentifier, "super")
+                    .Build());
+                    // new Claim(ClaimTypes.NameIdentifier, user.UserName)
+            });
+
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // this must be set before other middleware in the Configure() method so that all requests are logged (including static content)
+            app.UseMiddleware<RequestResponseLoggingMiddleware>();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -44,12 +100,14 @@ namespace PurchaseOrderTracker.WebUI.Admin
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
-            app.UseRouting();
+            app.UseHeaderPropagation();
 
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

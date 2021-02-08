@@ -10,6 +10,7 @@ namespace PurchaseOrderTracker.WebApi.Identity
 
         public CurrentUserHttpContext(IHttpContextAccessor httpContextAccessor)
         {
+            // _httpContextAccessor.HttpContext.Sign
             _httpContextAccessor = httpContextAccessor;
         }
 

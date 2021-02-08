@@ -2,6 +2,7 @@ import React from 'react';
 import './navbar-top.scss';
 import logo from './logo.png';
 // import { Button } from 'reactstrap';
+import Logout from '../logout/logout';
 
 export default class NavBarTop extends React.Component {
   render() {
@@ -11,7 +12,7 @@ export default class NavBarTop extends React.Component {
           <img src={logo} alt="logo" />
           <span className="mx-3 pt-1">PoT ADMIN</span>
         </div>
-        <div className="header pr-4">Logout</div>
+        <Logout className="header pr-4"></Logout>
       </div>
     );
   }

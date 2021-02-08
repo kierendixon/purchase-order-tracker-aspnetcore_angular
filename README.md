@@ -22,7 +22,7 @@ To run the app using Docker:
 1. Run `docker build --tag purchase-order-tracker .` to build an image containing the website and webapi
 1. Run `docker-compose up` to start the environment
 
-Once the containers are started you can access the application at http://localhost:4202
+Once the containers are started you can access the application at http://localhost:4202 ##
 
 # Technology Stack
 
@@ -80,24 +80,28 @@ The solution structure is influenced by the [Clean Architecture](https://blog.cl
    1. [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
    1. [stylelint](https://marketplace.visualstudio.com/items?itemName=shinnn.stylelint)
    1. [TSlint](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-tslint-plugin)
-1. Install Docker and switch to Linux containers
-1. Clone the repo
+
+## Debugging
+
+To run the application locally:
+
+1. Start SQL Server (see [SQL Server Setup](#SQL-Server-Setup))
+1. Serve the angular app by running `ng serve` (npm start??) from within the ClientApp folder of the WebUI project. This runs on port 4201 but is not accessed directly
+1. Start the application in Visual Studio. This will run both the WebUI (port 4200) and WebAPI (port 4202) projects ##
+
+You can then access the application at http://localhost:4200/
+
+run envoy proxy: `docker run --rm -p 4891:80 -v ${PWD}:/etc/envoy envoyproxy/envoy:v1.14.4 envoy -c /etc/envoy/envoy.debug.yaml`
+F5 apps from vs ide. must run in admin mode to bind to non-localhost
+
+access from host.docker.internal instead of localhost
 
 ## SQL Server Setup
 
-The **PurchaseOrderTracker.WebApi** project requires access to an instance of SQL Server 2017 CU3. You can either run an instance locally or startup a container and connect to it. If it doesn't already exist, the application will create the database schema and populate it with sample data.
+The **PurchaseOrderTracker.WebApi** project requires access to an instance of SQL Server. You can either run an instance locally or startup a container and connect to it. If it doesn't already exist, the application will create the database schema and populate it with sample data.
 
 To start a docker instance:
 
-`docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=PoTracker001" -p 1433:1433 -d microsoft/mssql-server-windows-developer:2017-CU3`
+`docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=PoTracker001" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2019-CU8-ubuntu-16.04`
 
-## Running the App
-
-To run the application in debug mode:
-
-1. Start your SQL Server instance (see SQL Server Setup instructions)
-2. Update the WebApi project's SQL connection string to point to your SQL Server instance
-3. Start the app through Visual Studio. This will run both the WebUI (port 4200) and WebAPI (port 4202) projects
-4. Serve the angular app by running `ng serve` from within the ClientApp folder of the WebUI project. This runs on port 4201.
-
-You can then access the website at http://localhost:4200/
+If required, update the `ConnectionStrings:IdentityDatabase` and `ConnectionStrings:PoTrackerDatabase` application settings with the new connection strings.

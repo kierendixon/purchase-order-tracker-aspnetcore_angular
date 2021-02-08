@@ -17,17 +17,20 @@ namespace PurchaseOrderTracker.WebApi.Features.Account
         public class CommandHandler : AsyncRequestHandler<Command>
         {
             private readonly UserManager<ApplicationUser> _userManager;
+            private readonly SignInManager<ApplicationUser> _signInManager;
             private readonly ICurrentUser _currentUser;
 
-            public CommandHandler(UserManager<ApplicationUser> userManager, ICurrentUser currentUser)
+            public CommandHandler(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ICurrentUser currentUser)
             {
                 _userManager = userManager;
+                _signInManager = signInManager;
                 _currentUser = currentUser;
             }
 
             protected override async Task Handle(Command request, CancellationToken cancellationToken)
             {
                 var user = await _userManager.FindByNameAsync(_currentUser.Username);
+
                 if (user == null)
                 {
                     throw new PurchaseOrderTrackerException($"Cannot find user. Username={_currentUser.Username}");
@@ -35,7 +38,13 @@ namespace PurchaseOrderTracker.WebApi.Features.Account
 
                 user.RefreshToken = null;
                 user.RefreshTokenExpiresAt = null;
+
                 await _userManager.UpdateAsync(user);
+
+                if(_currentUser.Username == "basic")
+                {
+                    await _signInManager.SignOutAsync();
+                }
             }
         }
     }

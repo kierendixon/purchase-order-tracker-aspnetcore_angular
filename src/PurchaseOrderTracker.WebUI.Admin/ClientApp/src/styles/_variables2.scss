@@ -1,8 +1,8 @@
 // do not name this file '_variables.scss' because it will override bootstrap's file of the same name
 
 // TODO: leave as ~bootstrap/scss/functions to make it more obvious ?
-@import 'functions';
-@import 'variables';
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
 
 // override bootstrap variables
 

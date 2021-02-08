@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,8 +16,10 @@ namespace PurchaseOrderTracker.WebApi.StartupExtensions.ServiceCollectionExtensi
             this IServiceCollection services,
             IConfiguration configuration)
         {
+            
             services.AddIdentityCore<ApplicationUser>()
                 .AddEntityFrameworkStores<Persistence.IdentityDbContext>();
+
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(opt =>
@@ -29,7 +32,22 @@ namespace PurchaseOrderTracker.WebApi.StartupExtensions.ServiceCollectionExtensi
                         ValidAudience = JwtConfig.Audience,
                         IssuerSigningKey = JwtConfig.SigningKey
                     };
-                });
+                })
+                .AddCookie()
+                .AddIdentityCookies();
+
+            services.AddScoped<SignInManager<ApplicationUser>>();
+
+            //services.ConfigureApplicationCookie(options =>
+            //{
+            //    // Cookie settings
+            //    options.Cookie.HttpOnly = true;
+            //    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+
+            //    options.LoginPath = "/Identity/Account/Login";
+            //    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+            //    options.SlidingExpiration = true;
+            //});
 
             services.Configure<IdentityOptions>(options =>
             {

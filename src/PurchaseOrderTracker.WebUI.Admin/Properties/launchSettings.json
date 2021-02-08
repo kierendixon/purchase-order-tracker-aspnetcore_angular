@@ -1,0 +1,19 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://host.docker.internal:4203/",
+      "sslPort": 0
+    }
+  },
+  "profiles": {
+    "PurchaseOrderTracker.WebUI.Admin": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://host.docker.internal:4203/"
+    }
+  }
+}

@@ -35,10 +35,12 @@ namespace PurchaseOrderTracker.WebApi.Features.Account
         public class CommandHandler : IRequestHandler<Command, CommandResult>
         {
             private readonly UserManager<ApplicationUser> _userManager;
+            private readonly SignInManager<ApplicationUser> _signInManager;
 
-            public CommandHandler(UserManager<ApplicationUser> userManager)
+            public CommandHandler(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
             {
                 _userManager = userManager;
+                _signInManager = signInManager;
             }
 
             public async Task<CommandResult> Handle(Command request, CancellationToken cancellationToken)
@@ -54,6 +56,13 @@ namespace PurchaseOrderTracker.WebApi.Features.Account
                 {
                     return new CommandResult(false);
                 }
+
+                if (request.UserName == "basic")
+                {
+                    var result = await _signInManager.PasswordSignInAsync(request.UserName, request.Password, false, false);
+                }
+
+                // TODO to create cookies use _signInManager
 
                 // TODO: Use IdentityServer4
                 var jwtToken = JwtFactory.Create(user);

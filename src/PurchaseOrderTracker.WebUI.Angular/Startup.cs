@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -40,9 +41,11 @@ namespace PurchaseOrderTracker.Web
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseSpaStaticFiles();
+            if (!env.IsDevelopment())
+            {
+                app.UseSpaStaticFiles();
+            }
 
             app.UseMvc(routes =>
             {
@@ -57,7 +60,10 @@ namespace PurchaseOrderTracker.Web
 
                 if (env.IsDevelopment())
                 {
-                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4201");
+                    //spa.UseAngularCliServer(npmScript: "start");
+
+                    // alternatively, start the server separately and proxy requests to it
+                     spa.UseProxyToSpaDevelopmentServer("http://localhost:4201");
                 }
             });
         }

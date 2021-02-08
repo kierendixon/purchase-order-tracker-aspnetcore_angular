@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,26 @@ namespace PurchaseOrderTracker.WebApi.Features.Account
             : base(mediator, mapper)
         {
         }
+
+        //[HttpGet("[action]")]
+        //public async Task<string> Test()
+        //{
+        //    return "test1";
+        //}
+
+        //[HttpGet("[action]")]
+        //[Authorize(CookieAuthenticationDefaults.AuthenticationScheme)]
+        //public async Task<string> Test2()
+        //{
+        //    return "test2";
+        //}
+
+        //[HttpGet("[action]")]
+        //[AllowAnonymous]
+        //public async Task<string> Test3()
+        //{
+        //    return "test3";
+        //}
 
         [HttpPost("[action]")]
         [AllowAnonymous]

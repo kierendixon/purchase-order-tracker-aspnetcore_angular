@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 
-const baseApiUrl = 'http://localhost:4202/api';
+const baseApiUrl = '/api';
 
 // main-site
 

@@ -1,4 +1,3 @@
-# docker build -t purchase-order-tracker .
 version: "3.7"
 services:
   website:
@@ -6,9 +5,7 @@ services:
     entrypoint: ["dotnet", "PurchaseOrderTracker.WebUI.Angular.dll"]
     working_dir: "/app/WebUI"
     depends_on:
-      - db
       - webapi
-      - envoy
     networks:
       - network
     expose:
@@ -24,7 +21,7 @@ services:
     networks:
       - network
   db:
-    image: "mcr.microsoft.com/mssql/server"
+    image: "mcr.microsoft.com/mssql/server:2019-CU8-ubuntu-16.04"
     environment:
         SA_PASSWORD: "PoTracker001"
         ACCEPT_EULA: "Y"
@@ -38,8 +35,10 @@ services:
     volumes:
       - ./:/etc/envoy
     ports:
-      - "4202:80"
+      - "4202:80" #fixme
       - "15200:8001"
+    depends_on: 
+      - website
     networks:
       - network
 

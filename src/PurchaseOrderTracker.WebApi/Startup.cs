@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +24,8 @@ namespace PurchaseOrderTracker.WebApi
 
         public IConfiguration Configuration { get; }
 
+        // todo: add middleware to validate (and return bad request if not valid)
+        // that mandatory headers are provided (user agent, correlation id)
         public void ConfigureServices(IServiceCollection services)
         {
             // Application assembly and WebApi assembly
@@ -33,7 +34,6 @@ namespace PurchaseOrderTracker.WebApi
             services.AddCustomIdentity(Configuration);
             services.AddCustomSwagger();
             services.AddCustomMvc();
-            services.AddCustomCors();
             services.AddMemoryCache();
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUser, CurrentUserHttpContext>();
@@ -66,8 +66,6 @@ namespace PurchaseOrderTracker.WebApi
                 app.UseHsts();
             }
 
-            app.UseCors(CorsExtensions.AllowWebServerCorsPolicy);
-            app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMvc();
         }

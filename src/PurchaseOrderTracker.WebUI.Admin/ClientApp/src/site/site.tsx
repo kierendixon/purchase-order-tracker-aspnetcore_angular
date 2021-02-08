@@ -2,11 +2,8 @@ import React from 'react';
 import './site.scss';
 import NavBarLeft from './narbar-left/navbar-left';
 import NavBarTop from './navbar-top/navbar-top';
-
 import UserList from '../users/users-list/users-list';
-type ClockState = {
-  time: Date
-}
+
 export default class Site extends React.Component<{}, State> {
   constructor(props) {
     super(props);

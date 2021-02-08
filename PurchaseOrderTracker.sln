@@ -9,10 +9,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{C13C7971-D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0D4965ED-D335-4E8B-B614-719EE644C3AD}"
 	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
 		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		codeanalysis-test.ruleset = codeanalysis-test.ruleset
 		codeanalysis.ruleset = codeanalysis.ruleset
+		docker-compose.yml = docker-compose.yml
+		Dockerfile = Dockerfile
+		envoy.debug.yaml = envoy.debug.yaml
+		envoy.yaml = envoy.yaml
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -80,7 +86,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.WebApi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.Cache", "src\PurchaseOrderTracker.Cache\PurchaseOrderTracker.Cache.csproj", "{1240F5D0-8951-48E9-A9F5-9CD444B4F307}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PurchaseOrderTracker.WebUI.Admin", "src\PurchaseOrderTracker.WebUI.Admin\PurchaseOrderTracker.WebUI.Admin.csproj", "{EAAEC912-8E65-4400-80E2-1AD54F3123DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PurchaseOrderTracker.WebUI.Admin", "src\PurchaseOrderTracker.WebUI.Admin\PurchaseOrderTracker.WebUI.Admin.csproj", "{EAAEC912-8E65-4400-80E2-1AD54F3123DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

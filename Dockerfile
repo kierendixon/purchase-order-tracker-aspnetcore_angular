@@ -4,8 +4,9 @@ FROM microsoft/dotnet:2.1-sdk AS build
 # https://github.com/aspnet/Announcements/issues/298 (Migrating from aspnetcore docker repos to dotnet)
 # https://github.com/dotnet/dotnet-docker/issues/360 (Please support PowerShell core on SDK images)
 WORKDIR /nodejs
-ENV NODE_VERSION 12.18.3
-ENV NODE_DOWNLOAD_SHA 8cdacecc43c35bcfa5474c793b9e7a01835e4171264f7b13f3e57093371872e9
+# TODO: upgrade to v12
+ENV NODE_VERSION 10.15.0
+ENV NODE_DOWNLOAD_SHA f0b4ff9a74cbc0106bbf3ee7715f970101ac5b1bbe814404d7a0673d1da9f674
 RUN curl -SL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz" --output nodejs.tar.gz \
     && echo "$NODE_DOWNLOAD_SHA nodejs.tar.gz" | sha256sum -c - \
     && tar -xzf "nodejs.tar.gz" -C /usr/local --strip-components=1 \
@@ -14,7 +15,7 @@ RUN curl -SL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-lin
 
 # copy files which don't change often and then 'dotnet restore' to cache as image layers
 WORKDIR /app
-COPY *.sln ./ 
+COPY PurchaseOrderTrackerAspNet2Apps.sln ./ 
 COPY *.ruleset ./
 COPY stylecop.json ./
 COPY src/PurchaseOrderTracker.Application/*.csproj ./src/PurchaseOrderTracker.Application/ 
