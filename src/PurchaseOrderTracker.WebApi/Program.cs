@@ -21,6 +21,7 @@ namespace PurchaseOrderTracker.WebApi
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
+            // TODO prob shouldnt be using CreateDefaultBuilder
             return WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>();
         }

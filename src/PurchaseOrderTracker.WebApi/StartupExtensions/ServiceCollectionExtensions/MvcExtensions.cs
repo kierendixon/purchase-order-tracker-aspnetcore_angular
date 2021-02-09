@@ -18,7 +18,7 @@ namespace PurchaseOrderTracker.WebApi.StartupExtensions.ServiceCollectionExtensi
                                  .Build();
                 opt.Filters.Add(new AuthorizeFilter(policy));
             })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             return services;
         }
