@@ -1,12 +1,16 @@
-﻿using AutoMapper;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using PurchaseOrderTracker.Application.Cache;
 using PurchaseOrderTracker.Application.Features.Supplier.Commands;
 using PurchaseOrderTracker.Application.Identity;
+using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
 using PurchaseOrderTracker.Persistence;
 using PurchaseOrderTracker.Persistence.Cache;
 using PurchaseOrderTracker.WebApi.Identity;
@@ -33,7 +37,17 @@ namespace PurchaseOrderTracker.WebApi
             services.AddCustomMediatR();
             services.AddCustomIdentity(Configuration);
             services.AddCustomSwagger();
-            services.AddCustomMvc();
+
+            services.AddControllersWithViews()
+                .AddJsonOptions(opt =>
+                {
+                    var converters = opt.JsonSerializerOptions.Converters;
+                    converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+                    //converters.Add(new CustomDictionaryJsonConverter<int, string>());
+                    //converters.Add(new CustomDictionaryJsonConverter<int, SupplierName>());
+                    //converters.Add(new CustomDictionaryJsonConverter<int, ProductName>());
+                });
+
             services.AddMemoryCache();
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUser, CurrentUserHttpContext>();
@@ -41,9 +55,8 @@ namespace PurchaseOrderTracker.WebApi
             services.AddDbContext<PoTrackerDbContext>(opt =>
                 opt.UseSqlServer(Configuration.GetConnectionString("PoTrackerDatabase")));
 
-            // This must be configured after services.AddMvc() in ASP.Net 2.1. It is fixed in ASP.Net 2.2
-            // https://github.com/aspnet/Docs/issues/6881
-            //
+            // TODO use ApiController
+            // Note below is from when this application was using ASP.NET 2.1...
             // When the new [ApiController] attribute in ASP.Net Core 2.1 is added to a controller
             // it restricts binding of values from a single source based on a set of inference rules.
             // I.e., values are only bound from query params or only from request body, not both.
@@ -53,7 +66,7 @@ namespace PurchaseOrderTracker.WebApi
             //services.Configure<ApiBehaviorOptions>(opt => opt.SuppressInferBindingSourcesForParameters = true);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, AutoMapper.IConfigurationProvider autoMapper)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AutoMapper.IConfigurationProvider autoMapper)
         {
             autoMapper.AssertConfigurationIsValid();
 
@@ -66,8 +79,18 @@ namespace PurchaseOrderTracker.WebApi
                 app.UseHsts();
             }
 
+            app.UseRouting();
             app.UseAuthentication();
-            app.UseMvc();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints
+                    .MapControllerRoute(
+                        name: "default",
+                        pattern: "{controller}/{action=Index}/{id?}")
+                    .RequireAuthorization();
+            });
+
         }
     }
 }

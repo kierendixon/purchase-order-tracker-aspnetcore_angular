@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 
 # setup node
 # https://github.com/aspnet/Announcements/issues/298 (Migrating from aspnetcore docker repos to dotnet)
@@ -41,7 +41,7 @@ RUN dotnet publish -c Release -o out
 
 # build runtime container
 # AS runtime
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
+FROM mcr.microsoft.com/dotnet/aspnet:5.0
 WORKDIR /app
 COPY --from=build /app/src/PurchaseOrderTracker.WebApi/out ./WebApi
 COPY --from=build /app/src/PurchaseOrderTracker.WebUI.Angular/out ./WebUI

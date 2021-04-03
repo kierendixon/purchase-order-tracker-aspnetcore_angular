@@ -78,11 +78,15 @@ namespace PurchaseOrderTracker.Application.Features.Supplier.Queries
                 //    .Where(c => c.SupplierId == request.SupplierId)
                 //    .ProjectToPagedList<Result.CategoryViewModel>(_configuration, request.PageNumber, request.PageSize);
 
+                
                 var totalCategories = await _context.ProductCategory
                     .Where(c => c.SupplierId == request.SupplierId)
                     .CountAsync();
                 var paginatedCategories = await _context.ProductCategory
                     .Where(c => c.SupplierId == request.SupplierId)
+                    .OrderBy(c => c.Id)
+                    // TODO: The first paginated page of categories loads correctly but queries for 
+                    // subsequent pages return 0 product categories instead of the expected amount
                     .Take(request.PageSize)
                     .Skip((request.PageNumber - 1) * request.PageSize)
                     .ToListAsync();

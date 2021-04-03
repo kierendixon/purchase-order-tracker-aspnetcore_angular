@@ -10,7 +10,8 @@ namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder.Models
         public int? SupplierId { get; set; }
 
         [Required]
-        public OrderNo OrderNo { get; set; }
+        [StringLength(150, MinimumLength = 3)]
+        public string OrderNo { get; set; }
 
         public int? ShipmentId { get; set; }
     }

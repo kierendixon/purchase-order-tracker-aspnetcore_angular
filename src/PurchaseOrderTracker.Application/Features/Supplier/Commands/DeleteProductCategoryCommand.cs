@@ -27,6 +27,7 @@ namespace PurchaseOrderTracker.Application.Features.Supplier.Commands
                 _context = context;
             }
 
+            // TODO: don't allow category to be deleted if it is being used by a product
             protected override async Task Handle(DeleteProductCategoryCommand request, CancellationToken cancellationToken)
             {
                 var supplier = await _context.Supplier.FindAsync(request.SupplierId);

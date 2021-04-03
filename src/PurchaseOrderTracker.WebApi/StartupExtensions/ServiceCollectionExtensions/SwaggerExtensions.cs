@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace PurchaseOrderTracker.WebApi.StartupExtensions.ServiceCollectionExtensions
@@ -11,7 +12,7 @@ namespace PurchaseOrderTracker.WebApi.StartupExtensions.ServiceCollectionExtensi
         {
             services.AddSwaggerGen(opt =>
             {
-                var info = new Info
+                var info = new OpenApiInfo
                 {
                     Version = "v1",
                     Title = "Purchase Order Tracker API"

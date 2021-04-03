@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
 
-namespace PurchaseOrderTracker.Web
+namespace PurchaseOrderTracker.WebUI.Angular
 {
     public class Startup
     {
@@ -18,8 +20,14 @@ namespace PurchaseOrderTracker.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            services.AddControllersWithViews()
+                .AddJsonOptions(opt =>
+                {
+                    var converters = opt.JsonSerializerOptions.Converters;
+                    converters.Add(new CustomDictionaryJsonConverter<int, string>());
+                    converters.Add(new CustomDictionaryJsonConverter<int, SupplierName>());
+                    converters.Add(new CustomDictionaryJsonConverter<int, ProductName>());
+                })
                 .AddFeatureFolders();
 
             // In production, the Angular files will be served from this directory
@@ -29,7 +37,7 @@ namespace PurchaseOrderTracker.Web
             });
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -42,16 +50,16 @@ namespace PurchaseOrderTracker.Web
             }
 
             app.UseStaticFiles();
-            if (!env.IsDevelopment())
-            {
-                app.UseSpaStaticFiles();
-            }
+            app.UseSpaStaticFiles();
 
-            app.UseMvc(routes =>
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller}/{action=Index}/{id?}");
             });
 
             app.UseSpa(spa =>
@@ -63,7 +71,7 @@ namespace PurchaseOrderTracker.Web
                     //spa.UseAngularCliServer(npmScript: "start");
 
                     // alternatively, start the server separately and proxy requests to it
-                     spa.UseProxyToSpaDevelopmentServer("http://localhost:4201");
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4201");
                 }
             });
         }

@@ -61,8 +61,8 @@ namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder
             var command = new EditCommand(
                 purchaseOrderId.Value,
                 dto.SupplierId.Value,
-                dto.OrderNo,
-                dto.ShipmentId.Value);
+                new OrderNo(dto.OrderNo),
+                dto.ShipmentId);
 
             return await _mediator.Send(command);
         }
