@@ -28,7 +28,7 @@ namespace PurchaseOrderTracker.WebApi.Identity
 
             // guid generation is predictable and therefore not secure
             var refreshToken = Guid.NewGuid().ToString();
-            var expiresInSeconds = JwtConfig.TokenLifetimeMinutes * 60;
+            var expiresInSeconds = JwtConfig.TokenLifetimeMinutes * 2;
 
             return new JsonWebToken(serializedJwtToken, expiresInSeconds, refreshToken);
         }

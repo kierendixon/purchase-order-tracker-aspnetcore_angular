@@ -1,11 +1,17 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using PurchaseOrderTracker.Persistence.Identity;
 using PurchaseOrderTracker.WebApi.Identity;
+using PurchaseOrderTracker.WebApi.StartupExtensions.ServiceCollectionExtensions;
 
 namespace PurchaseOrderTracker.WebApi.Features.Account
 {
@@ -13,6 +19,7 @@ namespace PurchaseOrderTracker.WebApi.Features.Account
     {
         public class Command : IRequest<CommandResult>
         {
+            // TODO: move into ctor. Use separate DTO with data annotations
             [Required]
             public string UserName { get; set; }
 
@@ -22,25 +29,23 @@ namespace PurchaseOrderTracker.WebApi.Features.Account
 
         public class CommandResult
         {
-            public CommandResult(bool succeeded, JsonWebToken jwtToken = null)
+            public CommandResult(bool succeeded)
             {
                 Succeeded = succeeded;
-                JwtToken = jwtToken;
             }
 
             public bool Succeeded { get; }
-            public JsonWebToken JwtToken { get; }
         }
 
         public class CommandHandler : IRequestHandler<Command, CommandResult>
         {
             private readonly UserManager<ApplicationUser> _userManager;
-            private readonly SignInManager<ApplicationUser> _signInManager;
+            private readonly IHttpContextAccessor _httpContextAccessor;
 
-            public CommandHandler(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+            public CommandHandler(UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
             {
                 _userManager = userManager;
-                _signInManager = signInManager;
+                _httpContextAccessor = httpContextAccessor;
             }
 
             public async Task<CommandResult> Handle(Command request, CancellationToken cancellationToken)
@@ -51,31 +56,39 @@ namespace PurchaseOrderTracker.WebApi.Features.Account
                     return new CommandResult(false);
                 }
 
-                var passwordIsValid = await _userManager.CheckPasswordAsync(user, request.Password);
-                if (!passwordIsValid)
+                // TODO check if account is locked
+                // and handle reset failed access count on success
+                var result = await _userManager.CheckPasswordAsync(user, request.Password);
+
+                if (result)
                 {
-                    return new CommandResult(false);
+                    var claimsIdentity = await GenerateClaims(user);
+                    var userPrincipal = new ClaimsPrincipal(claimsIdentity);
+                    await _httpContextAccessor.HttpContext.SignInAsync(IdentityExtensions.Scheme, userPrincipal);
+
+                    return new CommandResult(true);
                 }
-
-                if (request.UserName == "basic")
-                {
-                    var result = await _signInManager.PasswordSignInAsync(request.UserName, request.Password, false, false);
-                }
-
-                // TODO to create cookies use _signInManager
-
-                // TODO: Use IdentityServer4
-                var jwtToken = JwtFactory.Create(user);
-                await SaveRefreshToken(user, jwtToken.RefreshToken, DateTime.Now.AddDays(1));
-
-                return new CommandResult(true, jwtToken);
+                return new CommandResult(result);
             }
 
-            private async Task SaveRefreshToken(ApplicationUser user, string token, DateTime expiresAt)
+            private async Task<ClaimsIdentity> GenerateClaims(ApplicationUser user)
             {
-                user.RefreshToken = token;
-                user.RefreshTokenExpiresAt = expiresAt;
-                await _userManager.UpdateAsync(user);
+                var userId = await _userManager.GetUserIdAsync(user);
+                var userName = await _userManager.GetUserNameAsync(user);
+
+                var id = new ClaimsIdentity(IdentityExtensions.Scheme);
+                id.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId));
+                id.AddClaim(new Claim(ClaimTypes.Name, userName));
+                id.AddClaim(new Claim(ClaimTypes.Role, user.IsAdmin ? "admin" : "user"));
+
+                // TODO
+                //if (_userManager.SupportsUserSecurityStamp)
+                //{
+                //    id.AddClaim(new Claim("AspNet.Identity.SecurityStamp",
+                //        await _userManager.GetSecurityStampAsync(user)));
+                //}
+
+                return id;
             }
         }
     }

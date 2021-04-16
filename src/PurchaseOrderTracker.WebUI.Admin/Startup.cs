@@ -24,6 +24,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace PurchaseOrderTracker.WebUI.Admin
 {
@@ -57,31 +58,34 @@ namespace PurchaseOrderTracker.WebUI.Admin
 
             services.AddHttpClient<PurchaseOrderTrackerHttpClient>(c =>
             {
-                c.BaseAddress = new Uri("http://localhost:8080/api/");
+                c.BaseAddress = new Uri("http://localhost:4202/api/");
                 c.DefaultRequestHeaders.Add(HeaderNames.UserAgent, _executingAssemblyName);
             }).AddHeaderPropagation();
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(opt =>
+
+
+
+            /////
+            ///
+
+            services.AddAuthentication("Cookies")
+                .AddCookie(opt =>
                 {
-                    opt.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidIssuer = "PurchaseOrderTracker.WebApi",
-                        ValidAudience = "po-tracker-web-server",
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("insecure-key-128-bits"))
-                    };
+                    opt.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+                    opt.Cookie.Name = "pot.session";
+                    opt.LoginPath = new PathString("/account");
                 });
+
+            services.AddDataProtection()
+                .SetApplicationName("SharedCookieApp");
 
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("Administrators", new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
-                    //.RequireClaim("role", "Administrators")
-                    .RequireClaim(ClaimTypes.NameIdentifier, "super")
+                    .RequireClaim(ClaimTypes.Role, "admin")
                     .Build());
-                    // new Claim(ClaimTypes.NameIdentifier, user.UserName)
             });
-
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -31,12 +31,12 @@ export default class NavBarLeft extends React.Component<Props, State> {
       <div className="nav-left p-2 h-100">
         <Collapse isOpen={this.state.collapse}>
           <Nav vertical>
-            <NavItem active>
+            {/* <NavItem active>
               <NavLink href="#">
                 <FontAwesomeIcon icon={faHome} className="mr-2" fixedWidth={true} />
                 Home
               </NavLink>
-            </NavItem>
+            </NavItem> */}
           <hr className="navbar-divider my-0" />
             <NavItem active={this.state.activeNavItem === 'Users'}>
               <NavLink href="#" onClick={() => this.handleNavSelect('Users')}>
@@ -44,12 +44,12 @@ export default class NavBarLeft extends React.Component<Props, State> {
                 Users
               </NavLink>
             </NavItem>
-            <NavItem active={this.state.activeNavItem === 'Suppliers'}>
+            {/* <NavItem active={this.state.activeNavItem === 'Suppliers'}>
               <NavLink href="#" onClick={() => this.handleNavSelect('Suppliers')}>
                 <FontAwesomeIcon icon={faBuilding} className="mr-2" fixedWidth={true} />
                 Suppliers
               </NavLink>
-            </NavItem>
+            </NavItem> */}
           </Nav>
           <hr className="navbar-divider my-0" />
           <Button color="primary" onClick={this.toggle} style={{ marginBottom: '1rem', display: 'none' }}>

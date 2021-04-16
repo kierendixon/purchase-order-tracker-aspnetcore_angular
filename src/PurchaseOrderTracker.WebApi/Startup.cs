@@ -1,7 +1,10 @@
-﻿using System.Text.Json;
+﻿using System.Security.Claims;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -43,9 +46,6 @@ namespace PurchaseOrderTracker.WebApi
                 {
                     var converters = opt.JsonSerializerOptions.Converters;
                     converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
-                    //converters.Add(new CustomDictionaryJsonConverter<int, string>());
-                    //converters.Add(new CustomDictionaryJsonConverter<int, SupplierName>());
-                    //converters.Add(new CustomDictionaryJsonConverter<int, ProductName>());
                 });
 
             services.AddMemoryCache();
@@ -64,6 +64,22 @@ namespace PurchaseOrderTracker.WebApi
             // The SuppressInferBindingSourcesForParameters option disables this behaviour.
             // https://github.com/aspnet/Mvc/issues/8111
             //services.Configure<ApiBehaviorOptions>(opt => opt.SuppressInferBindingSourcesForParameters = true);
+
+            // TODO duplicate code
+            services.AddAuthorization(options =>
+            {
+                // make constant
+                options.AddPolicy("Administrators", new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    //.RequireClaim("role", "Administrators")
+                    .RequireClaim(ClaimTypes.NameIdentifier, "super")
+                    .Build());
+                // new Claim(ClaimTypes.NameIdentifier, user.UserName)
+            });
+
+
+            services.AddDataProtection()
+                .SetApplicationName("SharedCookieApp");
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AutoMapper.IConfigurationProvider autoMapper)

@@ -1,51 +1,53 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
-using Microsoft.AspNetCore.Identity;
-using PurchaseOrderTracker.Application.Identity;
-using PurchaseOrderTracker.Domain.Exceptions;
-using PurchaseOrderTracker.Persistence.Identity;
+﻿//using System.Threading;
+//using System.Threading.Tasks;
+//using MediatR;
+//using Microsoft.AspNetCore.Identity;
+//using PurchaseOrderTracker.Application.Identity;
+//using PurchaseOrderTracker.Domain.Exceptions;
+//using PurchaseOrderTracker.Persistence.Identity;
 
-namespace PurchaseOrderTracker.WebApi.Features.Account
-{
-    public class Logout
-    {
-        public class Command : IRequest
-        {
-        }
+//namespace PurchaseOrderTracker.WebApi.Features.Account
+//{
+//    // TODO Logout or LogoutCommand?
+//    public class Logout
+//    {
+//        public class Command : IRequest
+//        {
+//        }
 
-        public class CommandHandler : AsyncRequestHandler<Command>
-        {
-            private readonly UserManager<ApplicationUser> _userManager;
-            private readonly SignInManager<ApplicationUser> _signInManager;
-            private readonly ICurrentUser _currentUser;
+//        public class CommandHandler : AsyncRequestHandler<Command>
+//        {
+//            private readonly UserManager<ApplicationUser> _userManager;
+//            private readonly SignInManager<ApplicationUser> _signInManager;
+//            private readonly ICurrentUser _currentUser;
 
-            public CommandHandler(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ICurrentUser currentUser)
-            {
-                _userManager = userManager;
-                _signInManager = signInManager;
-                _currentUser = currentUser;
-            }
+//            public CommandHandler(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ICurrentUser currentUser)
+//            {
+//                _userManager = userManager;
+//                _signInManager = signInManager;
+//                _currentUser = currentUser;
+//            }
 
-            protected override async Task Handle(Command request, CancellationToken cancellationToken)
-            {
-                var user = await _userManager.FindByNameAsync(_currentUser.Username);
+//            protected override async Task Handle(Command request, CancellationToken cancellationToken)
+//            {
+//                var user = await _userManager.FindByNameAsync(_currentUser.Username);
 
-                if (user == null)
-                {
-                    throw new PurchaseOrderTrackerException($"Cannot find user. Username={_currentUser.Username}");
-                }
+//                if (user == null)
+//                {
+//                    throw new PurchaseOrderTrackerException($"Cannot find user. Username={_currentUser.Username}");
+//                }
 
-                user.RefreshToken = null;
-                user.RefreshTokenExpiresAt = null;
+//                user.RefreshToken = null;
+//                user.RefreshTokenExpiresAt = null;
 
-                await _userManager.UpdateAsync(user);
+//                await _userManager.UpdateAsync(user);
 
-                if(_currentUser.Username == "basic")
-                {
-                    await _signInManager.SignOutAsync();
-                }
-            }
-        }
-    }
-}
+//                // TODO for testing only...
+//                if(_currentUser.Username == "basic")
+//                {
+//                    await _signInManager.SignOutAsync();
+//                }
+//            }
+//        }
+//    }
+//}

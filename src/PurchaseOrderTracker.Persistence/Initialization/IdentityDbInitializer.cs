@@ -25,6 +25,12 @@ namespace PurchaseOrderTracker.Persistence.Initialization
                 {
                     await CreateUser(userManager, BasicUserUserName, BasicUserPassword);
                     await CreateUser(userManager, SuperUserUserName, SuperUserPassword);
+
+                    // TODO temp
+                    for (var i = 0; i < 50; i++)
+                    {
+                        await CreateUser(userManager, $"TestUser{i}", $"testuser{1}");
+                    }
                 }).GetAwaiter().GetResult();
             }
         }

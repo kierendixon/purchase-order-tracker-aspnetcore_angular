@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using PurchaseOrderTracker.Persistence.Identity;
 using PurchaseOrderTracker.WebApi.Identity;
 
@@ -12,42 +12,48 @@ namespace PurchaseOrderTracker.WebApi.StartupExtensions.ServiceCollectionExtensi
 {
     public static class IdentityExtensions
     {
+        public const string Scheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
         public static IServiceCollection AddCustomIdentity(
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            
-            services.AddIdentityCore<ApplicationUser>()
-                .AddEntityFrameworkStores<Persistence.IdentityDbContext>();
-
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(opt =>
+            services.AddAuthentication(Scheme)
+                .AddCookie(opt =>
                 {
-                    opt.SaveToken = true;
-                    opt.RequireHttpsMetadata = false;
-                    opt.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidIssuer = JwtConfig.Issuer,
-                        ValidAudience = JwtConfig.Audience,
-                        IssuerSigningKey = JwtConfig.SigningKey
-                    };
-                })
-                .AddCookie()
-                .AddIdentityCookies();
+                    opt.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+                    opt.Cookie.Name = "pot.session";
 
-            services.AddScoped<SignInManager<ApplicationUser>>();
+                    opt.LoginPath = new PathString("/account"); // challenge path
+                    // TODO frontend needs to handle this when performing api calls
+                    // or for api calls use a different scheme?
+                    //opt.AccessDeniedPath = ""; // forbid path
+                    //opt.LogoutPath = ""; // where to redirect after logout
+                    
+                    //opt.Events = new CookieAuthenticationEvents
+                    //{
+                    //    // TODO 
+                    //    // default ISecurityStampValidator implementation relies on SignInManager
+                    //    OnValidatePrincipal = SecurityStampValidator.ValidatePrincipalAsync
+                    //};
+                });
 
-            //services.ConfigureApplicationCookie(options =>
-            //{
-            //    // Cookie settings
-            //    options.Cookie.HttpOnly = true;
-            //    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+            services.AddDbContext<Persistence.IdentityDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("IdentityDatabase")));
 
-            //    options.LoginPath = "/Identity/Account/Login";
-            //    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-            //    options.SlidingExpiration = true;
-            //});
+            // Add UserManager and its dependencies
+            //services.AddOptions().AddLogging();
+            services.AddScoped<UserManager<ApplicationUser>>();
+            services.AddScoped<IUserValidator<ApplicationUser>, UserValidator<ApplicationUser>>();
+            services.AddScoped<IPasswordValidator<ApplicationUser>, PasswordValidator<ApplicationUser>>();
+            services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
+            services.AddScoped<ILookupNormalizer, UpperInvariantLookupNormalizer>();
+            services.AddScoped<IdentityErrorDescriber>();
+            // TODO
+            //services.AddScoped<ISecurityStampValidator, SecurityStampValidator<ApplicationUser>>();
+            //services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AdditionalUserClaimsPrincipalFactory>();
+            //services.AddScoped<IUserConfirmation<ApplicationUser>, DefaultUserConfirmation<ApplicationUser>>();
+            services.AddScoped<IUserStore<ApplicationUser>, UserStore>();
 
             services.Configure<IdentityOptions>(options =>
             {
@@ -58,9 +64,6 @@ namespace PurchaseOrderTracker.WebApi.StartupExtensions.ServiceCollectionExtensi
                 options.Password.RequiredLength = 3;
                 options.Password.RequiredUniqueChars = 1;
             });
-
-            services.AddDbContext<Persistence.IdentityDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("IdentityDatabase")));
 
             return services;
         }

@@ -32,10 +32,11 @@ export class AuthService {
   }
 
   private handleSuccessfulLogin(token: JsonWebToken): void {
+    // TODO
     this._currentUser = {
-      token: token
+      token
     };
-    this.localStorageService.set(this._storageKey, JSON.stringify(this._currentUser));
+    //this.localStorageService.set(this._storageKey, JSON.stringify(this._currentUser));
   }
 
   public handleRefreshCommand(command: RefreshCommand): Observable<CurrentUser> {
@@ -59,7 +60,10 @@ export class AuthService {
     const that = this;
 
     return this.http.post<null>(logoutAccountUrl, {}).pipe(
-      tap(val => that.clearCurrentUser()),
+      tap(
+        val => that.clearCurrentUser(),
+        err => that.clearCurrentUser()
+      ),
       catchError((err: HttpErrorResponse) => that.handleLogoutFailure(err))
     );
   }

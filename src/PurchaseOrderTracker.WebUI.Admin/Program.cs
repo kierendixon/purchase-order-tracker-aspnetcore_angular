@@ -19,6 +19,7 @@ namespace PurchaseOrderTracker.WebUI.Admin
             CreateHostBuilder(args).Build().Run();
         }
 
+        // TODO don't use default builder
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>

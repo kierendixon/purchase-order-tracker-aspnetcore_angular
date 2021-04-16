@@ -2,7 +2,7 @@ import React from 'react';
 import './site.scss';
 import NavBarLeft from './narbar-left/navbar-left';
 import NavBarTop from './navbar-top/navbar-top';
-import UserList from '../users/users-list/users-list';
+import Users from '../users/users-list/users-list';
 
 export default class Site extends React.Component<{}, State> {
   constructor(props) {
@@ -35,7 +35,7 @@ export default class Site extends React.Component<{}, State> {
         {(() => {
           switch (this.state.content) {
             case 'Users':
-              return <UserList/>;
+              return <Users/>;
             case 'Suppliers':
               return <div>Suppliers List</div>;
             default:

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using PurchaseOrderTracker.Application.Identity;
 
-namespace PurchaseOrderTracker.WebApi.Identity
+namespace PurchaseOrderTracker.WebUI.Angular.Features.Home
 {
     public class CurrentUserHttpContext : ICurrentUser
     {
@@ -10,7 +10,6 @@ namespace PurchaseOrderTracker.WebApi.Identity
 
         public CurrentUserHttpContext(IHttpContextAccessor httpContextAccessor)
         {
-            // _httpContextAccessor.HttpContext.Sign
             _httpContextAccessor = httpContextAccessor;
         }
 

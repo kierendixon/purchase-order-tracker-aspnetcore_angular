@@ -3,11 +3,17 @@
 }
 
 .main-content {
-  background-color: #e9e7e9;
+  //background-color: #e9e7e9;
+  background-color: #ffffff;
 }
 
 div#root > .header {
   height: 30px;
   text-align: right;
   background-color: black;
+}
+
+// todo move to right scss file
+.table {
+  background-color: #ffffff;
 }

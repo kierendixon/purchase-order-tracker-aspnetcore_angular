@@ -15,70 +15,54 @@ namespace PurchaseOrderTracker.WebApi.Features.Account
         {
         }
 
-        //[HttpGet("[action]")]
-        //public async Task<string> Test()
-        //{
-        //    return "test1";
-        //}
-
-        //[HttpGet("[action]")]
-        //[Authorize(CookieAuthenticationDefaults.AuthenticationScheme)]
-        //public async Task<string> Test2()
-        //{
-        //    return "test2";
-        //}
-
-        //[HttpGet("[action]")]
-        //[AllowAnonymous]
-        //public async Task<string> Test3()
-        //{
-        //    return "test3";
-        //}
-
         [HttpPost("[action]")]
         [AllowAnonymous]
+        // TODO response codes need to be updated for cookie auth
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Login([FromBody]Login.Command command)
+        public async Task/*<IActionResult>*/ Login([FromBody]Login.Command command)
         {
             var result = await _mediator.Send(command);
 
-            if (result.Succeeded)
-            {
-                return Ok(result.JwtToken);
-            }
-            else
-            {
-                return Unauthorized();
-            }
+            //if (result.Succeeded)
+            //{
+            //    return Ok(result.JwtToken);
+            //}
+            //else
+            //{
+            //    return Unauthorized();
+            //}
+
+            
         }
 
         [HttpPost("[action]")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Logout()
         {
-            await _mediator.Send(new Logout.Command());
+            //await _mediator.Send(new Logout.Command());
 
             return Ok();
         }
 
-        [HttpPost("[action]")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Refresh([FromBody]Refresh.Command command)
-        {
-            var result = await _mediator.Send(command);
+        //TODO
+        //[HttpPost("[action]")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //public async Task<IActionResult> Refresh([FromBody]Refresh.Command command)
+        //{
+        //    var result = await _mediator.Send(command);
 
-            if (result.Succeeded)
-            {
-                return Ok(result.Token);
-            }
-            else
-            {
-                return Unauthorized();
-            }
-        }
+        //    if (result.Succeeded)
+        //    {
+        //        return Ok(result.Token);
+        //    }
+        //    else
+        //    {
+        //        return Unauthorized();
+        //    }
+        //}
     }
 }
