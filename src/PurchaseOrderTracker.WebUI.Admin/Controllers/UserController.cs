@@ -22,7 +22,7 @@ namespace PurchaseOrderTracker.WebUI.Admin.Controllers
 
         // TODO paginate
         [HttpGet]
-        [Authorize(Policy ="Administrators")]
+        [Authorize("Administrators")] // move into constant
         public async Task<string> Users()
         {
             return await _client.GetUsers();
@@ -40,14 +40,6 @@ namespace PurchaseOrderTracker.WebUI.Admin.Controllers
         {
             return await _client.CreateUser(user.Username, user.Password);
         }
-
-        [HttpGet("[action]")]
-        [Authorize("Administrators")] // why i need to specify and default not working...
-        public async Task<string> GetTwo()
-        {
-            return "authorized..." + HttpContext.User.Identity.Name;
-        }
-
 
         // todo ui validation
         public class CreateUserDto{

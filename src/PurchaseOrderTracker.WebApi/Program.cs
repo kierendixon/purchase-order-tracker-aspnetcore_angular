@@ -20,6 +20,7 @@ namespace PurchaseOrderTracker.WebApi
             host.Run();
         }
 
+        // TODO don't use default builder
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>

@@ -1,10 +1,7 @@
-﻿using System.Security.Claims;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,7 +10,6 @@ using Microsoft.Extensions.Hosting;
 using PurchaseOrderTracker.Application.Cache;
 using PurchaseOrderTracker.Application.Features.Supplier.Commands;
 using PurchaseOrderTracker.Application.Identity;
-using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
 using PurchaseOrderTracker.Persistence;
 using PurchaseOrderTracker.Persistence.Cache;
 using PurchaseOrderTracker.WebApi.Identity;
@@ -31,7 +27,7 @@ namespace PurchaseOrderTracker.WebApi
 
         public IConfiguration Configuration { get; }
 
-        // todo: add middleware to validate (and return bad request if not valid)
+        // TODO: add middleware to validate (and return bad request if not valid)
         // that mandatory headers are provided (user agent, correlation id)
         public void ConfigureServices(IServiceCollection services)
         {
@@ -64,22 +60,6 @@ namespace PurchaseOrderTracker.WebApi
             // The SuppressInferBindingSourcesForParameters option disables this behaviour.
             // https://github.com/aspnet/Mvc/issues/8111
             //services.Configure<ApiBehaviorOptions>(opt => opt.SuppressInferBindingSourcesForParameters = true);
-
-            // TODO duplicate code
-            services.AddAuthorization(options =>
-            {
-                // make constant
-                options.AddPolicy("Administrators", new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    //.RequireClaim("role", "Administrators")
-                    .RequireClaim(ClaimTypes.NameIdentifier, "super")
-                    .Build());
-                // new Claim(ClaimTypes.NameIdentifier, user.UserName)
-            });
-
-
-            services.AddDataProtection()
-                .SetApplicationName("SharedCookieApp");
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AutoMapper.IConfigurationProvider autoMapper)

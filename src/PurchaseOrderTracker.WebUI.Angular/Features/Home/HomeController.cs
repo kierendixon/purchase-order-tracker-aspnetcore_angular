@@ -1,30 +1,15 @@
 ﻿using System.Diagnostics;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using PurchaseOrderTracker.Application.Identity;
-using PurchaseOrderTracker.Domain.Exceptions;
-using PurchaseOrderTracker.Persistence.Identity;
 
 namespace PurchaseOrderTracker.Web.Features.Home
 {
     [AllowAnonymous]
     public class HomeController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly ICurrentUser _currentUser;
-
-        public HomeController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ICurrentUser currentUser)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _currentUser = currentUser;
-        }
-
         public IActionResult Index()
         {
+            // TODO is this actually used?
             return Redirect("/index.html");
         }
 
@@ -33,13 +18,6 @@ namespace PurchaseOrderTracker.Web.Features.Home
         {
             ViewData["RequestId"] = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
             return View();
-        }
-
-
-        public async Task Logout()
-        {
-            _signInManager.SignOutAsync();
-            //LocalRedirect("/");
         }
     }
 }

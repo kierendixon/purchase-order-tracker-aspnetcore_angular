@@ -7,11 +7,11 @@ const App: React.FC = () => {
   const storageService = new LocalStorageService(window.localStorage);
   const authService = new AuthService(storageService);
   
-  if (authService.currentUser?.token == null) {
-    authService.clearCurrentUser();
-    window.location.href = '/account';
-    return <div>Authentication Failed. Redirecting to Logon page...</div>;
-  }
+  // if (authService.currentUser?.token == null) {
+  //   authService.clearCurrentUser();
+  //   window.location.href = '/account';
+  //   return <div>Authentication Failed. Redirecting to Logon page...</div>;
+  // }
 
   return <Site></Site>;
 };
