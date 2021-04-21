@@ -123,9 +123,10 @@ namespace PurchaseOrderTracker.WebUI.Admin
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("Administrator", new AuthorizationPolicyBuilder()
-                    .RequireClaim(ClaimTypes.Role, "admin")
-                    .Build());
+                options.AddPolicy("Administrator",
+                    new AuthorizationPolicyBuilder()
+                        .RequireClaim(ClaimTypes.Role, "admin")
+                        .Build());
             });
 
             services.AddDataProtection()

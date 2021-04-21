@@ -16,7 +16,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
         }
 
         // TODO
-        [Authorize("Administrators")]
+        [Authorize("Administrator")]
         [HttpGet]
         //[ProducesResponseType(StatusCodes.Status200OK)]
         //[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -26,7 +26,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
         }
 
         // TODO
-        [Authorize("Administrators")]
+        [Authorize("Administrator")]
         [HttpPut]
         //[ProducesResponseType(StatusCodes.Status200OK)]
         //[ProducesResponseType(StatusCodes.Status400BadRequest)]

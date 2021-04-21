@@ -13,6 +13,8 @@ using PurchaseOrderTracker.Persistence.Identity;
 
 namespace PurchaseOrderTracker.WebApi.StartupExtensions.ServiceCollectionExtensions
 {
+    // TODO move Identity into a separate web application and use IdentityServer
+    // https://identityserver4.readthedocs.io/en/latest/
     public static class IdentityExtensions
     {
         public const string Scheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -90,9 +92,11 @@ namespace PurchaseOrderTracker.WebApi.StartupExtensions.ServiceCollectionExtensi
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("Administrator", new AuthorizationPolicyBuilder()
-                    .RequireClaim(ClaimTypes.Role, "admin")
-                    .Build());
+                options.AddPolicy("Administrator",
+                    new AuthorizationPolicyBuilder()
+                        .RequireClaim(ClaimTypes.Role, "admin")
+                        .Build()
+                );
             });
 
             services.AddDataProtection()

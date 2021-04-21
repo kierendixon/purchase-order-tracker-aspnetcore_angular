@@ -22,7 +22,7 @@ namespace PurchaseOrderTracker.WebUI.Admin.Controllers
 
         // TODO paginate
         [HttpGet]
-        [Authorize("Administrators")] // move into constant
+        [Authorize("Administrator")] // move into constant
         public async Task<string> Users()
         {
             return await _client.GetUsers();
