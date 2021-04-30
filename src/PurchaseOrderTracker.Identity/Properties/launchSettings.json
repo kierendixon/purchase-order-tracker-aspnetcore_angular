@@ -1,0 +1,27 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://host.docker.internal:56316",
+      "sslPort": 0
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "PurchaseOrderTracker.Identity": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ConnectionStrings:IdentityDatabase": "Server=127.0.0.1,1433;Database=PurchaseOrderTrackerIdentity_Angular;User id=sa;Password=PoTracker001",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": "true",
+      "applicationUrl": "http://host.docker.internal:5111"
+    }
+  }
+}

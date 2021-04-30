@@ -4,21 +4,23 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using PurchaseOrderTracker.Persistence;
-using PurchaseOrderTracker.Persistence.Initialization;
+using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
+using PurchaseOrderTracker.Identity.Persistence;
+using PurchaseOrderTracker.Identity.Persistence.Initialization;
 
-namespace PurchaseOrderTracker.WebApi
+namespace PurchaseOrderTracker.Identity
 {
     public class Program
     {
         public static void Main(string[] args)
         {
+            // TODO log if startup fails
             var host = CreateHostBuilder(args).Build();
             InitializeDatabase(host);
             host.Run();
         }
 
-        // TODO don't use default builder
+        // TODO: don't use default builder
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
@@ -35,9 +37,10 @@ namespace PurchaseOrderTracker.WebApi
 
                 try
                 {
-                    logger.LogInformation("Initializing the application database...");
-                    var poTrackerDbContext = services.GetRequiredService<PoTrackerDbContext>();
-                    PoTrackerDbInitializer.Initialize(poTrackerDbContext);
+                    logger.LogInformation("Initializing the identity database...");
+                    var context = services.GetRequiredService<IdentityDbContext>();
+                    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+                    IdentityDbInitializer.Initialize(context, userManager);
                 }
                 catch (Exception ex)
                 {

@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
-using PurchaseOrderTracker.Persistence.Identity;
+using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
 
-namespace PurchaseOrderTracker.Persistence
+namespace PurchaseOrderTracker.Identity.Persistence
 {
     // based on https://github.com/dotnet/aspnetcore/blob/main/src/Identity/EntityFrameworkCore/src/IdentityDbContext.cs
     public class IdentityDbContext : DbContext

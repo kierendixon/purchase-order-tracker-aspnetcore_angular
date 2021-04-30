@@ -1,108 +1,127 @@
-﻿using System;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using PurchaseOrderTracker.Persistence.Identity;
+﻿//using System;
+//using System.Security.Claims;
+//using System.Threading.Tasks;
+//using Microsoft.AspNetCore.Authentication.Cookies;
+//using Microsoft.AspNetCore.Authorization;
+//using Microsoft.AspNetCore.DataProtection;
+//using Microsoft.AspNetCore.Http;
+//using Microsoft.AspNetCore.Identity;
+//using Microsoft.EntityFrameworkCore;
+//using Microsoft.Extensions.Configuration;
+//using Microsoft.Extensions.DependencyInjection;
+//using Microsoft.IdentityModel.Tokens;
+//using PurchaseOrderTracker.Persistence.Identity;
 
-namespace PurchaseOrderTracker.WebApi.StartupExtensions.ServiceCollectionExtensions
-{
-    // TODO move Identity into a separate web application and use IdentityServer
-    // https://identityserver4.readthedocs.io/en/latest/
-    public static class IdentityExtensions
-    {
-        public const string Scheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//namespace PurchaseOrderTracker.WebApi.StartupExtensions.ServiceCollectionExtensions
+//{
+//    // TODO move Identity into a separate web application and use IdentityServer
+//    // https://identityserver4.readthedocs.io/en/latest/
+//    public static class IdentityExtensions
+//    {
+//        public const string Scheme = CookieAuthenticationDefaults.AuthenticationScheme;
 
-        private static readonly Action<CookieAuthenticationOptions> _configureCookies = opt =>
-        {
-            opt.ExpireTimeSpan = TimeSpan.FromMinutes(10);
-            opt.Cookie.Name = "pot.session";
+//        private static readonly Action<CookieAuthenticationOptions> _configureCookies = opt =>
+//        {
+//            opt.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+//            opt.Cookie.Name = "pot.session";
 
-            opt.Events.OnRedirectToLogin = context =>
-            {
-                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                return Task.CompletedTask;
-            };
+//            opt.Events.OnRedirectToLogin = context =>
+//            {
+//                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+//                return Task.CompletedTask;
+//            };
 
-            opt.Events.OnRedirectToAccessDenied = context =>
-            {
-                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                return Task.CompletedTask;
-            };
+//            opt.Events.OnRedirectToAccessDenied = context =>
+//            {
+//                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+//                return Task.CompletedTask;
+//            };
 
-            opt.Events.OnRedirectToLogout = context =>
-            {
-                // override default event which calls
-                // context.Response.Redirect(context.RedirectUri)
+//            opt.Events.OnRedirectToLogout = context =>
+//            {
+//                // override default event which calls
+//                // context.Response.Redirect(context.RedirectUri)
 
-                return Task.CompletedTask;
-            };
+//                return Task.CompletedTask;
+//            };
 
-            opt.Events.OnRedirectToReturnUrl = context =>
-            {
-                // override default event which calls
-                // context.Response.Redirect(context.RedirectUri)
-                return Task.CompletedTask;
-            };
+//            opt.Events.OnRedirectToReturnUrl = context =>
+//            {
+//                // override default event which calls
+//                // context.Response.Redirect(context.RedirectUri)
+//                return Task.CompletedTask;
+//            };
 
-            // TODO 
-            // default ISecurityStampValidator implementation relies on SignInManager
-            // opt.Events.OnValidatePrincipal = SecurityStampValidator.ValidatePrincipalAsync
-        };
+//            // TODO 
+//            // default ISecurityStampValidator implementation relies on SignInManager
+//            // opt.Events.OnValidatePrincipal = SecurityStampValidator.ValidatePrincipalAsync
+//        };
 
-        public static IServiceCollection AddCustomIdentity(
-            this IServiceCollection services,
-            IConfiguration configuration)
-        {
-            services.AddAuthentication(Scheme)
-                .AddCookie(_configureCookies);
+//        public static IServiceCollection AddCustomIdentity(
+//            this IServiceCollection services,
+//            IConfiguration configuration)
+//        {
+//            services.AddAuthentication(Scheme)
+//                .AddCookie(_configureCookies)
+//                .AddJwtBearer("Bearer", options =>
+//                {
+//                    options.Authority = "https://localhost:5001";
 
-            services.AddDbContext<Persistence.IdentityDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("IdentityDatabase")));
+//                    options.TokenValidationParameters = new TokenValidationParameters
+//                    {
+//                        //If you are wondering, why the above code disables audience validation, have a look
+//                        // https://identityserver4.readthedocs.io/en/latest/topics/resources.html#refresources
+//                        ValidateAudience = false
+//                    };
+//                });
 
-            // Add UserManager and its dependencies
-            //services.AddOptions().AddLogging();
-            services.AddScoped<UserManager<ApplicationUser>>();
-            services.AddScoped<IUserValidator<ApplicationUser>, UserValidator<ApplicationUser>>();
-            services.AddScoped<IPasswordValidator<ApplicationUser>, PasswordValidator<ApplicationUser>>();
-            services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
-            services.AddScoped<ILookupNormalizer, UpperInvariantLookupNormalizer>();
-            services.AddScoped<IdentityErrorDescriber>();
-            // TODO
-            //services.AddScoped<ISecurityStampValidator, SecurityStampValidator<ApplicationUser>>();
-            //services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AdditionalUserClaimsPrincipalFactory>();
-            //services.AddScoped<IUserConfirmation<ApplicationUser>, DefaultUserConfirmation<ApplicationUser>>();
-            services.AddScoped<IUserStore<ApplicationUser>, UserStore>();
+//            services.AddDbContext<Persistence.IdentityDbContext>(options =>
+//                options.UseSqlServer(configuration.GetConnectionString("IdentityDatabase")));
 
-            services.Configure<IdentityOptions>(options =>
-            {
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequiredLength = 3;
-                options.Password.RequiredUniqueChars = 1;
-            });
+//            // Add UserManager and its dependencies
+//            //services.AddOptions().AddLogging();
+//            services.AddScoped<UserManager<ApplicationUser>>();
+//            services.AddScoped<IUserValidator<ApplicationUser>, UserValidator<ApplicationUser>>();
+//            services.AddScoped<IPasswordValidator<ApplicationUser>, PasswordValidator<ApplicationUser>>();
+//            services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
+//            services.AddScoped<ILookupNormalizer, UpperInvariantLookupNormalizer>();
+//            services.AddScoped<IdentityErrorDescriber>();
+//            // TODO
+//            //services.AddScoped<ISecurityStampValidator, SecurityStampValidator<ApplicationUser>>();
+//            //services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AdditionalUserClaimsPrincipalFactory>();
+//            //services.AddScoped<IUserConfirmation<ApplicationUser>, DefaultUserConfirmation<ApplicationUser>>();
+//            services.AddScoped<IUserStore<ApplicationUser>, UserStore>();
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("Administrator",
-                    new AuthorizationPolicyBuilder()
-                        .RequireClaim(ClaimTypes.Role, "admin")
-                        .Build()
-                );
-            });
+//            services.Configure<IdentityOptions>(options =>
+//            {
+//                options.Password.RequireDigit = false;
+//                options.Password.RequireLowercase = false;
+//                options.Password.RequireNonAlphanumeric = false;
+//                options.Password.RequireUppercase = false;
+//                options.Password.RequiredLength = 3;
+//                options.Password.RequiredUniqueChars = 1;
+//            });
 
-            services.AddDataProtection()
-                .SetApplicationName("PurchaseOrderTrackerApp");
+//            services.AddAuthorization(options =>
+//            {
+//                options.AddPolicy("Administrator",
+//                    new AuthorizationPolicyBuilder()
+//                        .RequireClaim(ClaimTypes.Role, "admin")
+//                        .Build()
+//                );
 
-            return services;
-        }
-    }
-}
+//                options.AddPolicy("ApiScope", policy =>
+//                {
+//                    // TODO do we need both require auth and require claim?
+//                    policy.RequireAuthenticatedUser();
+//                    policy.RequireClaim("scope", "api1");
+//                });
+//            });
+
+//            services.AddDataProtection()
+//                .SetApplicationName("PurchaseOrderTrackerApp");
+
+//            return services;
+//        }
+//    }
+//}

@@ -4,16 +4,18 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
+using PurchaseOrderTracker.Identity.Persistence;
 
-namespace PurchaseOrderTracker.Persistence.Identity
+namespace PurchaseOrderTracker.Identity.Features.Account
 {
     // based on https://github.com/dotnet/aspnetcore/blob/main/src/Identity/Extensions.Stores/src/UserStoreBase.cs
     public class UserStore :
         IUserPasswordStore<ApplicationUser>,
         IQueryableUserStore<ApplicationUser>
-        // TODO
-        //IUserSecurityStampStore<ApplicationUser>,
-        //IUserLockoutStore<ApplicationUser>
+    // TODO
+    //IUserSecurityStampStore<ApplicationUser>,
+    //IUserLockoutStore<ApplicationUser>
     {
         public UserStore(IdentityDbContext context, IdentityErrorDescriber describer = null)
         {
@@ -181,7 +183,7 @@ namespace PurchaseOrderTracker.Persistence.Identity
             return Task.FromResult(user.PasswordHash);
         }
 
-        public Task<string> GetUserIdAsync(ApplicationUser user, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<string> GetUserIdAsync(ApplicationUser user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -192,7 +194,7 @@ namespace PurchaseOrderTracker.Persistence.Identity
             return Task.FromResult(user.Id);
         }
 
-        public Task<string> GetUserNameAsync(ApplicationUser user, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<string> GetUserNameAsync(ApplicationUser user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -203,13 +205,13 @@ namespace PurchaseOrderTracker.Persistence.Identity
             return Task.FromResult(user.UserName);
         }
 
-        public Task<bool> HasPasswordAsync(ApplicationUser user, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<bool> HasPasswordAsync(ApplicationUser user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             return Task.FromResult(user.PasswordHash != null);
         }
 
-        public Task SetUserNameAsync(ApplicationUser user, string userName, CancellationToken cancellationToken = default(CancellationToken))
+        public Task SetUserNameAsync(ApplicationUser user, string userName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();

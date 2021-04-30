@@ -1,4 +1,4 @@
-const baseApiUrl = '/api';
+const baseApiUrl = '/identity';
 
 // account
 

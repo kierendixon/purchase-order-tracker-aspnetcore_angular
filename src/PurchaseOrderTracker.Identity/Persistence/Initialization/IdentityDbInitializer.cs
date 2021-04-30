@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using PurchaseOrderTracker.Domain.Exceptions;
-using PurchaseOrderTracker.Persistence.Identity;
+using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
 
-namespace PurchaseOrderTracker.Persistence.Initialization
+namespace PurchaseOrderTracker.Identity.Persistence.Initialization
 {
     public static class IdentityDbInitializer
     {
@@ -13,6 +13,7 @@ namespace PurchaseOrderTracker.Persistence.Initialization
         private const string SuperUserUserName = "super";
         private const string SuperUserPassword = "super";
 
+        // TODO IUserManager was previously IUserManager<ApplicationUser> when using the aspnetcore identity version
         public static void Initialize(IdentityDbContext context, UserManager<ApplicationUser> userManager)
         {
             // uncomment to delete database on every startup

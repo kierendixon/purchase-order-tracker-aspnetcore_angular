@@ -30,8 +30,8 @@ namespace PurchaseOrderTracker.WebUI.Angular
 
             services.AddHttpContextAccessor();
 
-            services.AddDbContext<Persistence.IdentityDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("IdentityDatabase")));
+            //services.AddDbContext<Persistence.IdentityDbContext>(options =>
+            //    options.UseSqlServer(Configuration.GetConnectionString("IdentityDatabase")));
 
             services.AddDataProtection()
                 .SetApplicationName("PurchaseOrderTrackerApp");
@@ -52,6 +52,8 @@ namespace PurchaseOrderTracker.WebUI.Angular
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

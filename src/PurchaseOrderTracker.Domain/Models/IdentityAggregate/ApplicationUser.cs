@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PurchaseOrderTracker.Persistence.Identity
+namespace PurchaseOrderTracker.Domain.Models.IdentityAggregate
 {
     // based on https://github.com/dotnet/aspnetcore/blob/main/src/Identity/Extensions.Stores/src/IdentityUser.cs
     public class ApplicationUser

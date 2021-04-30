@@ -33,6 +33,11 @@ static_resources:
                   cluster: webapi
                   auto_host_rewrite: true
               - match:
+                  prefix: "/identity/"
+                route:
+                  cluster: identity
+                  auto_host_rewrite: true
+              - match:
                   prefix: "/admin"
                 route:
                   cluster: admin-website
@@ -75,6 +80,13 @@ static_resources:
       - socket_address:
           address: host.docker.internal
           port_value: 4202
+    - name: identity
+      connect_timeout: 0.25s
+      type: logical_dns
+      hosts:
+      - socket_address:
+          address: host.docker.internal
+          port_value: 5111
     - name: main-website
       connect_timeout: 0.25s
       type: logical_dns

@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using PurchaseOrderTracker.Persistence;
-using PurchaseOrderTracker.Persistence.Identity;
+using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
+using PurchaseOrderTracker.Identity.Persistence;
 
 namespace PurchaseOrderTracker.Application.Features.User.Commands
 {

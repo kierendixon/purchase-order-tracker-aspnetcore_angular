@@ -1,7 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using PurchaseOrderTracker.Persistence.Identity;
+using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
+using PurchaseOrderTracker.Identity.Persistence;
 using X.PagedList;
 
 namespace PurchaseOrderTracker.Application.Features.User.Queries
@@ -29,9 +30,9 @@ namespace PurchaseOrderTracker.Application.Features.User.Queries
 
         public class Handler : IRequestHandler<GetUsersQuery, Result>
         {
-            private readonly Persistence.IdentityDbContext _context;
+            private readonly IdentityDbContext _context;
 
-            public Handler(Persistence.IdentityDbContext context)
+            public Handler(IdentityDbContext context)
             {
                 _context = context;
             }

@@ -12,8 +12,6 @@ using PurchaseOrderTracker.Application.Features.Supplier.Commands;
 using PurchaseOrderTracker.Application.Identity;
 using PurchaseOrderTracker.Persistence;
 using PurchaseOrderTracker.Persistence.Cache;
-using PurchaseOrderTracker.WebApi.Identity;
-using PurchaseOrderTracker.WebApi.StartupExtensions.ApplicationBuilderExtensions;
 using PurchaseOrderTracker.WebApi.StartupExtensions.ServiceCollectionExtensions;
 
 namespace PurchaseOrderTracker.WebApi
@@ -34,7 +32,8 @@ namespace PurchaseOrderTracker.WebApi
             // Application assembly and WebApi assembly
             services.AddAutoMapper(new[] { typeof(CreateCommand), typeof(Startup) });
             services.AddCustomMediatR();
-            services.AddCustomIdentity(Configuration);
+            // TODO add authN/authZ
+            //services.AddCustomIdentity(Configuration);
             services.AddCustomSwagger();
 
             services.AddControllersWithViews()
@@ -46,7 +45,6 @@ namespace PurchaseOrderTracker.WebApi
 
             services.AddMemoryCache();
             services.AddHttpContextAccessor();
-            services.AddScoped<ICurrentUser, CurrentUserHttpContext>();
             services.AddSingleton<ICacheManager, MemoryCacheManager>();
             services.AddDbContext<PoTrackerDbContext>(opt =>
                 opt.UseSqlServer(Configuration.GetConnectionString("PoTrackerDatabase")));
@@ -87,6 +85,30 @@ namespace PurchaseOrderTracker.WebApi
                     .RequireAuthorization();
             });
 
+        }
+    }
+
+    // TODO: move here or keep in separate files??
+    public static class ServiceCollectionExtensions
+    {
+
+
+    }
+
+    public static class ApplicationBuilderExtensions
+    {
+        public static IApplicationBuilder UseCustomSwagger(this IApplicationBuilder app)
+        {
+            var swaggerSpecUrl = "/swagger/v1/swagger.json";
+            var swaggerSpecName = "Purchase Order Tracker API";
+
+            app.UseSwagger();
+            app.UseSwaggerUI(opt =>
+            {
+                opt.SwaggerEndpoint(swaggerSpecUrl, swaggerSpecName);
+            });
+
+            return app;
         }
     }
 }
