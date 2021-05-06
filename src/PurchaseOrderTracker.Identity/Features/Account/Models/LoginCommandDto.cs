@@ -4,11 +4,12 @@ namespace PurchaseOrderTracker.Identity.Features.Account.Models
 {
     public class LoginCommandDto
     {
-        // TODO add length requirements?
         [Required]
+        [MaxLength(256)]
         public string UserName { get; set; }
 
         [Required]
+        [MinLength(3)]
         public string Password { get; set; }
     }
 }

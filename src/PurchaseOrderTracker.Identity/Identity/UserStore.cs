@@ -12,10 +12,10 @@ namespace PurchaseOrderTracker.Identity.Features.Account
     // based on https://github.com/dotnet/aspnetcore/blob/main/src/Identity/Extensions.Stores/src/UserStoreBase.cs
     public class UserStore :
         IUserPasswordStore<ApplicationUser>,
-        IQueryableUserStore<ApplicationUser>
+        IQueryableUserStore<ApplicationUser>,
+        IUserLockoutStore<ApplicationUser>
     // TODO
     //IUserSecurityStampStore<ApplicationUser>,
-    //IUserLockoutStore<ApplicationUser>
     {
         public UserStore(IdentityDbContext context, IdentityErrorDescriber describer = null)
         {
@@ -222,6 +222,86 @@ namespace PurchaseOrderTracker.Identity.Features.Account
             user.UserName = userName;
             return Task.CompletedTask;
         }
+        public virtual Task<DateTimeOffset?> GetLockoutEndDateAsync(ApplicationUser user, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+            return Task.FromResult(user.LockoutEnd);
+        }
+
+        public virtual Task SetLockoutEndDateAsync(ApplicationUser user, DateTimeOffset? lockoutEnd, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+            user.LockoutEnd = lockoutEnd;
+            return Task.CompletedTask;
+        }
+
+        public virtual Task<int> IncrementAccessFailedCountAsync(ApplicationUser user, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+            user.AccessFailedCount++;
+            return Task.FromResult(user.AccessFailedCount);
+        }
+
+        public virtual Task ResetAccessFailedCountAsync(ApplicationUser user, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+            user.AccessFailedCount = 0;
+            return Task.CompletedTask;
+        }
+
+        public virtual Task<int> GetAccessFailedCountAsync(ApplicationUser user, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+            return Task.FromResult(user.AccessFailedCount);
+        }
+
+        public virtual Task<bool> GetLockoutEnabledAsync(ApplicationUser user, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+            return Task.FromResult(user.LockoutEnabled);
+        }
+
+        public virtual Task SetLockoutEnabledAsync(ApplicationUser user, bool enabled, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+            user.LockoutEnabled = enabled;
+            return Task.CompletedTask;
+        }
 
         protected void ThrowIfDisposed()
         {
@@ -235,5 +315,6 @@ namespace PurchaseOrderTracker.Identity.Features.Account
         {
             _disposed = true;
         }
+
     }
 }

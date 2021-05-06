@@ -54,7 +54,7 @@ namespace PurchaseOrderTracker.Identity.Features.Account
                         var resetAccessFailedTask = _userManager.ResetAccessFailedCountAsync(user);
 
                         await _httpContextAccessor.HttpContext.SignInAsync(
-                            IdentityExtensions.Scheme,
+                            IdentityServiceCollectionExtensions.Scheme,
                             new ClaimsPrincipal(GenerateClaims(user)));
 
                         await resetAccessFailedTask;
@@ -80,7 +80,7 @@ namespace PurchaseOrderTracker.Identity.Features.Account
                 //var userId = await _userManager.GetUserIdAsync(user);
                 //var userName = await _userManager.GetUserNameAsync(user);
 
-                var id = new ClaimsIdentity(IdentityExtensions.Scheme);
+                var id = new ClaimsIdentity(IdentityServiceCollectionExtensions.Scheme);
                 id.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
                 id.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
                 id.AddClaim(new Claim(ClaimTypes.Role, user.IsAdmin ? "admin" : "user"));

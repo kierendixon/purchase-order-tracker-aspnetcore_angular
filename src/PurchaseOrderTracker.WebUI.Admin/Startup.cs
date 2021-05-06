@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Primitives;
@@ -22,7 +21,107 @@ namespace PurchaseOrderTracker.WebUI.Admin
 {
     public class Startup
     {
+        private readonly IWebHostEnvironment _env;
+
+        public Startup(IWebHostEnvironment env)
+        {
+            _env = env;
+        }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllersWithViews();
+            services.UseCustomRazorPages();
+            services.UseCustomSpaStaticFiles(_env);
+            services.AddCustomHeaderPropagation();
+            services.AddCustomHttpClients();
+            services.AddCustomAuthentication();
+            services.AddCustomAuthorization();
+            services.UseCustomDataProtection();
+        }
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            app.UseCustomErrorHandler(env);
+            app.UseCustomHsts(env);
+            app.UseMiddleware<RequestResponseLoggingMiddleware>(); // log all requests, including static content
+            app.UseStaticFiles();
+            app.UseCustomSpaStaticFiles(_env);
+            app.UseHeaderPropagation();
+            app.UseCustomEndpoints();
+            app.UseCustomSpaFallback(_env);
+        }
+    }
+
+    public static class ServiceCollectionExtensions
+    {
         private static readonly string _executingAssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+
+        public static void UseCustomRazorPages(this IServiceCollection services)
+        {
+            services.AddRazorPages(opt =>
+            {
+                opt.RootDirectory = "/Features";
+            });
+        }
+
+        public static void UseCustomSpaStaticFiles(this IServiceCollection services, IWebHostEnvironment env)
+        {
+            if (!env.IsDevelopment())
+            {
+                services.AddSpaStaticFiles(opt =>
+                {
+                    // In production, the React files will be served from this directory
+                    opt.RootPath = "ClientApp/build"; ;
+                });
+            }
+        }
+
+
+        public static void AddCustomHeaderPropagation(this IServiceCollection services)
+        {
+            services.AddHeaderPropagation(opt =>
+            {
+                opt.Headers.Add(HeaderNames.Referer);
+                // TODO get guid from Activity class instead
+                opt.Headers.Add("X-Correlation-ID", ctx => new StringValues(Guid.NewGuid().ToString())); 
+            });
+        }
+
+        public static void UseCustomDataProtection(this IServiceCollection services)
+        {
+            services.AddDataProtection()
+                .SetApplicationName("PurchaseOrderTrackerApp");
+        }
+
+        public static void AddCustomHttpClients(this IServiceCollection services)
+        {
+            services.AddHttpClient<PurchaseOrderTrackerHttpClient>(c =>
+            {
+                c.BaseAddress = new Uri("http://localhost:4202/api/");
+                c.DefaultRequestHeaders.Add(HeaderNames.UserAgent, _executingAssemblyName);
+            }).AddHeaderPropagation();
+        }
+    }
+
+    public static class IdentityServiceCollectionExtensions
+    {
+        public static void AddCustomAuthentication(this IServiceCollection services)
+        {
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(_configureCookies);
+        }
+
+        public static void AddCustomAuthorization(this IServiceCollection services)
+        {
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Administrator",
+                    new AuthorizationPolicyBuilder()
+                        .RequireClaim(ClaimTypes.Role, "admin")
+                        .Build());
+            });
+        }
 
         private static readonly Action<CookieAuthenticationOptions> _configureCookies = opt =>
         {
@@ -88,63 +187,18 @@ namespace PurchaseOrderTracker.WebUI.Admin
             };
         };
 
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
-        public void ConfigureServices(IServiceCollection services)
-        {
-            // TODO cleanup default config
-            services.AddControllersWithViews();
-
-            // In production, the React files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/build";
-            });
-
-            services.AddHeaderPropagation(opt =>
-            {
-                opt.Headers.Add(HeaderNames.Referer);
-                opt.Headers.Add("X-Correlation-ID", ctx => new StringValues(Guid.NewGuid().ToString())); // use Activity class instead
-            });
-
-            services.AddHttpClient<PurchaseOrderTrackerHttpClient>(c =>
-            {
-                c.BaseAddress = new Uri("http://localhost:4202/api/");
-                c.DefaultRequestHeaders.Add(HeaderNames.UserAgent, _executingAssemblyName);
-            }).AddHeaderPropagation();
-
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(_configureCookies);
-
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("Administrator",
-                    new AuthorizationPolicyBuilder()
-                        .RequireClaim(ClaimTypes.Role, "admin")
-                        .Build());
-            });
-
-            services.AddDataProtection()
-                .SetApplicationName("PurchaseOrderTrackerApp");
-        }   
-
         // can alternatively check the request path: context.Request.Path.StartsWithSegments("/api")
         private static bool IsAjaxRequest(HttpRequest request)
         {
             return !(request.Headers.TryGetValue("accept", out var acceptValues)
                 && acceptValues.Contains("text/html", StringComparer.InvariantCultureIgnoreCase));
         }
+    }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public static class ApplicationBuilderExtensions
+    {
+        public static void UseCustomErrorHandler(this IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // this must be set before other middleware in the Configure() method so that all requests are logged (including static content)
-            app.UseMiddleware<RequestResponseLoggingMiddleware>();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -152,34 +206,53 @@ namespace PurchaseOrderTracker.WebUI.Admin
             else
             {
                 app.UseExceptionHandler("/Error");
+            }
+        }
+
+        public static void UseCustomHsts(this IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (!env.IsDevelopment())
+            {
+                // TODO
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+        }
 
-            app.UseStaticFiles();
-            app.UseSpaStaticFiles();
+        public static void UseCustomSpaStaticFiles(this IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (!env.IsDevelopment())
+            {
+                app.UseSpaStaticFiles();
+            }
+        }
 
-            app.UseHeaderPropagation();
-
+        public static void UseCustomEndpoints(this IApplicationBuilder app)
+        {
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
+                    pattern: "/{controller}/{action}/{id?}"); // TODO id?
+                endpoints.MapRazorPages();
             });
+        }
 
-            app.UseSpa(spa =>
+        public static void UseCustomSpaFallback(this IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            // only used for development purposes. in production, SPA files will be served by UseSpaStaticFiles()
+            if (env.IsDevelopment())
             {
-                spa.Options.SourcePath = "ClientApp";
-
-                if (env.IsDevelopment())
+                app.UseSpa(spa =>
                 {
+                    spa.Options.SourcePath = "ClientApp";
                     spa.UseReactDevelopmentServer(npmScript: "start");
-                }
-            });
+                });
+            }
         }
     }
 }

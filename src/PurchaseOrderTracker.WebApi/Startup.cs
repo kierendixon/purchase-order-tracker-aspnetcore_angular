@@ -1,32 +1,37 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Linq;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using PurchaseOrderTracker.Application.Cache;
 using PurchaseOrderTracker.Application.Features.Supplier.Commands;
-using PurchaseOrderTracker.Application.Identity;
+using PurchaseOrderTracker.Cache;
 using PurchaseOrderTracker.Persistence;
 using PurchaseOrderTracker.Persistence.Cache;
-using PurchaseOrderTracker.WebApi.StartupExtensions.ServiceCollectionExtensions;
+using PurchaseOrderTracker.WebApi.Logging;
+using PurchaseOrderTracker.WebApi.Mvc;
 
 namespace PurchaseOrderTracker.WebApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env )
         {
             Configuration = configuration;
+            _env = env;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
+        private IWebHostEnvironment _env { get; }
 
-        // TODO: add middleware to validate (and return bad request if not valid)
-        // that mandatory headers are provided (user agent, correlation id)
         public void ConfigureServices(IServiceCollection services)
         {
             // Application assembly and WebApi assembly
@@ -60,55 +65,127 @@ namespace PurchaseOrderTracker.WebApi
             //services.Configure<ApiBehaviorOptions>(opt => opt.SuppressInferBindingSourcesForParameters = true);
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AutoMapper.IConfigurationProvider autoMapper)
+        public void Configure(IApplicationBuilder app, AutoMapper.IConfigurationProvider autoMapper)
         {
             autoMapper.AssertConfigurationIsValid();
 
-            if (env.IsDevelopment())
+            app.UseCustomErrorHandler(_env);
+            app.UseCustomHsts(_env);
+            app.UseMiddleware<EnforceRequestHeadersMiddleware>();
+            app.UseCustomEndpoints();
+            app.UseCustomSwagger(_env);
+        }
+    }
+
+    public static class ServiceCollectionExtensions
+    {
+        public static void AddCustomMediatR(this IServiceCollection services)
+        {
+            services.AddMediatR(new[]
             {
-                app.UseCustomSwagger();
+                typeof(Startup), // WebApi assembly
+                typeof(CreateCommand) // Application assembly
+            });
+
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(MediatrElapsedTimeBehaviour<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(MediatrQueryTrackingBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(MediatrCacheBehaviour<,>));
+        }
+
+        public static void AddCustomSwagger(this IServiceCollection services)
+        {
+            services.AddSwaggerGen(opt =>
+            {
+                var info = new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Purchase Order Tracker API"
+                };
+                opt.SwaggerDoc("v1", info);
+
+                opt.CustomOperationIds(apiDesc =>
+                    apiDesc.ActionDescriptor.RouteValues["controller"]
+                    + "_"
+                    + (apiDesc.ActionDescriptor.RouteValues["action"] ?? string.Empty)
+                    + apiDesc.HttpMethod);
+
+                // Fix names for generic types
+                // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/752#issuecomment-467817189
+                opt.CustomSchemaIds(type => DefaultSchemaIdSelector(type));
+            });
+        }
+
+        private static string DefaultSchemaIdSelector(Type modelType)
+        {
+            string schemaId;
+
+            if (!modelType.IsConstructedGenericType)
+            {
+                schemaId = modelType.FullName;
             }
             else
             {
-                app.UseHsts();
+                var prefix = modelType.GetGenericArguments()
+                    .Select(genericArg => DefaultSchemaIdSelector(genericArg))
+                    .Aggregate((previous, current) => previous + current);
+
+                schemaId = prefix + modelType.Name.Split('`').First();
             }
 
+            return schemaId.Replace("+", string.Empty);
+        }
+    }
+
+    public static class ApplicationBuilderExtensions
+    {
+        public static void UseCustomSwagger(this IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                var swaggerSpecUrl = "/swagger/v1/swagger.json";
+                var swaggerSpecName = "Purchase Order Tracker API";
+
+                app.UseSwagger();
+                app.UseSwaggerUI(opt =>
+                {
+                    opt.SwaggerEndpoint(swaggerSpecUrl, swaggerSpecName);
+                });
+            }
+        }
+
+        public static void UseCustomErrorHandler(this IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+        }
+
+        public static void UseCustomHsts(this IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (!env.IsDevelopment())
+            {
+                // TODO
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
+        }
+
+        public static void UseCustomEndpoints(this IApplicationBuilder app)
+        {
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
+                // TODO
+                // are controller route mappings required? or do webapi attributes remove the need for this?
                 endpoints
                     .MapControllerRoute(
                         name: "default",
                         pattern: "{controller}/{action=Index}/{id?}")
                     .RequireAuthorization();
             });
-
-        }
-    }
-
-    // TODO: move here or keep in separate files??
-    public static class ServiceCollectionExtensions
-    {
-
-
-    }
-
-    public static class ApplicationBuilderExtensions
-    {
-        public static IApplicationBuilder UseCustomSwagger(this IApplicationBuilder app)
-        {
-            var swaggerSpecUrl = "/swagger/v1/swagger.json";
-            var swaggerSpecName = "Purchase Order Tracker API";
-
-            app.UseSwagger();
-            app.UseSwaggerUI(opt =>
-            {
-                opt.SwaggerEndpoint(swaggerSpecUrl, swaggerSpecName);
-            });
-
-            return app;
         }
     }
 }

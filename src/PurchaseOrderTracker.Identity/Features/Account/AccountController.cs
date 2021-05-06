@@ -12,7 +12,7 @@ using PurchaseOrderTracker.Identity.Features.Account.Models;
 namespace PurchaseOrderTracker.WebApi.Features.Account
 {
     [ApiController]
-    [Route("identity/[controller]")]
+    [Route("identity/[controller]")] // TODO
     public class AccountController : BaseController
     {
         public AccountController(IMediator mediator, IMapper mapper)
@@ -20,7 +20,7 @@ namespace PurchaseOrderTracker.WebApi.Features.Account
         {
         }
 
-        // TODO add throttling. configure in envoy?
+        // TODO configure rate limiting in envoy for this route
         [HttpPost("[action]")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -43,7 +43,7 @@ namespace PurchaseOrderTracker.WebApi.Features.Account
         {
             if (User.Identity.IsAuthenticated)
             {
-                await HttpContext.SignOutAsync(IdentityExtensions.Scheme);
+                await HttpContext.SignOutAsync(IdentityServiceCollectionExtensions.Scheme);
             }
 
             return Ok();
