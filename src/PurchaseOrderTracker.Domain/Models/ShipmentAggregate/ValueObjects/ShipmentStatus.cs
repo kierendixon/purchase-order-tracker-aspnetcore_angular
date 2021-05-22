@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Dynamic;
-using System.Resources;
 using Stateless;
 
 // To export to DOT graph format use 'string graph = state.ToDotGraph();'

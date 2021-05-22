@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate.ValueObjects;
-using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
 
 namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder.Models
 {

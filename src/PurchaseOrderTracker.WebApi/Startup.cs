@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using AutoMapper;
 using MediatR;
@@ -23,7 +21,7 @@ namespace PurchaseOrderTracker.WebApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IWebHostEnvironment env )
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
             _env = env;
@@ -34,11 +32,11 @@ namespace PurchaseOrderTracker.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Application assembly and WebApi assembly
-            services.AddAutoMapper(new[] { typeof(CreateCommand), typeof(Startup) });
+            services.AddAutoMapper(new[] {
+                typeof(Startup), // WebApi assembly
+                typeof(CreateCommand) // Application assembly
+            });
             services.AddCustomMediatR();
-            // TODO add authN/authZ
-            //services.AddCustomIdentity(Configuration);
             services.AddCustomSwagger();
 
             services.AddControllersWithViews()
@@ -98,31 +96,7 @@ namespace PurchaseOrderTracker.WebApi
                     + "_"
                     + (apiDesc.ActionDescriptor.RouteValues["action"] ?? string.Empty)
                     + apiDesc.HttpMethod);
-
-                // Fix names for generic types
-                // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/752#issuecomment-467817189
-                opt.CustomSchemaIds(type => DefaultSchemaIdSelector(type));
             });
-        }
-
-        private static string DefaultSchemaIdSelector(Type modelType)
-        {
-            string schemaId;
-
-            if (!modelType.IsConstructedGenericType)
-            {
-                schemaId = modelType.FullName;
-            }
-            else
-            {
-                var prefix = modelType.GetGenericArguments()
-                    .Select(genericArg => DefaultSchemaIdSelector(genericArg))
-                    .Aggregate((previous, current) => previous + current);
-
-                schemaId = prefix + modelType.Name.Split('`').First();
-            }
-
-            return schemaId.Replace("+", string.Empty);
         }
     }
 
@@ -161,16 +135,16 @@ namespace PurchaseOrderTracker.WebApi
             }
         }
 
+        // TODO add authentication/authorization
         public static void UseCustomEndpoints(this IApplicationBuilder app)
         {
             app.UseRouting();
-            // TODO
             //app.UseAuthentication();
             //app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                    //.RequireAuthorization();
+                //.RequireAuthorization();
             });
         }
     }

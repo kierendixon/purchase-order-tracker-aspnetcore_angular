@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using PurchaseOrderTracker.Application.Cache;
 using PurchaseOrderTracker.Persistence;
 using static PurchaseOrderTracker.Application.Features.Reporting.Queries.ShipmentsSummaryQuery;

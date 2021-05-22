@@ -5,7 +5,6 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PurchaseOrderTracker.Application.Features.Shipment;
 using PurchaseOrderTracker.Application.Features.Shipment.Commands;
 using PurchaseOrderTracker.Application.Features.Shipment.Queries;
 using PurchaseOrderTracker.Application.PagedList;

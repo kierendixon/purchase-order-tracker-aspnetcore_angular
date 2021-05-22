@@ -3,7 +3,6 @@ using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate;
 using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate.ValueObjects;
 using PurchaseOrderTracker.Domain.Models.ShipmentAggregate;
 using PurchaseOrderTracker.Domain.Models.SupplierAggregate;
-using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
 
 namespace PurchaseOrderTracker.Domain.Tests.Builders
 {

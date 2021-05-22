@@ -6,8 +6,6 @@ using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PurchaseOrderTracker.Application.PagedList;
-using PurchaseOrderTracker.Domain.Models.SupplierAggregate;
-using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
 using PurchaseOrderTracker.Persistence;
 using X.PagedList;
 using static PurchaseOrderTracker.Application.Features.Supplier.Queries.EditProductCategoriesQuery;

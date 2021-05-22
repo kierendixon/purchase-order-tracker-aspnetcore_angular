@@ -1,10 +1,5 @@
-﻿using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using PurchaseOrderTracker.Application.Features.User.Commands;
-using PurchaseOrderTracker.Application.Features.User.Queries;
 
 namespace PurchaseOrderTracker.Identity.Features.Account
 {

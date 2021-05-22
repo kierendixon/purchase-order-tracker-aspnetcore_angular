@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
 using PurchaseOrderTracker.Persistence;
 using static PurchaseOrderTracker.Application.Features.PurchaseOrder.Queries.EditQuery;
 
