@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace PurchaseOrderTracker.WebUI.Admin.Controllers
 {
+    // TODO change return types to IActionResult
     // set authentication requirements TODO
     [ApiController]
     [Route("admin/users")] // TODO shuld be just "users"

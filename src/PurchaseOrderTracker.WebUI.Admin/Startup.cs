@@ -61,7 +61,7 @@ namespace PurchaseOrderTracker.WebUI.Admin
         {
             services.AddRazorPages(opt =>
             {
-                opt.RootDirectory = "/Features";
+                opt.RootDirectory = "/Features"; // TODO error page is still in Pages folder
             });
         }
 
@@ -71,7 +71,6 @@ namespace PurchaseOrderTracker.WebUI.Admin
             {
                 services.AddSpaStaticFiles(opt =>
                 {
-                    // In production, the React files will be served from this directory
                     opt.RootPath = "ClientApp/build"; ;
                 });
             }
@@ -235,9 +234,7 @@ namespace PurchaseOrderTracker.WebUI.Admin
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "/{controller}/{action}/{id?}"); // TODO id?
+                endpoints.MapControllers();
                 endpoints.MapRazorPages();
             });
         }

@@ -72,12 +72,7 @@ namespace PurchaseOrderTracker.Identity
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
-                // TODO 
-                //  "{controller}/{action=Index}/{id?}"
-                endpoints
-                    .MapControllerRoute(
-                        name: "default",
-                        pattern: "{controller}/{action}");
+                endpoints.MapControllers();
             });
         }
     }

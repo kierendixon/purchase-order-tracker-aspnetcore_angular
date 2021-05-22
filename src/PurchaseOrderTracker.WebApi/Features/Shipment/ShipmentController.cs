@@ -66,7 +66,7 @@ namespace PurchaseOrderTracker.WebApi.Features.Shipment
         [HttpPost("{shipmentId}/status")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> UpdateStatus(
+        public async Task<ActionResult> UpdateStatus( // TODO should this be ActionResult or IActionResult? Check if swagger docs changes
             [FromRoute] int shipmentId,
             EditStatusCommandDto dto)
         {

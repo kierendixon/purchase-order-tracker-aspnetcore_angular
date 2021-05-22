@@ -53,16 +53,6 @@ namespace PurchaseOrderTracker.WebApi
             services.AddSingleton<ICacheManager, MemoryCacheManager>();
             services.AddDbContext<PoTrackerDbContext>(opt =>
                 opt.UseSqlServer(Configuration.GetConnectionString("PoTrackerDatabase")));
-
-            // TODO use ApiController
-            // Note below is from when this application was using ASP.NET 2.1...
-            // When the new [ApiController] attribute in ASP.Net Core 2.1 is added to a controller
-            // it restricts binding of values from a single source based on a set of inference rules.
-            // I.e., values are only bound from query params or only from request body, not both.
-            // This breaks binding of values to mediator Command/Query objects which expect values from multiple sources
-            // The SuppressInferBindingSourcesForParameters option disables this behaviour.
-            // https://github.com/aspnet/Mvc/issues/8111
-            //services.Configure<ApiBehaviorOptions>(opt => opt.SuppressInferBindingSourcesForParameters = true);
         }
 
         public void Configure(IApplicationBuilder app, AutoMapper.IConfigurationProvider autoMapper)
@@ -174,17 +164,13 @@ namespace PurchaseOrderTracker.WebApi
         public static void UseCustomEndpoints(this IApplicationBuilder app)
         {
             app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
+            // TODO
+            //app.UseAuthentication();
+            //app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
-                // TODO
-                // are controller route mappings required? or do webapi attributes remove the need for this?
-                endpoints
-                    .MapControllerRoute(
-                        name: "default",
-                        pattern: "{controller}/{action=Index}/{id?}")
-                    .RequireAuthorization();
+                endpoints.MapControllers();
+                    //.RequireAuthorization();
             });
         }
     }

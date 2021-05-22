@@ -191,3 +191,18 @@ csharp_space_between_parentheses = false
 csharp_prefer_braces = true:silent
 csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = true
+
+
+#
+#
+#
+# TODO: migrate analyzer config from ruleset files to editorconfig
+
+// https://github.com/dotnet/aspnetcore/blob/52eff90fbcfca39b7eb58baad597df6a99a542b0/src/Mvc/Mvc.Api.Analyzers/src/ApiDiagnosticDescriptors.cs
+# API1000: Action returns undeclared status code.
+dotnet_diagnostic.API1000.severity = error
+
+dotnet_diagnostic.API1001.severity = error
+// disable because it complains about [ProducesResponseType(StatusCodes.Status400BadRequest)] attribute on controllers which are decorated with [ApiController]
+dotnet_diagnostic.API1002.severity = none
+dotnet_diagnostic.API1003.severity = error

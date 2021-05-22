@@ -16,7 +16,7 @@ namespace PurchaseOrderTracker.Identity.Features
     //
     //
     //
-    [Route("api/[controller]")]
+    [Route("api/[controller]")] // TODO: is this needed?
     [ApiController]
     public abstract class BaseController : ControllerBase
     {

@@ -103,9 +103,7 @@ namespace PurchaseOrderTracker.WebUI.Angular
             app.UseEndpoints(endpoints =>
             {
                 // TODO controllers are not currently used but I need to change /api direct access to bff pattern
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "/{controller}/{action}/{id?}");
+                endpoints.MapControllers();
                 endpoints.MapRazorPages();
             });
         }

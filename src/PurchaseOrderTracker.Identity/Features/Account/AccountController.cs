@@ -11,8 +11,8 @@ using PurchaseOrderTracker.Identity.Features.Account.Models;
 
 namespace PurchaseOrderTracker.WebApi.Features.Account
 {
-    [ApiController]
-    [Route("identity/[controller]")] // TODO
+    //[ApiController] already in base
+    [Route("identity/[controller]/[action]")] // TODO shouldnt need identity prefix. Set this in basecontroller?
     public class AccountController : BaseController
     {
         public AccountController(IMediator mediator, IMapper mapper)
@@ -21,7 +21,7 @@ namespace PurchaseOrderTracker.WebApi.Features.Account
         }
 
         // TODO configure rate limiting in envoy for this route
-        [HttpPost("[action]")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -37,7 +37,7 @@ namespace PurchaseOrderTracker.WebApi.Features.Account
             return Unauthorized();
         }
 
-        [HttpPost("[action]")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Logout()
         {
