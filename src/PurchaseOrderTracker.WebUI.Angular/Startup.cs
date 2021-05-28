@@ -1,17 +1,23 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PurchaseOrderTracker.AspNet.Common.HealthChecks;
 
 namespace PurchaseOrderTracker.WebUI.Angular
 {
     public class Startup
     {
         private readonly IWebHostEnvironment _env;
+        private readonly IConfiguration _configuration;
 
-        public Startup(IWebHostEnvironment env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
+            _configuration = configuration;
             _env = env;
         }
 
@@ -21,6 +27,7 @@ namespace PurchaseOrderTracker.WebUI.Angular
             services.AddControllersWithViews();
             services.UseCustomSpaStaticFiles(_env);
             services.UseCustomDataProtection();
+            services.UseCustomHealthChecks(_configuration);
         }
 
         public void Configure(IApplicationBuilder app)
@@ -59,6 +66,12 @@ namespace PurchaseOrderTracker.WebUI.Angular
         {
             services.AddDataProtection()
                 .SetApplicationName("PurchaseOrderTrackerApp");
+        }
+
+        public static void UseCustomHealthChecks(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddHealthChecks()
+                .AddUrlGroup(new Uri(configuration["WebApi.Url"] + "/health"), "PurchaseOrderTracker.WebApi", timeout: TimeSpan.FromSeconds(5));
         }
     }
 
@@ -105,6 +118,10 @@ namespace PurchaseOrderTracker.WebUI.Angular
                 // TODO controllers are not currently used but I need to change /api direct access to bff pattern
                 endpoints.MapControllers();
                 endpoints.MapRazorPages();
+                endpoints.MapHealthChecks("/health", new HealthCheckOptions()
+                {
+                    ResponseWriter = HealthCheckResponseWriter.WriteDetailedJsonResponse
+                });
             });
         }
 

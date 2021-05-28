@@ -3,12 +3,12 @@ using MediatR;
 
 namespace PurchaseOrderTracker.Identity.Features.Account
 {
-    public class UserController : BaseController
+    public class UserController// : BaseController
     {
-        public UserController(IMediator mediator, IMapper mapper)
-            : base(mediator, mapper)
-        {
-        }
+        //public UserController(IMediator mediator, IMapper mapper)
+        //    : base(mediator, mapper)
+        //{
+        //}
 
         //[ProducesResponseType(StatusCodes.Status200OK)]
         //[ProducesResponseType(StatusCodes.Status400BadRequest)]

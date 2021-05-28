@@ -16,28 +16,34 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using PurchaseOrderTracker.AspNet.Common.HealthChecks;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Configuration;
 
 namespace PurchaseOrderTracker.WebUI.Admin
 {
     public class Startup
     {
         private readonly IWebHostEnvironment _env;
+        private readonly IConfiguration _configuration;
 
-        public Startup(IWebHostEnvironment env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
+            _configuration = configuration;
             _env = env;
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.UseCustomRazorPages();
-            services.UseCustomSpaStaticFiles(_env);
+            services.AddCustomRazorPages();
+            services.AddCustomSpaStaticFiles(_env);
             services.AddCustomHeaderPropagation();
             services.AddCustomHttpClients();
             services.AddCustomAuthentication();
             services.AddCustomAuthorization();
-            services.UseCustomDataProtection();
+            services.AddCustomDataProtection();
+            services.AddCustomHealthChecks(_configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -57,7 +63,7 @@ namespace PurchaseOrderTracker.WebUI.Admin
     {
         private static readonly string _executingAssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
 
-        public static void UseCustomRazorPages(this IServiceCollection services)
+        public static void AddCustomRazorPages(this IServiceCollection services)
         {
             services.AddRazorPages(opt =>
             {
@@ -65,7 +71,7 @@ namespace PurchaseOrderTracker.WebUI.Admin
             });
         }
 
-        public static void UseCustomSpaStaticFiles(this IServiceCollection services, IWebHostEnvironment env)
+        public static void AddCustomSpaStaticFiles(this IServiceCollection services, IWebHostEnvironment env)
         {
             if (!env.IsDevelopment())
             {
@@ -76,18 +82,17 @@ namespace PurchaseOrderTracker.WebUI.Admin
             }
         }
 
-
         public static void AddCustomHeaderPropagation(this IServiceCollection services)
         {
             services.AddHeaderPropagation(opt =>
             {
                 opt.Headers.Add(HeaderNames.Referer);
-                // TODO get guid from Activity class instead
+                // TODO get guid from Activity class instead?
                 opt.Headers.Add("X-Correlation-ID", ctx => new StringValues(Guid.NewGuid().ToString())); 
             });
         }
 
-        public static void UseCustomDataProtection(this IServiceCollection services)
+        public static void AddCustomDataProtection(this IServiceCollection services)
         {
             services.AddDataProtection()
                 .SetApplicationName("PurchaseOrderTrackerApp");
@@ -100,6 +105,12 @@ namespace PurchaseOrderTracker.WebUI.Admin
                 c.BaseAddress = new Uri("http://localhost:4202/api/");
                 c.DefaultRequestHeaders.Add(HeaderNames.UserAgent, _executingAssemblyName);
             }).AddHeaderPropagation();
+        }
+
+        public static void AddCustomHealthChecks(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddHealthChecks()
+                .AddUrlGroup(new Uri(configuration["WebApi.Url"] + "/health"), "PurchaseOrderTracker.WebApi", timeout: TimeSpan.FromSeconds(5));
         }
     }
 
@@ -236,6 +247,10 @@ namespace PurchaseOrderTracker.WebUI.Admin
             {
                 endpoints.MapControllers();
                 endpoints.MapRazorPages();
+                endpoints.MapHealthChecks("/health", new HealthCheckOptions()
+                {
+                    ResponseWriter = HealthCheckResponseWriter.WriteDetailedJsonResponse
+                });
             });
         }
 

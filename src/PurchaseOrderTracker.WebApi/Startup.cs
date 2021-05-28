@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,7 +12,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using PurchaseOrderTracker.Application.Cache;
 using PurchaseOrderTracker.Application.Features.Supplier.Commands;
+using PurchaseOrderTracker.AspNet.Common.HealthChecks;
 using PurchaseOrderTracker.Cache;
+using PurchaseOrderTracker.Identity.Persistence;
 using PurchaseOrderTracker.Persistence;
 using PurchaseOrderTracker.Persistence.Cache;
 using PurchaseOrderTracker.WebApi.Logging;
@@ -21,6 +24,7 @@ namespace PurchaseOrderTracker.WebApi
 {
     public class Startup
     {
+
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
@@ -38,19 +42,16 @@ namespace PurchaseOrderTracker.WebApi
             });
             services.AddCustomMediatR();
             services.AddCustomSwagger();
-
-            services.AddControllersWithViews()
-                .AddJsonOptions(opt =>
-                {
-                    var converters = opt.JsonSerializerOptions.Converters;
-                    converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
-                });
-
-            services.AddMemoryCache();
+            services.AddCustomControllers();
             services.AddHttpContextAccessor();
+            services.AddCustomHealthChecks();
+            services.AddMemoryCache();
             services.AddSingleton<ICacheManager, MemoryCacheManager>();
+
             services.AddDbContext<PoTrackerDbContext>(opt =>
                 opt.UseSqlServer(Configuration.GetConnectionString("PoTrackerDatabase")));
+            services.AddDbContext<IdentityDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("IdentityDatabase")));
         }
 
         public void Configure(IApplicationBuilder app, AutoMapper.IConfigurationProvider autoMapper)
@@ -96,7 +97,27 @@ namespace PurchaseOrderTracker.WebApi
                     + "_"
                     + (apiDesc.ActionDescriptor.RouteValues["action"] ?? string.Empty)
                     + apiDesc.HttpMethod);
+
+                // disambiguate types with the same name
+                opt.CustomSchemaIds(type => type.FullName);
             });
+        }
+
+        public static void AddCustomControllers(this IServiceCollection services)
+        {
+            services.AddControllersWithViews()
+                .AddJsonOptions(opt =>
+                {
+                    var converters = opt.JsonSerializerOptions.Converters;
+                    converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+                });
+        }
+
+        public static void AddCustomHealthChecks(this IServiceCollection services)
+        {
+            services.AddHealthChecks()
+                .AddDbContextCheck<PoTrackerDbContext>()
+                .AddDbContextCheck<IdentityDbContext>();
         }
     }
 
@@ -145,6 +166,12 @@ namespace PurchaseOrderTracker.WebApi
             {
                 endpoints.MapControllers();
                 //.RequireAuthorization();
+                endpoints.MapHealthChecks("/health",
+                    new HealthCheckOptions()
+                    {
+                        ResponseWriter = HealthCheckResponseWriter.WriteDetailedJsonResponse
+                    }
+                );
             });
         }
     }

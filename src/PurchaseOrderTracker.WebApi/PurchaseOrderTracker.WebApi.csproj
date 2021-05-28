@@ -15,11 +15,13 @@
     <PackageReference Include="MediatR" Version="5.1.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="5.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="5.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\PurchaseOrderTracker.Application\PurchaseOrderTracker.Application.csproj" />
+    <ProjectReference Include="..\PurchaseOrderTracker.AspNet.Common\PurchaseOrderTracker.AspNet.Common.csproj" />
     <ProjectReference Include="..\PurchaseOrderTracker.Cache\PurchaseOrderTracker.Cache.csproj" />
     <ProjectReference Include="..\PurchaseOrderTracker.Domain\PurchaseOrderTracker.Domain.csproj" />
   </ItemGroup>

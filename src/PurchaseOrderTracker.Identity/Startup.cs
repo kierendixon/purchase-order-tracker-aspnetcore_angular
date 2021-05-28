@@ -17,6 +17,8 @@ using MediatR;
 using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
 using PurchaseOrderTracker.Identity.Features.Account;
 using PurchaseOrderTracker.Identity.Persistence;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using PurchaseOrderTracker.AspNet.Common.HealthChecks;
 
 namespace PurchaseOrderTracker.Identity
 {
@@ -36,6 +38,7 @@ namespace PurchaseOrderTracker.Identity
             services.AddControllers();
             services.AddCustomIdentity(Configuration);
             services.AddHttpContextAccessor();
+            services.AddCustomHealthChecks();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -46,34 +49,12 @@ namespace PurchaseOrderTracker.Identity
         }
     }
 
-    public static class ApplicationBuilderExtensions
+    public static class ServiceCollectionExtensions
     {
-        public static void UseCustomErrorHandler(this IApplicationBuilder app, IWebHostEnvironment env)
+        public static void AddCustomHealthChecks(this IServiceCollection services)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-        }
-
-        public static void UseCustomHsts(this IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (!env.IsDevelopment())
-            {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-        }
-
-        public static void UseCustomEndpoints(this IApplicationBuilder app)
-        {
-            app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            services.AddHealthChecks()
+                .AddDbContextCheck<IdentityDbContext>();
         }
     }
 
@@ -132,7 +113,6 @@ namespace PurchaseOrderTracker.Identity
                 options.UseSqlServer(configuration.GetConnectionString("IdentityDatabase")));
 
             // Add UserManager and its dependencies
-            //services.AddOptions().AddLogging();
             services.AddScoped<UserManager<ApplicationUser>>();
             services.AddScoped<IUserValidator<ApplicationUser>, UserValidator<ApplicationUser>>();
             services.AddScoped<IPasswordValidator<ApplicationUser>, PasswordValidator<ApplicationUser>>();
@@ -180,6 +160,41 @@ namespace PurchaseOrderTracker.Identity
                 .SetApplicationName("PurchaseOrderTrackerApp");
 
             return services;
+        }
+    }
+
+    public static class ApplicationBuilderExtensions
+    {
+        public static void UseCustomErrorHandler(this IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+        }
+
+        public static void UseCustomHsts(this IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (!env.IsDevelopment())
+            {
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
+        }
+
+        public static void UseCustomEndpoints(this IApplicationBuilder app)
+        {
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health", new HealthCheckOptions()
+                {
+                    ResponseWriter = HealthCheckResponseWriter.WriteDetailedJsonResponse
+                });
+            });
         }
     }
 }

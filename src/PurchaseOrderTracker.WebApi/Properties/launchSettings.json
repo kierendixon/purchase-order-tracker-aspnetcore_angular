@@ -13,6 +13,7 @@
       "commandName": "Project",
       "environmentVariables": {
         "ConnectionStrings:PoTrackerDatabase": "Server=127.0.0.1,1433;Database=PurchaseOrderTracker_Angular;User id=sa;Password=PoTracker001",
+        "ConnectionStrings:IdentityDatabase": "Server=127.0.0.1,1433;Database=PurchaseOrderTrackerIdentity_Angular;User id=sa;Password=PoTracker001",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "http://host.docker.internal:4202"

@@ -11,7 +11,15 @@ using PurchaseOrderTracker.Identity.Features.Account.Models;
 
 namespace PurchaseOrderTracker.WebApi.Features.Account
 {
-    //[ApiController] already in base
+    
+
+
+
+
+
+
+
+
     [Route("identity/[controller]/[action]")] // TODO shouldnt need identity prefix. Set this in basecontroller?
     public class AccountController : BaseController
     {

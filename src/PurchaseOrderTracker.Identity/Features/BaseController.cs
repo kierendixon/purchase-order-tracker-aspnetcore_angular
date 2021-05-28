@@ -4,19 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace PurchaseOrderTracker.Identity.Features
 {
-
-
-
-
-
-
-
-
-
-    //
-    //
-    //
-    [Route("api/[controller]")] // TODO: is this needed?
+    [Route("[controller]")]
     [ApiController]
     public abstract class BaseController : ControllerBase
     {
