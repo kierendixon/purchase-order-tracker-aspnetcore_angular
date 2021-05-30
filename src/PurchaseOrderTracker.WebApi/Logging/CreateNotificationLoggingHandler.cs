@@ -17,7 +17,7 @@ namespace PurchaseOrderTracker.WebApi.Logging
 
         public Task Handle(ICreateNotification notification, CancellationToken cancellationToken)
         {
-            _logger.LogDebug($"Created object. Type={notification.GetEntityType().Name} Id={notification.GetEntityId()}");
+            _logger.LogDebug($"Created {notification.GetEntityType().Name} Id={notification.GetEntityId()}");
             return Task.CompletedTask;
         }
     }

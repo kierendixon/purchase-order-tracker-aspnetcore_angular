@@ -21,7 +21,7 @@ namespace PurchaseOrderTracker.WebApi.Logging
             var response = await next();
             watch.Stop();
 
-            _logger.LogTrace($"Type={request.GetType().FullName} ElapsedMs={watch.ElapsedMilliseconds}");
+            _logger.LogTrace("Type={fullName} ElapsedMs={elapsedMilliseconds}", request.GetType().FullName, watch.ElapsedMilliseconds);
 
             return response;
         }

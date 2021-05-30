@@ -23,12 +23,12 @@ namespace PurchaseOrderTracker.WebUI.Admin.Logging
 
         public async Task InvokeAsync(HttpContext context)
         {
-            _logger.LogDebug("{0}", BuildLogMessage(context));
+            _logger.LogDebug(BuildLogMessage(context).ToString());
 
             await _next(context);
         }
 
-        // if logging the Body, use RecycleableMemoryStream
+        // use RecycleableMemoryStream if logging the request Body
         // https://stackoverflow.com/questions/43403941/how-to-read-asp-net-core-response-body/52328142
         private static StringBuilder BuildLogMessage(HttpContext context)
         {

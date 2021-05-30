@@ -2,6 +2,8 @@
 
 namespace PurchaseOrderTracker.WebApi.Features.Supplier.Models
 {
+    // TODO: convert DTO's to C# 9 RecordTypes ?
+    // https://docs.microsoft.com/en-us/aspnet/core/mvc/models/model-binding?view=aspnetcore-5.0#constructor-binding-and-record-types
     public class CreateCommandDto
     {
         [Required]

@@ -58,6 +58,8 @@ namespace PurchaseOrderTracker.Application.Features.Supplier.Commands
             {
                 try
                 {
+                    // TODO await after executing all database queries
+                    // TODO check if returned supplier and category are found
                     var supplier = await _context.Supplier.FindAsync(request.SupplierId);
                     var category = _context.ProductCategory.Single(c => c.Id == request.CategoryId);
                     var product = _mapper.Map<Product>(request);

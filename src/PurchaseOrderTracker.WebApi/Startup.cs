@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using PurchaseOrderTracker.Application.Cache;
 using PurchaseOrderTracker.Application.Features.Supplier.Commands;
+using PurchaseOrderTracker.Application.Logging;
 using PurchaseOrderTracker.AspNet.Common.HealthChecks;
 using PurchaseOrderTracker.Cache;
 using PurchaseOrderTracker.Identity.Persistence;
@@ -76,6 +77,7 @@ namespace PurchaseOrderTracker.WebApi
                 typeof(CreateCommand) // Application assembly
             });
 
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(MediatrLoggingBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(MediatrElapsedTimeBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(MediatrQueryTrackingBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(MediatrCacheBehaviour<,>));
