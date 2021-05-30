@@ -13,7 +13,6 @@ namespace PurchaseOrderTracker.Identity.Persistence.Initialization
         private const string SuperUserUserName = "super";
         private const string SuperUserPassword = "super";
 
-        // TODO IUserManager was previously IUserManager<ApplicationUser> when using the aspnetcore identity version
         public static void Initialize(IdentityDbContext context, UserManager<ApplicationUser> userManager)
         {
             // uncomment to delete database on every startup
@@ -22,17 +21,17 @@ namespace PurchaseOrderTracker.Identity.Persistence.Initialization
 
             if (created)
             {
-                Task.Run(async () =>
-                {
-                    await CreateUser(userManager, BasicUserUserName, BasicUserPassword);
-                    await CreateUser(userManager, SuperUserUserName, SuperUserPassword);
+                var tasks = new Task[52];
 
-                    // TODO temp
-                    for (var i = 0; i < 50; i++)
-                    {
-                        await CreateUser(userManager, $"TestUser{i}", $"testuser{1}");
-                    }
-                }).GetAwaiter().GetResult();
+                tasks[0] = CreateUser(userManager, BasicUserUserName, BasicUserPassword);
+                tasks[1] = CreateUser(userManager, SuperUserUserName, SuperUserPassword);
+
+                for (var i = 0; i < 50; i++)
+                {
+                    tasks[i + 2] = CreateUser(userManager, $"TestUser{i}", $"testuser{1}");
+                }
+
+                Task.WaitAll(tasks);
             }
         }
 

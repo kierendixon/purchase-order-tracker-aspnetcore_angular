@@ -17,7 +17,6 @@ namespace PurchaseOrderTracker.WebApi
             host.Run();
         }
 
-        // TODO don't use default builder
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
@@ -40,6 +39,7 @@ namespace PurchaseOrderTracker.WebApi
                 }
                 catch (Exception ex)
                 {
+                    // TODO if can't connect to database wait and try again
                     logger.LogError(ex, "An error occurred initializing the database");
                     throw;
                 }

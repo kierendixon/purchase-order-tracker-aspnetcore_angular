@@ -14,13 +14,11 @@ namespace PurchaseOrderTracker.Identity
     {
         public static void Main(string[] args)
         {
-            // TODO log if startup fails
             var host = CreateHostBuilder(args).Build();
             InitializeDatabase(host);
             host.Run();
         }
 
-        // TODO: don't use default builder
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>

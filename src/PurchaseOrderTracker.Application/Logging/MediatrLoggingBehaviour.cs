@@ -16,11 +16,7 @@ namespace PurchaseOrderTracker.Application.Logging
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
-            // don't call request.ToString() if Debug logging is disabled
-            if (_logger.IsEnabled(LogLevel.Debug))
-            { 
-                _logger.LogDebug("{fullName} [{toString}]", request.GetType().FullName, request.ToString());
-            };
+            _logger.LogDebug("{fullName} [{toString}]", request.GetType().FullName, request);
 
             return await next();
         }
