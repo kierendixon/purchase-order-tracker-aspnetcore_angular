@@ -11,32 +11,32 @@ namespace PurchaseOrderTracker.WebUI.Admin.Controllers
     [Route("admin/users")] // TODO shuld be just "users"
     public class UserController : ControllerBase
     {
-        private PurchaseOrderTrackerHttpClient _client;
+        private PurchaseOrderTrackerHttpClient _httpClient;
 
-        public UserController(PurchaseOrderTrackerHttpClient client)
+        public UserController(PurchaseOrderTrackerHttpClient httpClient)
         {
-            _client = client;
+            _httpClient = httpClient;
         }
 
         // TODO paginate
         [HttpGet]
         [Authorize("Administrator")] // move into constant
-        public async Task<string> Users()
+        public async Task<ActionResult<string>> Users()
         {
-            return await _client.GetUsers();
+            return await _httpClient.GetUsers();
         }
 
         [HttpGet("{userId}")]
-        public async Task<string> Get(string userId)
+        public async Task<ActionResult<string>> Get(string userId)
         {
             return userId;
             //return await _client.GetUsers();
         }
 
         [HttpPut]
-        public async Task<string> Create(CreateUserDto user)
+        public async Task<ActionResult<string>> Create(CreateUserDto user)
         {
-            return await _client.CreateUser(user.Username, user.Password);
+            return await _httpClient.CreateUser(user.Username, user.Password);
         }
 
         // todo ui validation

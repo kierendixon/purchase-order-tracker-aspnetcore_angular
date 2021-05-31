@@ -36,7 +36,7 @@ namespace PurchaseOrderTracker.WebApi.Features.Supplier
         [HttpGet("{supplierId?}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<EditQuery.Result>> Get([FromRoute]int? supplierId)
+        public async Task<ActionResult<EditQuery.Result>> Get(int? supplierId)
         {
             return await _mediator.Send(new EditQuery(supplierId));
         }
@@ -63,7 +63,7 @@ namespace PurchaseOrderTracker.WebApi.Features.Supplier
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<CreateProductCommand.Result>> CreateProduct(
-            [FromRoute]int supplierId,
+            int supplierId,
             CreateProductCommandDto dto)
         {
             var command = new CreateProductCommand(supplierId, new ProductCode(dto.ProdCode),
@@ -77,10 +77,10 @@ namespace PurchaseOrderTracker.WebApi.Features.Supplier
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<EditProductsQuery.Result>> GetProducts(
-            [FromQuery]int? pageNumber,
-            [FromQuery]int? pageSize,
-            [FromQuery][StringLength(20, MinimumLength = 3)]string productCodeFilter,
-            [FromRoute]int supplierId)
+            int? pageNumber,
+            int? pageSize,
+            [StringLength(20, MinimumLength = 3)]string productCodeFilter,
+            int supplierId)
         {
             var query = new EditProductsQuery(
                 pageSize,
@@ -94,8 +94,8 @@ namespace PurchaseOrderTracker.WebApi.Features.Supplier
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<EditProductCommand.Result>> EditProduct(
-            [FromRoute]int supplierId,
-            [FromRoute]int productId,
+            int supplierId,
+            int productId,
             EditProductCommandDto dto)
         {
             var command = new EditProductCommand(supplierId, productId, new ProductCode(dto.ProdCode),
@@ -107,8 +107,8 @@ namespace PurchaseOrderTracker.WebApi.Features.Supplier
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<DeleteProductCommand.Result>> DeleteProduct(
-            [FromRoute]int supplierId,
-            [FromRoute]int productId)
+            int supplierId,
+            int productId)
         {
             return await _mediator.Send(new DeleteProductCommand(supplierId, productId));
         }
@@ -117,9 +117,9 @@ namespace PurchaseOrderTracker.WebApi.Features.Supplier
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<EditProductCategoriesQuery.Result>> EditProductCategories(
-            [FromQuery]int? pageNumber,
-            [FromQuery]int? pageSize,
-            [FromRoute]int supplierId)
+            int? pageNumber,
+            int? pageSize,
+            int supplierId)
         {
             var query = new EditProductCategoriesQuery(pageSize, pageNumber, supplierId);
             var result = await _mediator.Send(query);
@@ -131,7 +131,7 @@ namespace PurchaseOrderTracker.WebApi.Features.Supplier
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateProductCategory(
-            [FromRoute]int supplierId,
+            int supplierId,
             CreateProductCategoryCommandDto dto)
         {
             var command = new CreateProductCategoryCommand(supplierId, new ProductCategoryName(dto.Name));
@@ -140,12 +140,12 @@ namespace PurchaseOrderTracker.WebApi.Features.Supplier
             return StatusCode(StatusCodes.Status201Created);
         }
 
-        [HttpPost("{supplierId}/product-categories/{CategoryId}")]
+        [HttpPost("{supplierId}/product-categories/{categoryId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> EditProductCategory(
-            [FromRoute]int supplierId,
-            [FromRoute]int categoryId,
+            int supplierId,
+            int categoryId,
             EditProductCategoryCommandDto dto)
         {
             var command = new EditProductCategoryCommand(supplierId, categoryId, new ProductCategoryName(dto.Name));
@@ -154,12 +154,12 @@ namespace PurchaseOrderTracker.WebApi.Features.Supplier
             return Ok();
         }
 
-        [HttpDelete("{supplierId}/product-categories/{CategoryId}")]
+        [HttpDelete("{supplierId}/product-categories/{categoryId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteProductCategory(
-            [FromRoute]int supplierId,
-            [FromRoute]int categoryId)
+            int supplierId,
+            int categoryId)
         {
             await _mediator.Send(new DeleteProductCategoryCommand(supplierId, categoryId));
             return Ok();
@@ -169,9 +169,9 @@ namespace PurchaseOrderTracker.WebApi.Features.Supplier
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<InquiryQueryResultDto>> Inquiry(
-            [FromQuery] int? pageSize,
-            [FromQuery] int? pageNumber,
-            [FromQuery][Required] InquiryQuery.QueryType? queryType)
+            int? pageSize,
+            int? pageNumber,
+            [Required] InquiryQuery.QueryType? queryType)
         {
             var result = await _mediator.Send(new InquiryQuery(pageSize, pageNumber, queryType.Value));
             var pagedListDto = new StaticPagedList<SupplierDto>(

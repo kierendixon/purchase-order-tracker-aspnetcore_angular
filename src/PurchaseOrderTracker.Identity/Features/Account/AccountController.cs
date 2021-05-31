@@ -11,15 +11,6 @@ using PurchaseOrderTracker.Identity.Features.Account.Models;
 
 namespace PurchaseOrderTracker.WebApi.Features.Account
 {
-    
-
-
-
-
-
-
-
-
     [Route("identity/[controller]/[action]")] // TODO shouldnt need identity prefix. Set this in basecontroller?
     public class AccountController : BaseController
     {
@@ -33,7 +24,7 @@ namespace PurchaseOrderTracker.WebApi.Features.Account
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Login([FromBody] LoginCommandDto dto)
+        public async Task<IActionResult> Login(LoginCommandDto dto)
         {
             var result = await _mediator.Send(new LoginCommand(dto.UserName, dto.Password));
 

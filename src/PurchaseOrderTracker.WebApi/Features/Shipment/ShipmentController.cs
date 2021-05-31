@@ -35,7 +35,7 @@ namespace PurchaseOrderTracker.WebApi.Features.Shipment
         [HttpGet("{shipmentId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<EditQuery.Result>> Get([FromRoute]int shipmentId)
+        public async Task<ActionResult<EditQuery.Result>> Get(int shipmentId)
         {
             return await _mediator.Send(new EditQuery(shipmentId));
         }
@@ -44,7 +44,7 @@ namespace PurchaseOrderTracker.WebApi.Features.Shipment
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<EditQuery.Result>> Update(
-            [FromRoute]int shipmentId,
+            int shipmentId,
             EditCommandDto dto)
         {
             var command = new EditCommand(shipmentId, dto.TrackingId, dto.Company, dto.EstimatedArrivalDate,
@@ -66,7 +66,7 @@ namespace PurchaseOrderTracker.WebApi.Features.Shipment
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> UpdateStatus( // TODO should this be ActionResult or IActionResult? Check if swagger docs changes
-            [FromRoute] int shipmentId,
+            int shipmentId,
             EditStatusCommandDto dto)
         {
             var command = new EditStatusCommand(shipmentId, dto.UpdatedStatus.Value);
@@ -79,9 +79,9 @@ namespace PurchaseOrderTracker.WebApi.Features.Shipment
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<InquiryQueryResultDto>> Inquiry(
-            [FromQuery] int? pageSize,
-            [FromQuery] int? pageNumber,
-            [FromQuery][Required] InquiryQuery.QueryType? queryType)
+            int? pageSize,
+            int? pageNumber,
+            [Required] InquiryQuery.QueryType? queryType)
         {
             var result = await _mediator.Send(new InquiryQuery(pageSize, pageNumber, queryType.Value));
             var pagedListDto = new StaticPagedList<ShipmentDto>(
