@@ -1,10 +1,8 @@
 import React from 'react';
-import './navbar-left.scss';
+import './NavBarLeft.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faHome, faBuilding } from '@fortawesome/free-solid-svg-icons';
 import { Nav, NavItem, NavLink, Collapse, Button } from 'reactstrap';
-
-
 
 // rename to sidebar?
 export default class NavBarLeft extends React.Component<Props, State> {
@@ -17,12 +15,12 @@ export default class NavBarLeft extends React.Component<Props, State> {
 
   //TODO
   toggle() {
-    this.setState(state => ({ collapse: !state.collapse }));
+    this.setState((state) => ({ collapse: !state.collapse }));
   }
 
   handleNavSelect(nav) {
     console.log('nav: ' + nav);
-    this.setState(state => ({ ...this.state, activeNavItem: nav }));
+    this.setState((state) => ({ ...this.state, activeNavItem: nav }));
     this.props.clickHandler(nav);
   }
 
@@ -37,7 +35,7 @@ export default class NavBarLeft extends React.Component<Props, State> {
                 Home
               </NavLink>
             </NavItem> */}
-          <hr className="navbar-divider my-0" />
+            <hr className="navbar-divider my-0" />
             <NavItem active={this.state.activeNavItem === 'Users'}>
               <NavLink href="#" onClick={() => this.handleNavSelect('Users')}>
                 <FontAwesomeIcon icon={faUser} className="mr-2" fixedWidth={true} />

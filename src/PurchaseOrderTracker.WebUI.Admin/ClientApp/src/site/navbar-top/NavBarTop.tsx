@@ -1,8 +1,8 @@
 import React from 'react';
-import './navbar-top.scss';
+import './NavBarTop.scss';
 import logo from './logo.png';
 // import { Button } from 'reactstrap';
-import Logout from '../logout/logout';
+import Logout from '../logout/Logout';
 
 export default class NavBarTop extends React.Component {
   render() {

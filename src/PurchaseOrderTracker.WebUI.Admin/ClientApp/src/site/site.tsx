@@ -1,52 +1,51 @@
 import React from 'react';
-import './site.scss';
-import NavBarLeft from './narbar-left/navbar-left';
-import NavBarTop from './navbar-top/navbar-top';
-import Users from '../users/users-list/users-list';
+import './Site.scss';
+import NavBarLeft from './narbar-left/NavBarLeft';
+import NavBarTop from './navbar-top/NavBarTop';
+import Users from './users-list/UsersList';
+
+interface State {
+  content: string | null;
+}
 
 export default class Site extends React.Component<{}, State> {
-  constructor(props) {
+  constructor(props: {}) {
     super(props);
     this.state = {
-      content: null
+      content: null,
     };
   }
 
   render() {
     return (
       <>
-      <NavBarTop/>
-      <div className="d-flex align-items-stretch site">
-        <NavBarLeft clickHandler={this.navClickHandler}></NavBarLeft>
-        {this.renderMainContent()}
-      </div>
+        <NavBarTop />
+        <div className="d-flex align-items-stretch site">
+          <NavBarLeft clickHandler={this.onNavBarClick}></NavBarLeft>
+          {this.renderMainContent()}
+        </div>
       </>
     );
   }
 
-  navClickHandler = (nav: string) =>
-  {
-    this.setState({content: nav});
-  }
+  onNavBarClick = (nav: string) => {
+    this.setState({ content: nav });
+  };
 
-  renderMainContent = () =>
-    (
-      <div className="main-content flex-fill">
-        {(() => {
-          switch (this.state.content) {
-            case 'Users':
-              return <Users/>;
-            case 'Suppliers':
-              return <div>Suppliers List</div>;
-            default:
-              return <div>default</div>//null;
-          }
-        })()}
-      </div>
-    );
-
-}
-
-interface State {
-  content: string | null;
+  // todo use path to select the component
+  // window.location.pathname => /search
+  renderMainContent = () => (
+    <div className="main-content flex-fill">
+      {(() => {
+        switch (this.state.content) {
+          case 'Users':
+            return <Users />;
+          case 'Suppliers':
+            return <div>Suppliers List</div>;
+          default:
+            return <div>default</div>; //null;
+        }
+      })()}
+    </div>
+  );
 }

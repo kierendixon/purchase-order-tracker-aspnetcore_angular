@@ -8,7 +8,6 @@ import { BasePage } from '../../test/base-page';
 import { TestHelper } from '../../test/test-helper';
 import { AppModule } from '../app.module';
 import { mainSiteUrl, returnUrlQueryParam } from '../config/routing.config';
-import { LocalStorageService } from '../infrastructure/browser-storage/local-storage.service';
 import { AuthService, LoginCommand } from '../infrastructure/security/auth.service';
 import { AccountComponent } from './account.component';
 
@@ -19,7 +18,7 @@ describe('AccountComponent', () => {
 
   beforeEach(async(() => {
     const httpClientSpy: HttpClient = jasmine.createSpyObj('HttpClient', ['get']);
-    testAuthService = new AuthService(httpClientSpy, new LocalStorageService(new FakeBrowserStorage()));
+    testAuthService = new AuthService(httpClientSpy);
 
     TestBed.configureTestingModule({
       imports: [AppModule],

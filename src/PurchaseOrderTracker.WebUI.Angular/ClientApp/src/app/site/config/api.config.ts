@@ -104,3 +104,7 @@ export function purchaseOrderLineItemsUrl(purchaseOrderId: number): string {
   const compiled = _.template(basePurchaseOrderUrl + '/${purchaseOrderId}/line-items');
   return compiled({ purchaseOrderId });
 }
+
+// user
+
+export const baseUserUrl = `/user`;

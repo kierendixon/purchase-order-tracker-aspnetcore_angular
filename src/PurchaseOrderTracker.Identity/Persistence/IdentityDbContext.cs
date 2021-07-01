@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
 
+// TODO: read from a separate database to WebAPI?
+// use direct database queries instead of EF for Identity?
 namespace PurchaseOrderTracker.Identity.Persistence
 {
     // based on https://github.com/dotnet/aspnetcore/blob/main/src/Identity/EntityFrameworkCore/src/IdentityDbContext.cs

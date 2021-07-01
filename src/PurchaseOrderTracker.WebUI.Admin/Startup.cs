@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
-using PurchaseOrderTracker.WebUI.Admin.Controllers;
 using PurchaseOrderTracker.WebUI.Admin.Logging;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
@@ -39,7 +38,7 @@ namespace PurchaseOrderTracker.WebUI.Admin
             services.AddCustomRazorPages();
             services.AddCustomSpaStaticFiles(_env);
             services.AddCustomHeaderPropagation();
-            services.AddCustomHttpClients();
+            //services.AddCustomHttpClients();
             services.AddCustomAuthentication();
             services.AddCustomAuthorization();
             services.AddCustomDataProtection();
@@ -50,12 +49,40 @@ namespace PurchaseOrderTracker.WebUI.Admin
         {
             app.UseCustomErrorHandler(env);
             app.UseCustomHsts(env);
-            app.UseMiddleware<RequestResponseLoggingMiddleware>(); // log all requests, including static content
+            app.UseMiddleware<RequestResponseLoggingMiddleware>(); // log all requests including static content
             app.UseStaticFiles();
-            app.UseCustomSpaStaticFiles(_env);
             app.UseHeaderPropagation();
             app.UseCustomEndpoints();
+
+            //TODO
+            app.Use(async (context, next) =>
+            {
+                if (!context.User.Identity.IsAuthenticated)
+                {
+                    var uri = "/account";
+                    // TODO Angular SPA performs a local redirect instead of back to this app
+                    //if (context.Request.Path.HasValue)
+                    //{
+                    //    uri = QueryHelpers.AddQueryString(uri, "returnUrl", context.Request.Path);
+                    //}
+
+                    context.Response.Redirect(uri);
+                    //await context.ChallengeAsync("oidc");
+                }
+                // TODO check against existing policy instead of defining it again AddCustomAuthorization()
+                else if (context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role && c.Value == "admin") != null)
+                {
+                    await next();
+                }
+                else
+                {
+                    // authenticated but not admin
+                    context.Response.Redirect("/main-site");
+                }
+            });
+
             app.UseCustomSpaFallback(_env);
+            app.UseCustomSpaStaticFiles(_env);
         }
     }
 
@@ -98,14 +125,14 @@ namespace PurchaseOrderTracker.WebUI.Admin
                 .SetApplicationName("PurchaseOrderTrackerApp");
         }
 
-        public static void AddCustomHttpClients(this IServiceCollection services)
-        {
-            services.AddHttpClient<PurchaseOrderTrackerHttpClient>(c =>
-            {
-                c.BaseAddress = new Uri("http://localhost:4202/api/");
-                c.DefaultRequestHeaders.Add(HeaderNames.UserAgent, _executingAssemblyName);
-            }).AddHeaderPropagation();
-        }
+        //public static void AddCustomHttpClients(this IServiceCollection services)
+        //{
+        //    services.AddHttpClient<PurchaseOrderTrackerHttpClient>(c =>
+        //    {
+        //        c.BaseAddress = new Uri("http://localhost:4202/api/");
+        //        c.DefaultRequestHeaders.Add(HeaderNames.UserAgent, _executingAssemblyName);
+        //    }).AddHeaderPropagation();
+        //}
 
         public static void AddCustomHealthChecks(this IServiceCollection services, IConfiguration configuration)
         {

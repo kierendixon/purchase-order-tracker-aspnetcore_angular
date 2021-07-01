@@ -1,33 +1,44 @@
-﻿using AutoMapper;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using PurchaseOrderTracker.Application.Features.User.Commands;
+using PurchaseOrderTracker.Application.Features.User.Queries;
 
-namespace PurchaseOrderTracker.Identity.Features.Account
+namespace PurchaseOrderTracker.WebApi.Features.User
 {
-    public class UserController// : BaseController
+    [Authorize(RoleAdministrator)]
+    public class UserController : BaseController
     {
-        //public UserController(IMediator mediator, IMapper mapper)
-        //    : base(mediator, mapper)
-        //{
-        //}
+        // todo
+        public const string RoleAdministrator = "administrator";
 
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        // TODO
-        //[Authorize("ApiScope", AuthenticationSchemes = "Bearer")]
-        //[HttpGet]
-        //public async Task<ActionResult<GetUsersQuery.Result>> Get(int pageSize)
-        //{
-        //    return await _mediator.Send(new GetUsersQuery(pageSize, null));
-        //}
+        public UserController(IMediator mediator, IMapper mapper)
+            : base(mediator, mapper)
+        {
+        }
 
-        // TODO
-        //[Authorize("ApiScope", AuthenticationSchemes = "Bearer")]
-        //[HttpPut]
-        ////[ProducesResponseType(StatusCodes.Status200OK)]
-        ////[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //public async Task<ActionResult<CreateCommand.Result>> Create([FromBody] CreateCommand command)
-        //{
-        //    return await _mediator.Send(command);
-        //}
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpGet]
+        public async Task<ActionResult<GetUsersQuery.Result>> Get(
+            [Required][Range(1,20)] int? pageSize,
+            string filter,
+            int page = 1)
+        {
+            return await _mediator.Send(new GetUsersQuery(pageSize, filter, page));
+        }
+
+       [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CreateCommand.Result>> Create([FromBody] CreateCommand command)
+        {
+            // Todo map to RPC error response format?
+            return await _mediator.Send(command);
+        }
     }
 }

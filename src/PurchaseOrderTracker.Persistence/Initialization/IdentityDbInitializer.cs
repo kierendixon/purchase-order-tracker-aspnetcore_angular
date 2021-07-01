@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using PurchaseOrderTracker.Domain.Exceptions;
 using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
+using PurchaseOrderTracker.Persistence;
+using PurchaseOrderTracker.Persistence.Initialization;
 
 namespace PurchaseOrderTracker.Identity.Persistence.Initialization
 {

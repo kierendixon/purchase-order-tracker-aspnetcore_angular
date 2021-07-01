@@ -4,7 +4,7 @@ using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
 // TODO namespace & duplicate code
 // TODO probably don't need to use EntityFramework for this database because not much data is required
 // and only a read operation is performed
-namespace PurchaseOrderTracker.Identity.Persistence
+namespace PurchaseOrderTracker.Persistence
 {
     // based on https://github.com/dotnet/aspnetcore/blob/main/src/Identity/EntityFrameworkCore/src/IdentityDbContext.cs
     public class IdentityDbContext : DbContext

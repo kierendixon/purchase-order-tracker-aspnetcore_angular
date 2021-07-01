@@ -1,51 +1,63 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿//using System.ComponentModel.DataAnnotations;
+//using System.Linq;
+//using System.Security.Claims;
+//using System.Threading.Tasks;
+//using Microsoft.AspNetCore.Authorization;
+//using Microsoft.AspNetCore.Mvc;
 
-namespace PurchaseOrderTracker.WebUI.Admin.Controllers
-{
-    // TODO change return types to IActionResult
-    // set authentication requirements TODO
-    [ApiController]
-    [Route("admin/users")] // TODO shuld be just "users"
-    public class UserController : ControllerBase
-    {
-        private PurchaseOrderTrackerHttpClient _httpClient;
+//namespace PurchaseOrderTracker.WebUI.Admin.Controllers
+//{
+//    // TODO change return types to IActionResult
+//    // set authentication requirements TODO
+//    [ApiController]
+//        [Authorize]
+//    [Route("admin/user")] // TODO shuld be just "users"
+//    public class UserController : ControllerBase
+//    {
+//        private PurchaseOrderTrackerHttpClient _httpClient;
 
-        public UserController(PurchaseOrderTrackerHttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
+//        public UserController(PurchaseOrderTrackerHttpClient httpClient)
+//        {
+//            _httpClient = httpClient;
+//        }
 
-        // TODO paginate
-        [HttpGet]
-        [Authorize("Administrator")] // move into constant
-        public async Task<ActionResult<string>> Users()
-        {
-            return await _httpClient.GetUsers();
-        }
+//        // don't really need this. if any api call from the frontend returns 401 unauthorized then redirect user to /account page
+//        // this handles non-admin user as well as session timeout
+//        [Route("currentUser")]
+//        public ActionResult GetUser()
+//        {
+//            var role = HttpContext.User.Claims.First(c => c.Type == ClaimTypes.Role).Value;
+//            return role == "admin" ? Ok() : Unauthorized();
+//        }
 
-        [HttpGet("{userId}")]
-        public async Task<ActionResult<string>> Get(string userId)
-        {
-            return userId;
-            //return await _client.GetUsers();
-        }
+//        // TODO paginate
+//        [HttpGet]
+//        [Authorize("Administrator")] // move into constant
+//        public async Task<ActionResult<string>> Users()
+//        {
+//            return await _httpClient.GetUsers();
+//        }
 
-        [HttpPut]
-        public async Task<ActionResult<string>> Create(CreateUserDto user)
-        {
-            return await _httpClient.CreateUser(user.Username, user.Password);
-        }
+//        [HttpGet("{userId}")]
+//        public async Task<ActionResult<string>> Get(string userId)
+//        {
+//            return userId;
+//            //return await _client.GetUsers();
+//        }
 
-        // todo ui validation
-        public class CreateUserDto{
-            [Required]
-            public string Username { get; set; }
+//        [HttpPut]
+//        public async Task<ActionResult<string>> Create(CreateUserDto user)
+//        {
+//            return await _httpClient.CreateUser(user.Username, user.Password);
+//        }
 
-            [Required]
-            public string Password { get; set; }
-        }
-    }
-}
+//        // todo ui validation
+//        public class CreateUserDto{
+//            [Required]
+//            public string Username { get; set; }
+
+//            [Required]
+//            public string Password { get; set; }
+//        }
+//    }
+//}

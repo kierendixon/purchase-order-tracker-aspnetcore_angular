@@ -125,6 +125,7 @@ namespace PurchaseOrderTracker.Identity
             //services.AddScoped<IUserConfirmation<ApplicationUser>, DefaultUserConfirmation<ApplicationUser>>();
             services.AddScoped<IUserStore<ApplicationUser>, UserStore>();
 
+            // TODO not needed in this application because it doesnt create users
             services.Configure<IdentityOptions>(opt =>
             {
                 // relax password requirements for testing purposes

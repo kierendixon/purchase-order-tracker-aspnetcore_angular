@@ -1,10 +1,19 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Linq;
+using System.Security.Claims;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,9 +24,10 @@ using PurchaseOrderTracker.Application.Features.Supplier.Commands;
 using PurchaseOrderTracker.Application.Logging;
 using PurchaseOrderTracker.AspNet.Common.HealthChecks;
 using PurchaseOrderTracker.Cache;
-using PurchaseOrderTracker.Identity.Persistence;
+using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
 using PurchaseOrderTracker.Persistence;
 using PurchaseOrderTracker.Persistence.Cache;
+using PurchaseOrderTracker.WebApi.Features.User;
 using PurchaseOrderTracker.WebApi.Logging;
 using PurchaseOrderTracker.WebApi.Mvc;
 
@@ -43,6 +53,8 @@ namespace PurchaseOrderTracker.WebApi
             });
             services.AddCustomMediatR();
             services.AddCustomSwagger();
+            services.AddCustomAuthentication();
+            services.AddCustomAuthorization();
             services.AddCustomControllers();
             services.AddHttpContextAccessor();
             services.AddCustomHealthChecks();
@@ -53,6 +65,37 @@ namespace PurchaseOrderTracker.WebApi
                 opt.UseSqlServer(Configuration.GetConnectionString("PoTrackerDatabase")));
             services.AddDbContext<IdentityDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("IdentityDatabase")));
+
+            // TODO
+            // Add UserManager and its dependencies
+            services.AddScoped<UserManager<ApplicationUser>>();
+            services.AddScoped<IUserValidator<ApplicationUser>, UserValidator<ApplicationUser>>();
+            services.AddScoped<IPasswordValidator<ApplicationUser>, PasswordValidator<ApplicationUser>>();
+            services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
+            services.AddScoped<ILookupNormalizer, UpperInvariantLookupNormalizer>();
+            services.AddScoped<IdentityErrorDescriber>();
+            // TODO
+            //services.AddScoped<ISecurityStampValidator, SecurityStampValidator<ApplicationUser>>();
+            //services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AdditionalUserClaimsPrincipalFactory>();
+            //services.AddScoped<IUserConfirmation<ApplicationUser>, DefaultUserConfirmation<ApplicationUser>>();
+            services.AddScoped<IUserStore<ApplicationUser>, UserStore>();
+
+            services.Configure<IdentityOptions>(opt =>
+            {
+                // relax password requirements for testing purposes
+                opt.Password.RequireDigit = false;
+                opt.Password.RequireLowercase = false;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireUppercase = false;
+                opt.Password.RequiredLength = 3;
+                opt.Password.RequiredUniqueChars = 1;
+
+                opt.Lockout.MaxFailedAccessAttempts = 3;
+                opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // this is the default in ASP.Net Identity
+            });
+
+            services.AddDataProtection()
+                .SetApplicationName("PurchaseOrderTrackerApp");
         }
 
         public void Configure(IApplicationBuilder app, AutoMapper.IConfigurationProvider autoMapper)
@@ -162,12 +205,13 @@ namespace PurchaseOrderTracker.WebApi
         public static void UseCustomEndpoints(this IApplicationBuilder app)
         {
             app.UseRouting();
-            //app.UseAuthentication();
-            //app.UseAuthorization();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
-                //.RequireAuthorization();
+                endpoints.MapControllers()
+                    .RequireAuthorization();
+
                 endpoints.MapHealthChecks("/health",
                     new HealthCheckOptions()
                     {
@@ -175,6 +219,98 @@ namespace PurchaseOrderTracker.WebApi
                     }
                 );
             });
+        }
+    }
+
+    // TODO move duplicate code to shared library
+    public static class IdentityServiceCollectionExtensions
+    {
+        public static void AddCustomAuthentication(this IServiceCollection services)
+        {
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(_configureCookies);
+        }
+
+        public static void AddCustomAuthorization(this IServiceCollection services)
+        {
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("administrator",
+                    new AuthorizationPolicyBuilder()
+                        .RequireClaim(ClaimTypes.Role, "admin")
+                        .Build());
+            });
+        }
+
+        private static readonly Action<CookieAuthenticationOptions> _configureCookies = opt =>
+        {
+            opt.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+            opt.Cookie.Name = "pot.session";
+            opt.LoginPath = new PathString("/account");
+
+            // override default CookieAuthenticationEvents to use different IsAjaxRequest logic
+            // https://github.com/dotnet/aspnetcore/blob/52eff90fbcfca39b7eb58baad597df6a99a542b0/src/Security/Authentication/Cookies/src/CookieAuthenticationHandler.cs
+            // https://github.com/dotnet/aspnetcore/blob/52eff90fbcfca39b7eb58baad597df6a99a542b0/src/Security/Authentication/Cookies/src/CookieAuthenticationEvents.cs
+            opt.Events.OnRedirectToLogin = context =>
+            {
+                if (IsAjaxRequest(context.Request))
+                {
+                    //context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                }
+                else
+                {
+                    context.Response.Redirect(context.RedirectUri);
+                }
+                return Task.CompletedTask;
+            };
+
+            opt.Events.OnRedirectToAccessDenied = context =>
+            {
+                if (IsAjaxRequest(context.Request))
+                {
+                    // context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
+                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                }
+                else
+                {
+                    context.Response.Redirect(context.RedirectUri);
+                }
+                return Task.CompletedTask;
+            };
+
+            opt.Events.OnRedirectToLogout = context =>
+            {
+                if (IsAjaxRequest(context.Request))
+                {
+                    //context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
+                }
+                else
+                {
+                    context.Response.Redirect(context.RedirectUri);
+                }
+                return Task.CompletedTask;
+            };
+
+            opt.Events.OnRedirectToReturnUrl = context =>
+            {
+                if (IsAjaxRequest(context.Request))
+                {
+                    // context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
+                }
+                else
+                {
+                    context.Response.Redirect(context.RedirectUri);
+                }
+                return Task.CompletedTask;
+            };
+        };
+
+        // can alternatively check the request path: context.Request.Path.StartsWithSegments("/api")
+        private static bool IsAjaxRequest(HttpRequest request)
+        {
+            return !(request.Headers.TryGetValue("accept", out var acceptValues)
+                && acceptValues.Contains("text/html", StringComparer.InvariantCultureIgnoreCase));
         }
     }
 }

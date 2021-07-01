@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace PurchaseOrderTracker.WebApi.Features
 {
+    // TODO: shouldn't need prefix
     [Route("api/[controller]")]
     [ApiController]
     public abstract class BaseController : ControllerBase
