@@ -14,7 +14,7 @@ import {
 } from 'reactstrap';
 import './UsersList.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faPlus, faTrash, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faPlus, faTrash, faSearch, faUndo } from '@fortawesome/free-solid-svg-icons';
 
 type UserResponse = {
   pagedList: Array<User>;
@@ -37,36 +37,62 @@ const Users = (props) => {
   list
   */
   const [mode, setMode] = useState<string>('List');
-  const [selectedRecord, setSelectedRecord] = useState<string | undefined>(undefined);
+  const [selectedRecord, setSelectedRecord] = useState<User | undefined>(undefined);
 
+  // todo use enum / update name
   const panel = () => {
     switch (mode) {
       case 'Create':
-        return <CreateUser submitCallback={() => setMode('List')} />;
+        return <CreateEditUser submitCallback={() => setMode('List')} />;
       case 'Edit':
-        return <span>Edit</span>;
+        return <span className={selectedRecord?.userName}>Edit 1{selectedRecord?.id}</span>;
       case 'List':
         return <UsersList selectedRecord={selectedRecord} setSelectedRecord={setSelectedRecord} />;
     }
   };
 
+  // todo
+  const setModeMode = async (mode: string) => {
+    if (mode == 'Delete') {
+      const response = await fetch(`/api/user/${selectedRecord!.id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.status == 200) {
+        // todo refresh user list. need to hoist up the user data
+        // so that it can be refreshed and then passed to Userlist component
+        setMode('List');
+      } else {
+        // handle error
+      }
+    } else {
+      setMode(mode);
+    }
+  };
+
   return (
     <>
-      <UserButtons selectedRecord={selectedRecord} setSelectedRecord={setSelectedRecord} setMode={setMode} />
+      <ActionMenu
+        selectedRecord={selectedRecord}
+        setSelectedRecord={setSelectedRecord}
+        mode={mode}
+        setMode={setModeMode}
+      />
       {panel()}
     </>
   );
 };
 
-const UserButtons = (props) => {
-  const { selectedRecord, setSelectedRecord, setMode } = props;
+const ActionMenu = (props) => {
+  // todo define props
+  const { selectedRecord, setSelectedRecord, mode, setMode } = props;
 
   return (
     <div
       className="users-list d-flex flex-column"
-      onClick={() => {
-        setSelectedRecord(undefined);
-      }}
+      // onClick={() => {
+      //   setSelectedRecord(undefined);
+      // }}
     >
       <div className="menu d-flex">
         <Button className="btn" color="none" onClick={() => setMode('Create')}>
@@ -84,24 +110,56 @@ const UserButtons = (props) => {
           Delete
         </Button>
         <div className="divider"></div>
+        {(mode == 'Edit' || mode == 'Create') && (
+          <Button className="btn" color="none" onClick={() => setMode('List')}>
+            <FontAwesomeIcon icon={faUndo} className="mr-1" fixedWidth={true} />
+            Cancel
+          </Button>
+        )}
+        ;
       </div>
     </div>
   );
 };
 
-const CreateUser = (props) => {
+interface CreateUserProps {
+  submitCallback();
+  user: User;
+}
+
+const CreateEditUser = (props: CreateUserProps) => {
+  // todo
   const [formValues, setFormValues] = useState<any>({});
+  const [user, setUser] = useState<User>(props.user);
 
-  function handleOnClickCreateUser(event: React.FormEvent<HTMLFormElement>) {
+  const onClickCreateUser = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(formValues);
-    props.submitCallback();
-  }
 
-  const handleonChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const rawResponse = await fetch('/api/user', {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formValues),
+    });
+    // const content = await rawResponse.json();
+
+    if (rawResponse.status == 200) {
+      props.submitCallback();
+    } else {
+      console.log(await rawResponse.json());
+    }
+  };
+
+  const onFormInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     // any race condition concerns?
     setFormValues({ ...formValues, [event.target.name]: event.target.value });
+  };
+
+  const isFormValid = () => {
+    return formValues.username == undefined && formValues.password == undefined;
   };
 
   return (
@@ -112,15 +170,15 @@ const CreateUser = (props) => {
             Username
           </Label>
           <Col sm={8}>
-            <Input type="text" name="username" onChange={handleonChange} />
+            <Input type="text" name="username" onChange={onFormInputChange} />
           </Col>
         </FormGroup>
         <FormGroup row>
-          <Label for="password" sm={4}>
+          <Label for="onetimepassword" sm={4}>
             One time password
           </Label>
           <Col sm={8}>
-            <Input type="password" name="password" onChange={handleonChange} />
+            <Input type="password" name="onetimepassword" onChange={onFormInputChange} />
           </Col>
         </FormGroup>
         <FormGroup row>
@@ -135,7 +193,7 @@ const CreateUser = (props) => {
         </FormGroup>
         <FormGroup check row>
           <Col sm={{ size: 8, offset: 4 }}>
-            <Button color="primary" onClick={(event) => handleOnClickCreateUser(event)}>
+            <Button color="primary" disabled={isFormValid()} onClick={(event) => onClickCreateUser(event)}>
               Create
             </Button>
           </Col>
@@ -161,9 +219,9 @@ const UsersList = (props) => {
     fetchUsers();
   }, []);
 
-  function handleRowClick(id: string, e: React.MouseEvent<HTMLTableRowElement, MouseEvent>) {
-    setSelectedRecord(id);
-    e.stopPropagation();
+  function handleRowClick(user: User, e: React.MouseEvent<HTMLTableRowElement, MouseEvent>) {
+    setSelectedRecord(user);
+    e.stopPropagation(); // ??
   }
 
   function filterMatchesUser(user: User): boolean {
@@ -219,10 +277,10 @@ const UsersList = (props) => {
                   (userFilter === undefined || filterMatchesUser(user)) && (
                     <tr
                       onClick={(e) => {
-                        handleRowClick(user.id, e);
+                        handleRowClick(user, e);
                       }}
                       // todo use util function
-                      className={(selectedRecord == user.id ? 'table-active' : '') + (i % 2 == 0 ? '' : '')}
+                      className={(selectedRecord?.id == user.id ? 'table-active' : '') + (i % 2 == 0 ? '' : '')}
                       key={user.id}
                     >
                       <th scope="row">{user.userName}</th>

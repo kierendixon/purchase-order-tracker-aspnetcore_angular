@@ -4,6 +4,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faHome, faBuilding } from '@fortawesome/free-solid-svg-icons';
 import { Nav, NavItem, NavLink, Collapse, Button } from 'reactstrap';
 
+interface State {
+  collapse: boolean;
+  activeNavItem: string | null;
+}
+
+interface Props {
+  clickHandler(nav: string): void;
+}
+
 // rename to sidebar?
 export default class NavBarLeft extends React.Component<Props, State> {
   constructor(props) {
@@ -19,7 +28,6 @@ export default class NavBarLeft extends React.Component<Props, State> {
   }
 
   handleNavSelect(nav) {
-    console.log('nav: ' + nav);
     this.setState((state) => ({ ...this.state, activeNavItem: nav }));
     this.props.clickHandler(nav);
   }
@@ -42,12 +50,12 @@ export default class NavBarLeft extends React.Component<Props, State> {
                 Users
               </NavLink>
             </NavItem>
-            {/* <NavItem active={this.state.activeNavItem === 'Suppliers'}>
+            <NavItem active={this.state.activeNavItem === 'Suppliers'}>
               <NavLink href="#" onClick={() => this.handleNavSelect('Suppliers')}>
                 <FontAwesomeIcon icon={faBuilding} className="mr-2" fixedWidth={true} />
                 Suppliers
               </NavLink>
-            </NavItem> */}
+            </NavItem>
           </Nav>
           <hr className="navbar-divider my-0" />
           <Button color="primary" onClick={this.toggle} style={{ marginBottom: '1rem', display: 'none' }}>
@@ -57,13 +65,4 @@ export default class NavBarLeft extends React.Component<Props, State> {
       </div>
     );
   }
-}
-
-interface State {
-  collapse: boolean;
-  activeNavItem: string | null;
-}
-
-interface Props {
-  clickHandler: Function;
 }

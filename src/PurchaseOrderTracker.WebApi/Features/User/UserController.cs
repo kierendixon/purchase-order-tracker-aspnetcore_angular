@@ -32,13 +32,32 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             return await _mediator.Send(new GetUsersQuery(pageSize, filter, page));
         }
 
-       [HttpPut]
+        [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<CreateCommand.Result>> Create([FromBody] CreateCommand command)
         {
             // Todo map to RPC error response format?
+            // todo returmn http201 for created?s
             return await _mediator.Send(command);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<UpdateCommand.Result>> Update([FromBody] UpdateCommand command)
+        {
+            // todo finalise
+            return await _mediator.Send(command);
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<DeleteCommand.Result> Delete(string id)
+        {
+            // todo return 404 if not found
+            return await _mediator.Send(new DeleteCommand(id));
         }
     }
 }

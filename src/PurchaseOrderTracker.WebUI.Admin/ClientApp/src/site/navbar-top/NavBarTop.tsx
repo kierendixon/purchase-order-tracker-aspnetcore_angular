@@ -12,6 +12,16 @@ export default class NavBarTop extends React.Component {
           <img src={logo} alt="logo" />
           <span className="mx-3 pt-1">PoT ADMIN</span>
         </div>
+        <div>
+          {/* todo */}
+          <span
+            style={{ cursor: 'pointer' }}
+            className="header pr-4"
+            onClick={() => (window.location.href = '/main-site')}
+          >
+            Back to Main Site
+          </span>
+        </div>
         <Logout className="header pr-4"></Logout>
       </div>
     );

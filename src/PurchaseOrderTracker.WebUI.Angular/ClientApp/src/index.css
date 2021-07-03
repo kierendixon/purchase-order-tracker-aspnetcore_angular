@@ -1,15 +1,3 @@
-<!DOCTYPE html>
-<html lang="en" class="h-100">
-  <head>
-    <meta charset="utf-8" />
-    <title>Purchase Order Tracker</title>
-    <base href="/" />
-
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <!-- todo -->
-    <link rel="stylesheet" href="index.css">
-    <style>
 /* https://loading.io/css/ */
 .lds-spinner {
   color: official;
@@ -89,32 +77,3 @@
     opacity: 0;
   }
 }
-
-.spinner-container {
-  display: flex;
-  justify-content:center;
-}
-    </style>
-
-  </head>
-  <body class="h-100">
-    <app-root>
-      <div class="h-100 bg-hero spinner-container">
-        <div class="lds-spinner">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-      </div>
-    </app-root>
-  </body>
-</html>
