@@ -21,13 +21,12 @@ type UserResponse = {
 };
 
 // TODO generate definitions from backend
-type User = {
+interface User {
   id: string;
   userName: string;
   isAdmin: boolean;
-  lockoutEnabled: boolean;
   lockoutEnd: Date;
-};
+}
 
 const Users = (props) => {
   /*
@@ -37,47 +36,49 @@ const Users = (props) => {
   list
   */
   const [mode, setMode] = useState<string>('List');
-  const [selectedRecord, setSelectedRecord] = useState<User | undefined>(undefined);
+  const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
 
   // todo use enum / update name
   const panel = () => {
     switch (mode) {
       case 'Create':
-        return <CreateEditUser submitCallback={() => setMode('List')} />;
+        return <CreateUser submitCallback={() => setMode('List')} />;
       case 'Edit':
-        return <span className={selectedRecord?.userName}>Edit 1{selectedRecord?.id}</span>;
+        return <EditUser onSubmit={() => setModeMode('List')} user={selectedUser!} />;
       case 'List':
-        return <UsersList selectedRecord={selectedRecord} setSelectedRecord={setSelectedRecord} />;
+        return <UsersList selectedUser={selectedUser} setSelectedUser={setSelectedUser} />;
     }
   };
 
   // todo
   const setModeMode = async (mode: string) => {
+    // todo "delete" is not a mode but instead an action
     if (mode == 'Delete') {
-      const response = await fetch(`/api/user/${selectedRecord!.id}`, {
+      const response = await fetch(`/api/user/${selectedUser!.id}`, {
         method: 'DELETE',
       });
 
       if (response.status == 200) {
         // todo refresh user list. need to hoist up the user data
         // so that it can be refreshed and then passed to Userlist component
+        setMode('Delete');
         setMode('List');
+        setSelectedUser(undefined);
       } else {
         // handle error
       }
     } else {
       setMode(mode);
+
+      if (mode == 'List') {
+        setSelectedUser(undefined);
+      }
     }
   };
 
   return (
     <>
-      <ActionMenu
-        selectedRecord={selectedRecord}
-        setSelectedRecord={setSelectedRecord}
-        mode={mode}
-        setMode={setModeMode}
-      />
+      <ActionMenu selectedUser={selectedUser} setSelectedUser={setSelectedUser} mode={mode} setMode={setModeMode} />
       {panel()}
     </>
   );
@@ -85,13 +86,13 @@ const Users = (props) => {
 
 const ActionMenu = (props) => {
   // todo define props
-  const { selectedRecord, setSelectedRecord, mode, setMode } = props;
+  const { selectedUser, setSelectedUser, mode, setMode } = props;
 
   return (
     <div
       className="users-list d-flex flex-column"
       // onClick={() => {
-      //   setSelectedRecord(undefined);
+      //   setSelectedUser(undefined);
       // }}
     >
       <div className="menu d-flex">
@@ -100,12 +101,12 @@ const ActionMenu = (props) => {
           New
         </Button>
         <div className="divider"></div>
-        <Button disabled={selectedRecord == null} color="none" className="btn" onClick={() => setMode('Edit')}>
+        <Button disabled={selectedUser == null} color="none" className="btn" onClick={() => setMode('Edit')}>
           <FontAwesomeIcon icon={faEdit} className="mr-1" fixedWidth={true} />
           Edit
         </Button>
         <div className="divider"></div>
-        <Button disabled={selectedRecord == null} className="btn" color="none" onClick={() => setMode('Delete')}>
+        <Button disabled={selectedUser == null} className="btn" color="none" onClick={() => setMode('Delete')}>
           <FontAwesomeIcon icon={faTrash} className="mr-1" fixedWidth={true} />
           Delete
         </Button>
@@ -122,15 +123,9 @@ const ActionMenu = (props) => {
   );
 };
 
-interface CreateUserProps {
-  submitCallback();
-  user: User;
-}
-
-const CreateEditUser = (props: CreateUserProps) => {
+const CreateUser = (props: { submitCallback() }) => {
   // todo
   const [formValues, setFormValues] = useState<any>({});
-  const [user, setUser] = useState<User>(props.user);
 
   const onClickCreateUser = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -193,9 +188,110 @@ const CreateEditUser = (props: CreateUserProps) => {
         </FormGroup>
         <FormGroup check row>
           <Col sm={{ size: 8, offset: 4 }}>
-            <Button color="primary" disabled={isFormValid()} onClick={(event) => onClickCreateUser(event)}>
+            {/* <Button color="primary" disabled={isFormValid()} onClick={(event) => onClickCreateUser(event)}>
               Create
-            </Button>
+            </Button> */}
+          </Col>
+        </FormGroup>
+      </Form>
+    </div>
+  );
+};
+
+const EditUser = (props: { onSubmit(); user: User }) => {
+  const [user, setUser] = useState<User>(Object.assign({}, props.user));
+
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const rawResponse = await fetch('/api/user', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    });
+    // const content = await rawResponse.json();
+
+    if (rawResponse.status == 200) {
+      props.onSubmit();
+    } else {
+      console.log(await rawResponse.json());
+    }
+  };
+
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // (e) => setUser(Object.assign({}, user, { [user.userName]: e.target.value }))
+    const target = event.target;
+    const value =
+      target.type == 'checkbox'
+        ? target.checked
+        : target.type == 'datetime-local'
+        ? Date.parse(target.value) || undefined
+        : target.value;
+
+    const property = event.target.name;
+
+    setUser((prevUser) => ({
+      ...prevUser,
+      [property]: value,
+    }));
+  };
+
+  const lockoutEndDateAsDateTimeLocal = () => {
+    // 2021-07-08T15:24:07.0163509+10:00
+    // todo hacky; use dayjs instead
+    return props.user.lockoutEnd == null ? undefined : new Date(props.user.lockoutEnd).toISOString().substring(0, 23);
+  };
+
+  return (
+    <div style={{ padding: '20px', maxWidth: '500px' }}>
+      <Form>
+        <FormGroup row>
+          <Label for="id" sm={4}>
+            Id
+          </Label>
+          <Col sm={8}>
+            <Input type="text" name="id" value={user.id} disabled />
+          </Col>
+        </FormGroup>
+        <FormGroup row>
+          <Label for="userName" sm={4}>
+            Username
+          </Label>
+          <Col sm={8}>
+            <Input type="text" name="userName" value={user.userName} onChange={onChange} />
+          </Col>
+        </FormGroup>
+        <FormGroup row>
+          <Label for="lockoutEnd" sm={4}>
+            Lockout End
+          </Label>
+          <Col sm={8}>
+            <Input
+              type="datetime-local"
+              name="lockoutEnd"
+              defaultValue={lockoutEndDateAsDateTimeLocal()}
+              onChange={onChange}
+            />
+          </Col>
+        </FormGroup>
+        <FormGroup row>
+          <Label sm={4} for="isAdmin"></Label>
+          <Col sm={{ size: 8 }}>
+            <FormGroup check>
+              <Label check>
+                <Input type="checkbox" name="isAdmin" checked={user.isAdmin} onChange={onChange} /> Admin
+              </Label>
+            </FormGroup>
+          </Col>
+        </FormGroup>
+        <FormGroup check row>
+          <Col sm={{ size: 8, offset: 4 }}>
+            {/* <Button color="primary" disabled={false} onClick={(event) => onSubmit(event)}>
+              Update
+            </Button> */}
           </Col>
         </FormGroup>
       </Form>
@@ -204,7 +300,7 @@ const CreateEditUser = (props: CreateUserProps) => {
 };
 
 const UsersList = (props) => {
-  const { selectedRecord, setSelectedRecord } = props;
+  const { selectedUser, setSelectedUser } = props;
   const [users, setUsers] = useState<Array<User> | undefined>(undefined);
   const [userFilter, setUserFilter] = useState<string | undefined>(undefined);
 
@@ -220,7 +316,7 @@ const UsersList = (props) => {
   }, []);
 
   function handleRowClick(user: User, e: React.MouseEvent<HTMLTableRowElement, MouseEvent>) {
-    setSelectedRecord(user);
+    setSelectedUser(user);
     e.stopPropagation(); // ??
   }
 
@@ -244,17 +340,13 @@ const UsersList = (props) => {
         <div className="user-table ml-2 mt-2 flex-grow-1">
           <Form inline className="mb-2" onSubmit={(event) => handleSearchFormSubmit(event)}>
             <InputGroup>
-              <Input
-                placeholder="Search Username"
-                value={userFilter}
-                onChange={(e) => setUserFilter(e.target.value)}
-                style={{ cursor: 'pointer' }}
-              />
+              <Input placeholder="Search Username" value={userFilter} onChange={(e) => setUserFilter(e.target.value)} />
               <InputGroupAddon
                 addonType="append"
                 onClick={() => {
                   fetchUsers(userFilter);
                 }}
+                style={{ cursor: 'pointer' }}
               >
                 <InputGroupText>
                   <FontAwesomeIcon icon={faSearch} className="mr-1" fixedWidth={true} />
@@ -267,8 +359,7 @@ const UsersList = (props) => {
               <tr>
                 <th>Username</th>
                 <th>Admin</th>
-                <th>Locked Out</th>
-                <th>Lockout End</th>
+                <th>Locked</th>
               </tr>
             </thead>
             <tbody>
@@ -280,7 +371,7 @@ const UsersList = (props) => {
                         handleRowClick(user, e);
                       }}
                       // todo use util function
-                      className={(selectedRecord?.id == user.id ? 'table-active' : '') + (i % 2 == 0 ? '' : '')}
+                      className={(selectedUser?.id == user.id ? 'table-active' : '') + (i % 2 == 0 ? '' : '')}
                       key={user.id}
                     >
                       <th scope="row">{user.userName}</th>
@@ -294,9 +385,19 @@ const UsersList = (props) => {
                         />
                       </td>
                       <td>
-                        <Input type="checkbox" checked={user.lockoutEnabled} readOnly style={{ marginLeft: '0px' }} />
+                        <Input
+                          // todo inline style
+                          type="checkbox"
+                          checked={user.lockoutEnd == undefined ? false : new Date(user.lockoutEnd) < new Date()}
+                          readOnly
+                          style={{ marginLeft: '0px' }}
+                        />
+                        {user.lockoutEnd == undefined
+                          ? null
+                          : new Date(user.lockoutEnd) < new Date()
+                          ? ` (${user.lockoutEnd})`
+                          : null}
                       </td>
-                      <td>{user.lockoutEnd}</td>
                     </tr>
                   )
               )}

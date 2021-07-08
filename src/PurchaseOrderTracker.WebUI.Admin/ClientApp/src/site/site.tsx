@@ -36,7 +36,12 @@ const MainContent = (props: { navMenu: string }) => {
           case 'users':
             return <Users />;
           case 'suppliers':
-            return <div>Suppliers List</div>;
+            return (
+              <div>
+                Suppliers List <br />
+                TODO: migrate Supplier management functionality from the Angular main app to the React admin app
+              </div>
+            );
           default:
             return null;
         }

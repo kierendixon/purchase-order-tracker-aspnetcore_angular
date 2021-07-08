@@ -46,19 +46,17 @@ namespace PurchaseOrderTracker.Application.Features.User.Queries
             public class User
             {
                 // todo should bother with argument validaiton?
-                public User(string id, string userName, bool isAdmin, bool lockoutEnabled, DateTime? lockoutEnd)
+                public User(string id, string userName, bool isAdmin, DateTimeOffset? lockoutEnd)
                 {
                     Id = id;
                     IsAdmin = isAdmin;
                     UserName = userName;
-                    LockoutEnabled = lockoutEnabled;
-                    LockoutEnd = lockoutEnd;
+                    LockoutEnd = lockoutEnd?.LocalDateTime;
                 }
 
                 public string Id { get; }
                 public string UserName { get; }
                 public bool IsAdmin { get; }
-                public bool LockoutEnabled { get; }
                 public DateTime? LockoutEnd { get; }
             }
         }

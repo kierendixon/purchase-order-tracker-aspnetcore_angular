@@ -47,7 +47,7 @@ namespace PurchaseOrderTracker.Identity.Features.Account
             {
                 var user = await _userManager.FindByNameAsync(request.UserName);
 
-                if (!IsUserAccountLocked(user))
+                if (user != null && !IsUserAccountLocked(user))
                 {
                     if (await _userManager.CheckPasswordAsync(user, request.Password))
                     {
@@ -72,7 +72,9 @@ namespace PurchaseOrderTracker.Identity.Features.Account
 
             private static bool IsUserAccountLocked(ApplicationUser user)
             {
-                return user?.LockoutEnabled == true && user.LockoutEnd >= DateTime.Now;
+                // TODO user.LockoutEnd.DateTime ??
+                return user.LockoutEnabled == true
+                    &&user.LockoutEnd?.LocalDateTime < DateTime.Now;
             }
 
             private ClaimsIdentity GenerateClaims(ApplicationUser user)

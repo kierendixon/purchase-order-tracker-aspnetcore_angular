@@ -13,18 +13,18 @@ namespace PurchaseOrderTracker.Application.Features.User.Commands
 {
     public class UpdateCommand : IRequest<UpdateCommand.Result>
     {
-        public UpdateCommand(string id, string username, string password, bool isAdmin)
+        public UpdateCommand(string id, string username, bool isAdmin, DateTime? lockoutEnd)
         {
             Id = id?? throw new ArgumentNullException(nameof(id));
             UserName = username ?? throw new ArgumentNullException(nameof(username));
-            Password = password ?? throw new ArgumentNullException(nameof(password));
             IsAdmin = isAdmin;
+            LockoutEnd = lockoutEnd;
         }
 
         public string Id { get; }
         public string UserName { get; }
-        public string Password { get; }
         public bool IsAdmin { get; }
+        public DateTime? LockoutEnd { get; }
 
         public class Result
         {
@@ -54,8 +54,10 @@ namespace PurchaseOrderTracker.Application.Features.User.Commands
             {
                 var user = await _userManager.FindByIdAsync(request.Id);
                 user.IsAdmin = request.IsAdmin;
+                user.LockoutEnd = request.LockoutEnd;
                 user.UserName = request.UserName;
-                user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, request.Password);
+                //todo
+                //user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, request.Password);
 
                 var result = await _userManager.UpdateAsync(user);
                 return new Result(result.Succeeded, result.Errors);
