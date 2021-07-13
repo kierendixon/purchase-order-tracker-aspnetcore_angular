@@ -14,7 +14,7 @@
     "dayjs": "^1.10.6",
     "react": "^16.10.1",
     "react-dom": "^16.10.1",
-    "react-scripts": "3.4.4",
+    "react-scripts": "4.0.3",
     "reactstrap": "^8.9.0",
     "typescript": "^4.1.3"
   },
@@ -28,7 +28,21 @@
     "extends": [
       "react-app",
       "prettier"
-    ]
+    ],
+    "rules": {
+      "sort-imports": [
+        "error",
+        {
+          "memberSyntaxSortOrder": [
+            "none",
+            "all",
+            "single",
+            "multiple"
+          ],
+          "allowSeparatedGroups": true
+        }
+      ]
+    }
   },
   "browserslist": {
     "production": [

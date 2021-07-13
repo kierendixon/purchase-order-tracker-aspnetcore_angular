@@ -1,10 +1,11 @@
 .nav-left {
+  // TODO
   //background-color: #2d3f50;
   //background: linear-gradient(180deg, #181a1dde 10%, #2d3f50 100%);
   background-color: #efefef;
   width: 14rem;
 
-  border-top: 1px solid rgb(95,101,108);
+  border-top: 1px solid rgb(95, 101, 108);
 
   .nav-item {
     &.active > a {
@@ -25,7 +26,6 @@
       }
     }
   }
-
 
   .navbar-divider {
     border-top: 1px solid rgba(255, 255, 255, 0.15);

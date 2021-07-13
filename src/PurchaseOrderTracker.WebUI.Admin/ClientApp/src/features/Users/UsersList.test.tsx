@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import UsersList from './UsersList';
+import UsersList from '.';
 
 it('renders', () => {
   const div = document.createElement('div');

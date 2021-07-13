@@ -1,20 +1,20 @@
 // todo get socketjs working behind proxy
-import React, { useEffect, useState } from 'react';
 import {
-  Table,
   Button,
-  InputGroupAddon,
-  InputGroup,
-  Input,
-  Form,
-  InputGroupText,
-  FormGroup,
-  Label,
   Col,
+  Form,
+  FormGroup,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  Label,
+  Table,
 } from 'reactstrap';
-import './UsersList.scss';
+import React, { useEffect, useState } from 'react';
+import { faEdit, faPlus, faSearch, faTrash, faUndo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faPlus, faTrash, faSearch, faUndo } from '@fortawesome/free-solid-svg-icons';
+import './UsersList.scss';
 
 type UserResponse = {
   pagedList: Array<User>;
