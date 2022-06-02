@@ -1,0 +1,105 @@
+admin:
+  access_log_path: "/dev/null"
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 8001
+
+static_resources:
+  listeners:
+  - address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 80
+    name: pot_listener
+    filter_chains:
+    - filters:
+      - name: envoy.filters.network.http_connection_manager
+        typed_config:
+          "@type": type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager
+          stat_prefix: ingress_http
+          http_filters:
+          - name: envoy.router  
+          route_config:
+            name: pot_route
+            virtual_hosts:
+            - name: pot_vhost
+              domains:
+              - "*"
+              routes:
+              - match:
+                  prefix: "/api/"
+                route:
+                  cluster: webapi
+                  auto_host_rewrite: true
+              - match:
+                  prefix: "/identity/"
+                route:
+                  cluster: identity
+                  auto_host_rewrite: true
+              - match:
+                  prefix: "/admin"
+                route:
+                  cluster: website-admin
+                  auto_host_rewrite: true
+                  prefix_rewrite: ""
+              - match:
+                  prefix: "/admin/"
+                route:
+                  cluster: website-admin
+                  auto_host_rewrite: true
+                  prefix_rewrite: ""
+              - match:
+                  prefix: "/"
+                route:
+                  cluster: website-main
+                  auto_host_rewrite: true
+          access_log:
+          - name: envoy.access_loggers.file
+            filter:
+              not_health_check_filter: {}          
+            config:
+              path: "/dev/stdout"
+              json_format:
+                time: "%START_TIME%"
+                protocol: "%PROTOCOL%"
+                duration: "%DURATION%"
+                request_method: "%REQ(:METHOD)%"
+                response_code: "%RESPONSE_CODE%"
+                request_host: "%REQ(HOST)%"
+                path: "%REQ(X-ENVOY-ORIGINAL-PATH?:PATH)%"
+                response_flags: "%RESPONSE_FLAGS%"
+                route_name: "%ROUTE_NAME%"
+                upstream_host: "%UPSTREAM_HOST%"
+                upstream_cluster: "%UPSTREAM_CLUSTER%"
+                upstream_local_address: "%UPSTREAM_LOCAL_ADDRESS%"
+
+  clusters:
+    - name: webapi
+      connect_timeout: 0.25s
+      type: logical_dns
+      hosts:
+      - socket_address:
+          address: host.docker.internal
+          port_value: 4202
+    - name: identity
+      connect_timeout: 0.25s
+      type: logical_dns
+      hosts:
+      - socket_address:
+          address: host.docker.internal
+          port_value: 5111
+    - name: website-main
+      connect_timeout: 0.25s
+      type: logical_dns
+      hosts:
+      - socket_address:
+          address: host.docker.internal
+          port_value: 4200
+    - name: website-admin
+      connect_timeout: 0.25s
+      type: logical_dns
+      hosts:
+      - socket_address:
+          address: host.docker.internal
+          port_value: 4203

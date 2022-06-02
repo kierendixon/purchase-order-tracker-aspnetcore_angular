@@ -1,47 +1,93 @@
-# docker build -t purchase-order-tracker .
 version: "3.7"
 services:
-  website:
-    image: "purchase-order-tracker"
+  website-main:
+    image: "purchase-order-tracker-angular"
     entrypoint: ["dotnet", "PurchaseOrderTracker.WebUI.Angular.dll"]
-    working_dir: "/app/WebUI"
+    working_dir: "/app"
     depends_on:
-      - db
       - webapi
-      - envoy
     networks:
-      - network
+      - pot-network
+    volumes:
+      - sensitive-data:/data
     expose:
       - "80"
+    environment:
+      - Logging:LogLevel:Default=Debug
+      - DataProtection:KeysDirectory=/data
+  website-admin:
+    image: "purchase-order-tracker-admin"
+    entrypoint: ["dotnet", "PurchaseOrderTracker.WebUI.Admin.dll"]
+    working_dir: "/app"
+    depends_on:
+      - webapi
+    networks:
+      - pot-network
+    volumes:
+      - sensitive-data:/data
+    expose:
+      - "80"
+    environment:
+      - Logging:LogLevel:Default=Debug
+      - DataProtection:KeysDirectory=/data
   webapi:
-    image: "purchase-order-tracker"
+    image: "purchase-order-tracker-webapi"
     entrypoint: ["dotnet", "PurchaseOrderTracker.WebApi.dll"]
-    working_dir: "/app/WebApi"
+    working_dir: "/app"
     depends_on:
       - db
     expose:
       - "80"
+    environment:
+      - ConnectionStrings:PoTrackerDatabase=Server=db,1433;Database=PurchaseOrderTracker_Angular;User id=sa;Password=PoTracker001
+      - ConnectionStrings:IdentityDatabase=Server=db,1433;Database=PurchaseOrderTrackerIdentity_Angular;User id=sa;Password=PoTracker001
+      - Logging:LogLevel:Default=Debug
+      - DataProtection:KeysDirectory=/data
     networks:
-      - network
+      - pot-network
+    volumes:
+      - sensitive-data:/data
+  identity:
+    image: "purchase-order-tracker-identity"
+    entrypoint: ["dotnet", "PurchaseOrderTracker.Identity.dll"]
+    working_dir: "/app"
+    depends_on:
+      - webapi
+    expose:
+      - "80"
+    environment:
+      - Logging:LogLevel:Default=Debug
+      - ConnectionStrings:IdentityDatabase=Server=db,1433;Database=PurchaseOrderTrackerIdentity_Angular;User id=sa;Password=PoTracker001
+      - DataProtection:KeysDirectory=/data
+    networks:
+      - pot-network
+    volumes:
+      - sensitive-data:/data
   db:
-    image: "mcr.microsoft.com/mssql/server"
+    image: "mcr.microsoft.com/mssql/server:2019-CU8-ubuntu-16.04"
     environment:
         SA_PASSWORD: "PoTracker001"
         ACCEPT_EULA: "Y"
-    # Expose connectivity to host machine for debugging purposes
     ports:
-      - "1433:1433"
+      - "1433:1433" # expose connectivity to host machine for debugging purposes
     networks:
-      - network
+      - pot-network
   envoy:
     image: envoyproxy/envoy:v1.14.4
     volumes:
-      - ./:/etc/envoy
+      - ./:/etc/envoy # mount envoy.yaml
     ports:
-      - "4202:80"
-      - "15200:8001"
+      - "4890:80" # purchase order tracker website
+      - "15200:8001" # envoy admin console
+    depends_on: 
+      - website-main
+      - website-admin
+      - identity
     networks:
-      - network
+      - pot-network
 
 networks:
-  network:
+  pot-network:
+  
+volumes:
+  sensitive-data:

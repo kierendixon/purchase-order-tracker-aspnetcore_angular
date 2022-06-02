@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate.ValueObjects;
-using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
 
 namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder.Models
 {
@@ -10,7 +8,8 @@ namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder.Models
         public int? SupplierId { get; set; }
 
         [Required]
-        public OrderNo OrderNo { get; set; }
+        [StringLength(150, MinimumLength = 3)]
+        public string OrderNo { get; set; }
 
         public int? ShipmentId { get; set; }
     }

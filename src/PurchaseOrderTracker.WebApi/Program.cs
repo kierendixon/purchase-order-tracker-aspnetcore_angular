@@ -1,11 +1,12 @@
 ﻿using System;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
+using PurchaseOrderTracker.Identity.Persistence.Initialization;
 using PurchaseOrderTracker.Persistence;
-using PurchaseOrderTracker.Persistence.Identity;
 using PurchaseOrderTracker.Persistence.Initialization;
 
 namespace PurchaseOrderTracker.WebApi
@@ -14,18 +15,19 @@ namespace PurchaseOrderTracker.WebApi
     {
         public static void Main(string[] args)
         {
-            var host = CreateWebHostBuilder(args).Build();
+            var host = CreateHostBuilder(args).Build();
             InitializeDatabase(host);
             host.Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
-        {
-            return WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
-        }
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
 
-        private static void InitializeDatabase(IWebHost host)
+        private static void InitializeDatabase(IHost host)
         {
             using (var scope = host.Services.CreateScope())
             {
@@ -35,7 +37,6 @@ namespace PurchaseOrderTracker.WebApi
                 try
                 {
                     logger.LogInformation("Initializing the application database...");
-
                     var poTrackerDbContext = services.GetRequiredService<PoTrackerDbContext>();
                     PoTrackerDbInitializer.Initialize(poTrackerDbContext);
 
@@ -46,6 +47,7 @@ namespace PurchaseOrderTracker.WebApi
                 }
                 catch (Exception ex)
                 {
+                    // TODO if can't connect to database wait and try again
                     logger.LogError(ex, "An error occurred initializing the database");
                     throw;
                 }

@@ -17,7 +17,7 @@ export class CreateCommand {
   constructor(
     readonly trackingId: string,
     readonly company: string,
-    readonly eta: Date,
+    readonly estimatedArrivalDate: Date,
     readonly shippingCost: number,
     readonly destinationAddress: string,
     readonly comments: string

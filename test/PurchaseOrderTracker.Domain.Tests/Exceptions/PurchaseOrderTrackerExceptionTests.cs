@@ -1,37 +1,30 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using PurchaseOrderTracker.Domain.Exceptions;
 
 namespace PurchaseOrderTracker.Domain.Tests.Exceptions
 {
+    [TestFixture]
     public class PurchaseOrderTrackerExceptionTests
     {
-        [TestFixture]
-        public class ConstructorWithOneParam
+        [Test]
+        public void constructor_assigns_values_when_there_is_one_param()
         {
-            [Test]
-            public void Always_AssignsValues()
-            {
-                var exMessage = "message";
-                var ex = new PurchaseOrderTrackerException(exMessage);
+            var exMessage = "message";
+            var ex = new PurchaseOrderTrackerException(exMessage);
 
-                Assert.That(ex.Message, Is.EqualTo(exMessage));
-            }
+            Assert.That(ex.Message, Is.EqualTo(exMessage));
         }
 
-        [TestFixture]
-        public class ConstructorWithTwoParams
+        [Test]
+        public void constructor_assigns_values_when_there_are_two_params()
         {
-            [Test]
-            public void Always_AssignsValues()
-            {
-                var innerMessage = "Inner Message";
-                var outerMessage = "Outer Message";
-                var innerEx = new PurchaseOrderTrackerException(innerMessage);
-                var outerEx = new PurchaseOrderTrackerException(outerMessage, innerEx);
+            var innerMessage = "Inner Message";
+            var outerMessage = "Outer Message";
+            var innerEx = new PurchaseOrderTrackerException(innerMessage);
+            var outerEx = new PurchaseOrderTrackerException(outerMessage, innerEx);
 
-                Assert.That(outerEx.InnerException, Is.SameAs(innerEx));
-                Assert.That(outerEx.Message, Is.EqualTo(outerMessage));
-            }
+            Assert.That(outerEx.InnerException, Is.SameAs(innerEx));
+            Assert.That(outerEx.Message, Is.EqualTo(outerMessage));
         }
     }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using NUnit.Framework;
 using PurchaseOrderTracker.Domain.Tests.Builders;
 
@@ -10,7 +10,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
         public class Constructor
         {
             [Test]
-            public void Always_AssignsValues()
+            public void assigns_values()
             {
                 var product = new ProductBuilder().Build();
                 var line = new PurchaseOrderLineBuilder()
@@ -25,7 +25,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
             }
 
             [Test]
-            public void NullProduct_ThrowsArgumentNullException()
+            public void throws_arg_null_ex_when_product_is_null()
             {
                 try
                 {

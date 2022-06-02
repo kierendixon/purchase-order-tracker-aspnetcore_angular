@@ -2,9 +2,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using PurchaseOrderTracker.Domain.Exceptions;
-using PurchaseOrderTracker.Persistence.Identity;
+using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
+using PurchaseOrderTracker.Persistence;
+using PurchaseOrderTracker.Persistence.Initialization;
 
-namespace PurchaseOrderTracker.Persistence.Initialization
+namespace PurchaseOrderTracker.Identity.Persistence.Initialization
 {
     public static class IdentityDbInitializer
     {
@@ -21,11 +23,13 @@ namespace PurchaseOrderTracker.Persistence.Initialization
 
             if (created)
             {
-                Task.Run(async () =>
+                CreateUser(userManager, BasicUserUserName, BasicUserPassword).Wait();
+                CreateUser(userManager, SuperUserUserName, SuperUserPassword).Wait();
+
+                for (var i = 0; i < 50; i++)
                 {
-                    await CreateUser(userManager, BasicUserUserName, BasicUserPassword);
-                    await CreateUser(userManager, SuperUserUserName, SuperUserPassword);
-                }).GetAwaiter().GetResult();
+                    CreateUser(userManager, $"TestUser{i}", $"testuser{1}").Wait();
+                }
             }
         }
 

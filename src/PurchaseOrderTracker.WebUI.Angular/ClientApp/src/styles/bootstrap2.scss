@@ -28,7 +28,9 @@
 @import 'badge';
 @import 'jumbotron';
 @import 'alert';
-@import 'progress';
+//@import 'progress';
+// why does importing this cause an error?
+// SassError: Invalid CSS after "m": expected 1 selector or at-rule, was "module.exports = re"
 @import 'media';
 @import 'list-group';
 @import 'close';

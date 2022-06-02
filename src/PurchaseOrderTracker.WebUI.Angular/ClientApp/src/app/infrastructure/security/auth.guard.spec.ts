@@ -3,7 +3,6 @@ import { async } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 
 import { FakeBrowserStorage } from 'src/test/fake-browser-storage';
-import { LocalStorageService } from '../browser-storage/local-storage.service';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 
@@ -14,7 +13,7 @@ describe('AuthGuard', () => {
   beforeEach(async(() => {
     const routerSpy: Router = jasmine.createSpyObj('Router', ['navigate']);
     const httpClientSpy: HttpClient = jasmine.createSpyObj('HttpClient', ['get']);
-    testAuthService = new AuthService(httpClientSpy, new LocalStorageService(new FakeBrowserStorage()));
+    testAuthService = new AuthService(httpClientSpy);
     authGuard = new AuthGuard(routerSpy, testAuthService);
   }));
 

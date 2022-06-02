@@ -25,15 +25,16 @@ export class EditComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.purchaseOrderId = this.route.snapshot.params[idParam];
+    this.purchaseOrderId = parseInt(this.route.snapshot.params[idParam], 10);
     this.refreshData();
   }
 
   refreshData(): void {
     const query = new EditQuery(this.purchaseOrderId);
-    this.editService
-      .handleQuery(query)
-      .subscribe(result => (this.model = result), err => this.messagesService.addHttpResponseError(err));
+    this.editService.handleQuery(query).subscribe(
+      result => (this.model = result),
+      err => this.messagesService.addHttpResponseError(err)
+    );
   }
 
   onSubmit() {
@@ -43,22 +44,18 @@ export class EditComponent implements OnInit {
       this.model.supplierId,
       this.model.shipmentId
     );
-    this.editService
-      .handleCommand(command)
-      .subscribe(
-        () => this.messagesService.addMessage('Purchase Order updated'),
-        err => this.messagesService.addHttpResponseError(err)
-      );
+    this.editService.handleCommand(command).subscribe(
+      () => this.messagesService.addMessage('Purchase Order updated'),
+      err => this.messagesService.addHttpResponseError(err)
+    );
   }
 
   onDelete() {
     const command = new DeleteCommand(this.purchaseOrderId);
-    this.deleteService
-      .handle(command)
-      .subscribe(
-        () => this.router.navigateByUrl(purchaseOrdersUrl),
-        err => this.messagesService.addHttpResponseError(err)
-      );
+    this.deleteService.handle(command).subscribe(
+      () => this.router.navigateByUrl(purchaseOrdersUrl),
+      err => this.messagesService.addHttpResponseError(err)
+    );
   }
 
   onUpdateStatus(status: string) {

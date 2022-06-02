@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using NUnit.Framework;
 using PurchaseOrderTracker.Domain.Models.SupplierAggregate;
 using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
@@ -13,7 +12,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
         public class Constructor
         {
             [Test]
-            public void Always_AssignsValues()
+            public void assigns_values()
             {
                 var category = new ProductCategoryBuilder().Build();
                 var product = new Product(new ProductCode("code1"), new ProductName("name2"), category, 999);
@@ -25,7 +24,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
             }
 
             [Test]
-            public void Always_DefaultIdentifier()
+            public void defaults_identifier()
             {
                 var category = new ProductCategoryBuilder().Build();
                 var product = new Product(new ProductCode("code1"), new ProductName("name2"), category, 999);
@@ -35,12 +34,12 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
             }
 
             [Test]
-            public void NullName_ThrowsArgumentNullException()
+            public void throws_ex_when_name_is_null()
             {
                 try
                 {
                     var category = new ProductCategoryBuilder().Build();
-                    var product = new Product(new ProductCode("code1"), null, category, 999);
+                    _ = new Product(new ProductCode("code1"), null, category, 999);
                     Assert.Fail("Expected exception to be thrown");
                 }
                 catch (Exception ex)
@@ -51,7 +50,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
             }
 
             [Test]
-            public void NullProdCode_ThrowsArgumentNullException()
+            public void throws_ex_when_product_code_is_null()
             {
                 var category = new ProductCategoryBuilder().Build();
                 Assert.Throws<ArgumentNullException>(() =>

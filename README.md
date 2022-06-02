@@ -1,103 +1,116 @@
 [![Build status](https://dev.azure.com/purchase-order-tracker/Purchase%20Order%20Tracker%20-%20Angular/_apis/build/status/Purchase%20Order%20Tracker%20-%20Angular%20.NET%20Core)](https://dev.azure.com/purchase-order-tracker/Purchase%20Order%20Tracker%20-%20Angular/_build/latest?definitionId=2)
 <a href="https://sonarcloud.io/dashboard?id=purchase-order-tracker-aspnetcore_angular"><img src="https://sonarcloud.io/images/project_badges/sonarcloud-white.svg" height="24" width="102" ></a>
 
-# Purchase Order Tracker (ASP.NET Core + Angular)
+# Purchase Order Tracker
 
-Purchase Order Tracker is a line-of-business system used to track the delivery of purchase orders.
+Purchase Order Tracker is a line-of-business system that tracks the delivery of purchase orders.
 
-You can maintain **Suppliers** and their **Products**, create **Purchase Orders** with **Line Items**, and assign orders to **Shipments**.
+_This is a pet project for the purpose of learning about software design and development._
 
-# Purpose
+## User Guides
 
-The purpose of building this system is to learn more about designing software and to learn about the technologies used.
+Application user guides are available in the [Wiki](https://github.com/kierendixon/purchase-order-tracker-aspnetcore_angular/wiki).
 
-# Documentation
+## Run Using Docker
 
-Application user guides and technical design documentation are available in the [Wiki](https://github.com/kierendixon/purchase-order-tracker-aspnetcore_angular/wiki).
+A new instance of Purchase Order Tracker can be quickly and easily started using Docker.
+You don't need to install anything other than Docker itself because multi-stage builds are used to compile the application within containers.
 
-# Running the App using Docker
+Execute the following commands:
 
-To run the app using Docker:
+1. `docker build --tag purchase-order-tracker-webapi -f src/PurchaseOrderTracker.WebApi/Dockerfile .`
+1. `docker build --tag purchase-order-tracker-angular -f src/PurchaseOrderTracker.WebUI.Angular/Dockerfile .`
+1. `docker build --tag purchase-order-tracker-admin -f src/PurchaseOrderTracker.WebUI.Admin/Dockerfile .`
+1. `docker build --tag purchase-order-tracker-identity -f src/PurchaseOrderTracker.Identity/Dockerfile .`
+1. `docker-compose up`
 
-1. Run `docker build --tag purchase-order-tracker .` to build an image containing the website and webapi
-1. Run `docker-compose up` to start the environment
+Once the containers are started you can access the web interface at http://localhost:4890
 
-Once the containers are started you can access the application at http://localhost:4202
+# Technical Details
 
-# Technology Stack
+The Purchase Order Tracker system is comprised of multiple components:
 
-This project is built using ASP.NET Core MVC v2 and Angular. Some of the key libraries used are listed below - refer to each of the csproj and package.json files for a full list of dependencies.
+1. The main website - for day-to-day work, including creating purchase orders, assigning them to shipments, and maintaining related data.
+1. The admin website - to perform administrative tasks, including user management and maintaining suppliers and their available products.
+1. An api - used by both the main and admin websites to execute business logic and interact with the database.
+1. An identity server - to verify login credentials and create session cookies.
+1. A reverse proxy - to access the websites and api through a single domain and port.
+1. A database - to persist data.
 
-C# libraries:
+The core technologies used include:
 
-- [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/)
-- [Mediator](https://github.com/jbogard/MediatR)
-- [AutoMapper](https://github.com/AutoMapper/AutoMapper)
-- [Feature Folders](https://github.com/OdeToCode/AddFeatureFolders)
-- [Stateless](https://github.com/dotnet-state-machine/stateless)
-- [Swagger](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
-
-Javascript/CSS libraries:
-
-- [Angular](https://angular.io/)
-- [Angular CLI](https://angular.io/cli)
-- [Bootstrap](https://getbootstrap.com/)
-- [NG Bootstrap](https://ng-bootstrap.github.io)
-- [Font Awesome](http://fontawesome.io)
-- [lodash](https://lodash.com)
-
-Testing libraries:
-
-- [NUnit3](https://github.com/nunit/docs/wiki)
-- [Moq](https://github.com/moq/moq4)
-- [Entity Framework Core InMemory Provider](https://docs.microsoft.com/en-us/ef/core/providers/in-memory/)
-- [ASP.NET Core Test Host](https://www.nuget.org/packages/Microsoft.AspNetCore.TestHost)
-- [Jasmine](https://jasmine.github.io/)
-- [Karma](https://karma-runner.github.io)
-
-# Solution Structure
-
-The solution structure is influenced by the [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) pattern and structured into the following components:
-
-- **PurchaseOrderTracker.Domain** - enterprise business rules (rules that would exist even if this software system did not)
-- **PurchaseOrderTracker.Application** - application business rules (rules that define or constrain the way that an automated system works, i.e., workflow logic)
-- **PurchaseOrderTracker.WebUI.Angular** - the website user interface
-- **PurchaseOrderTracker.WebApi** - an rpc-style web API the website uses
-- **PurchaseOrderTracker.Persistence** - data persistence
-- **PurchaseOrderTracker.Cache** - data caching
+1. Main website - Angular (v9.0) frontend and ASP.NET Core (v5) backend
+1. Admin website - React (v16.10) frontend and ASP.NET Core (v5) backend
+1. Api - ASP.NET Core (v5)
+1. Identity Server - ASP.NET Core (v5) utilising ASP.NET Core Identity for identity features
+1. Reverse proxy - Envoy Proxy (v1.14)
+1. Database - Microsoft SQL Server (v2019)
 
 # Developer Environment Setup
 
 1. Install Visual Studio IDE (2019 or higher)
-1. Optionally, install these Visual Studio IDE extensions:
+1. Optionally, install Visual Studio IDE extensions:
    1. [Project PowerTools](https://marketplace.visualstudio.com/items?itemName=ms-madsk.ProjectFileTools)
    1. [Double-Click Maximise](https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.Double-ClickMaximize)
    1. [Solution Error Visualizer](https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.SolutionErrorVisualizer)
    1. [Output Enhancer](https://marketplace.visualstudio.com/items?itemName=NikolayBalakin.Outputenhancer)
-1. Install NodeJs (v12.18.3)
-1. Install Visual Studio Code (v1.42 or higher)
-1. Install these VS Code extensions:
+1. Install NodeJs (v16.14.2)
+1. Install Visual Studio Code (v1.61 or higher)
+1. Install VS Code extensions:
    1. [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
    1. [stylelint](https://marketplace.visualstudio.com/items?itemName=shinnn.stylelint)
    1. [TSlint](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-tslint-plugin)
-1. Install Docker and switch to Linux containers
-1. Clone the repo
+1. Install Chrome extensions:
+   1. [Angular DevTools](https://chrome.google.com/webstore/detail/angular-devtools/ienfalfjdbdpebioblfackkekamfmbnh?hl=en)
+   1. [React DevTools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en)
+   1. [Redux DevTools](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=en)
+1. Install SQL Server Management Studio (v17 or higher)
 
-## SQL Server Setup
+## Debugging
 
-The **PurchaseOrderTracker.WebApi** project requires access to an instance of SQL Server 2017 CU3. You can either run an instance locally or startup a container and connect to it. If it doesn't already exist, the application will create the database schema and populate it with sample data.
+To debug applications locally, you must first start an instance of SQL Server and Envoy Proxy, then start the ASP.Net applications in Visual Studio IDE, then the frontend SPAs using npm.
 
-To start a docker instance:
+The following ports must be free:
 
-`docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=PoTracker001" -p 1433:1433 -d microsoft/mssql-server-windows-developer:2017-CU3`
+- 1434 - SQL Server
+- 4200 - Main website (Angular) backend
+- 4201 - Main website (Angular) frontend
+- 4202 - WebApi
+- 4203 - Admin website backend
+- 4204 - Admin website frontend
+- 4891 - Envoy Proxy
+- 5111 - Identity Server
 
-## Running the App
+Once everything is started up access the application via Envoy Proxy at http://localhost:4891
 
-To run the application in debug mode:
+### SQL Server
 
-1. Start your SQL Server instance (see SQL Server Setup instructions)
-2. Update the WebApi project's SQL connection string to point to your SQL Server instance
-3. Start the app through Visual Studio. This will run both the WebUI (port 4200) and WebAPI (port 4202) projects
-4. Serve the angular app by running `ng serve` from within the ClientApp folder of the WebUI project. This runs on port 4201.
+Use Docker to create a SQL Server container:  
+`docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=PoTracker001" -p 1434:1433 -d mcr.microsoft.com/mssql/server:2019-CU8-ubuntu-16.04`
 
-You can then access the website at http://localhost:4200/
+SQL Server is used by both PurchaseOrderTracker.WebApi and PurchaseOrderTracker.Identity. If it's the first time starting the SQL Server container, application code will create necessary databases, database objects, and populate tables with sample data.
+
+If you use a different SQL Server port or want to use a locally running instance of SQL Server, override `ConnectionStrings:IdentityDatabase` and `ConnectionStrings:PoTrackerDatabase` configuration values by setting environment variables in the relevant project's debug settings.
+
+### Envoy Proxy
+
+Use Docker to create an Envoy Proxy container:  
+`docker run --rm -p 4891:80 -v ${PWD}:/etc/envoy envoyproxy/envoy:v1.14.4 envoy -c /etc/envoy/envoy.debug.yaml`
+
+### ASP.NET Applications
+
+Open Visual Studio IDE and press F5. Multiple startup projects will be selected by default which will start the following applications:
+
+1. PurchaseOrderTracker.WebApi
+1. PurchaseOrderTracker.WebUI.Admin
+1. PurchaseOrderTracker.WebUI.Angular
+1. PurchaseOrderTracker.Identity
+
+### Frontend SPAs
+
+Open each of the website SPAs in Visual Studio Code, then run `npm start` to startup serving them.
+
+The SPAs are located at:
+
+1. PurchaseOrderTracker.WebUI.Angular/ClientApp
+1. PurchaseOrderTracker.WebUI.Admin/ClientApp

@@ -83,27 +83,36 @@ namespace PurchaseOrderTracker.Persistence
 
         private void ConfigureSupplier(EntityTypeBuilder<Supplier> entity)
         {
-            entity.Property(s => s.Id).ForSqlServerUseSequenceHiLo();
+            entity.Property(s => s.Id).UseHiLo("SupplierHiLoSequence");
             entity.OwnsOne(p => p.Name, o =>
             {
                 o.HasIndex(p => p.Value).IsUnique();
                 o.Property(p => p.Value).IsRequired().HasMaxLength(20);
+                // explicitly configure shadow properties to workaround issue https://github.com/dotnet/efcore/issues/20740
+                // System.InvalidOperationException: 'Supplier.Id' and 'SupplierName.SupplierId' are both mapped to column 'Id' in 'Supplier' but are configured with different value generation strategies.
+                o.Property<int>("SupplierId").UseHiLo("SupplierHiLoSequence");
             });
         }
 
         private void ConfigureProduct(EntityTypeBuilder<Product> entity)
         {
-            entity.Property(b => b.Id).ForSqlServerUseSequenceHiLo();
+            entity.Property(p => p.Id).UseHiLo("ProductHiLoSequence");
             entity.Property(p => p.Price).IsRequired();
             entity.Property<int>("CategoryId").IsRequired();
             entity.OwnsOne(p => p.ProductCode, o =>
             {
                 o.HasIndex(p => p.Value).IsUnique();
                 o.Property(p => p.Value).IsRequired().HasMaxLength(20);
+                // explicitly configure shadow properties to workaround issue https://github.com/dotnet/efcore/issues/20740
+                // System.InvalidOperationException: 'Product.Id' and 'ProductCode.ProductId' are both mapped to column 'Id' in 'Product' but are configured with different value generation strategies.
+                o.Property<int>("ProductId").UseHiLo("ProductHiLoSequence");
             });
             entity.OwnsOne(p => p.Name, o =>
             {
                 o.Property(p => p.Value).IsRequired().HasMaxLength(150);
+                // explicitly configure shadow properties to workaround issue https://github.com/dotnet/efcore/issues/20740
+                // System.InvalidOperationException: 'Product.Id' and 'ProductName.ProductId' are both mapped to column 'Id' in 'Product' but are configured with different value generation strategies
+                o.Property<int>("ProductId").UseHiLo("ProductHiLoSequence");
             });
 
             // TODO

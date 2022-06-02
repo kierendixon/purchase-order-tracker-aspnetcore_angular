@@ -11,14 +11,14 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
         public class Constructor
         {
             [Test]
-            public void Always_AssignsValues()
+            public void assigns_values()
             {
                 var category = new ProductCategoryBuilder().Build();
                 Assert.That(category.Name.Value, Is.EqualTo("furniture"));
             }
 
             [Test]
-            public void Always_DefaultIdentifier()
+            public void defaults_id()
             {
                 var category = new ProductCategoryBuilder().Build();
                 Assert.That(category.Id, Is.EqualTo(default(int)));
@@ -26,11 +26,11 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
             }
 
             [Test]
-            public void NullName_ThrowsArgumentNullException()
+            public void throws_ex_when_name_is_null()
             {
                 try
                 {
-                    var category = new ProductCategory(null);
+                    _ = new ProductCategory(null);
                     Assert.Fail("Expected exception to be thrown");
                 }
                 catch (Exception ex)

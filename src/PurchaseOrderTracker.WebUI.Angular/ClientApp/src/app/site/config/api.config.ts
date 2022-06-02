@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 
-const baseApiUrl = 'http://localhost:4202/api';
+const baseApiUrl = '/api';
 
 // main-site
 
@@ -104,3 +104,7 @@ export function purchaseOrderLineItemsUrl(purchaseOrderId: number): string {
   const compiled = _.template(basePurchaseOrderUrl + '/${purchaseOrderId}/line-items');
   return compiled({ purchaseOrderId });
 }
+
+// user
+
+export const baseUserUrl = `/user`;

@@ -16,7 +16,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
         public class Constructor
         {
             [Test]
-            public void Always_AssignsValues()
+            public void assigns_values()
             {
                 var supplier = new SupplierBuilder().Build();
                 var purchaseOrder = new PurchaseOrder(new OrderNo("orderNo"), supplier);
@@ -26,7 +26,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
             }
 
             [Test]
-            public void Always_DefaultCreatedDateToNow()
+            public void defaults_created_date_to_now()
             {
                 var purchaseOrder = new PurchaseOrderBuilder().Build();
 
@@ -37,7 +37,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
             }
 
             [Test]
-            public void Always_DefaultIdentifier()
+            public void defaults_id()
             {
                 var purchaseOrder = new PurchaseOrderBuilder().Build();
 
@@ -45,7 +45,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
             }
 
             [Test]
-            public void Always_DefaultLineItemsAsEmptyCollection()
+            public void defaults_line_items_as_empty_collection()
             {
                 var purchaseOrder = new PurchaseOrderBuilder().Build();
 
@@ -53,7 +53,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
             }
 
             [Test]
-            public void Always_DefaultStatusToDraft()
+            public void defaults_status_as_draft()
             {
                 var purchaseOrder = new PurchaseOrderBuilder().Build();
 
@@ -61,7 +61,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
             }
 
             [Test]
-            public void NullOrderNo_ThrowsArgumentNullException()
+            public void throws_null_arg_ex_when_order_no_is_null()
             {
                 try
                 {
@@ -76,7 +76,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
             }
 
             [Test]
-            public void NullSupplier_ThrowsArgumentNullException()
+            public void throws_null_arg_ex_when_supplier_is_null()
             {
                 try
                 {
@@ -95,7 +95,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
         public class AddLineItemMethod
         {
             [Test]
-            public void ProductIsFromDifferentSupplier_ExceptionThrown()
+            public void throws_ex_when_product_is_from_a_different_supplier()
             {
                 var supplier = new SupplierBuilder().Id(123).Build();
                 var purchaseOrder = new PurchaseOrderBuilder()
@@ -109,7 +109,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
             }
 
             [Test]
-            public void ProductIsFromSameSupplier_LineItemAddedToCollection()
+            public void adds_item_when_product_is_from_the_same_supplier()
             {
                 var supplier = new SupplierBuilder().Id(123).Build();
                 var purchaseOrder = new PurchaseOrderBuilder()
@@ -127,7 +127,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
         public class ChangeSupplierMethod
         {
             [Test]
-            public void PurchaseOrderIsNotOpen_ExceptionThrown()
+            public void throws_ex_when_status_is_delivered()
             {
                 var purchaseOrder = new PurchaseOrderBuilder()
                     .Supplier(new SupplierBuilder().Id(111).Build())
@@ -137,11 +137,25 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
                 purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.Shipped);
                 purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.Delivered);
 
+                Assert.That(purchaseOrder.Status.CurrentState, Is.EqualTo(PurchaseOrderStatus.State.Delivered));
                 Assert.Throws<PurchaseOrderTrackerException>(() => purchaseOrder.ChangeSupplier(newSupplier));
             }
 
             [Test]
-            public void PurchaseOrderIsOpen_SupplierChangedAndLineItemsCleared()
+            public void throws_ex_when_status_is_cancelled()
+            {
+                var purchaseOrder = new PurchaseOrderBuilder()
+                    .Supplier(new SupplierBuilder().Id(111).Build())
+                    .Build();
+                var newSupplier = new SupplierBuilder().Id(222).Build();
+                purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.Cancelled);
+
+                Assert.That(purchaseOrder.Status.CurrentState, Is.EqualTo(PurchaseOrderStatus.State.Cancelled));
+                Assert.Throws<PurchaseOrderTrackerException>(() => purchaseOrder.ChangeSupplier(newSupplier));
+            }
+            
+            [Test]
+            public void changes_supplier_and_clears_line_items()
             {
                 var product = new ProductBuilder().SupplierId(111).Build();
                 var purchaseOrder = new PurchaseOrderBuilder()
@@ -158,6 +172,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
 
                 purchaseOrder.ChangeSupplier(newSupplier);
 
+                Assert.That(purchaseOrder.IsOpen);
                 Assert.That(purchaseOrder.LineItems.Any(), Is.False);
                 Assert.That(purchaseOrder.Supplier, Is.SameAs(newSupplier));
             }
@@ -167,7 +182,18 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
         public class CanBeDeletedMethod
         {
             [Test]
-            public void StatusIsDelivered_ReturnsFalse()
+            public void returns_false_when_status_is_shipped()
+            {
+                var purchaseOrder = new PurchaseOrderBuilder().Build();
+                // TODO: Use UpdateStatus instead of returning state machine and changing status on it
+                purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.Approved);
+                purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.Shipped);
+
+                Assert.That(purchaseOrder.CanBeDeleted, Is.False);
+            }
+
+            [Test]
+            public void returns_false_when_status_is_delivered()
             {
                 var purchaseOrder = new PurchaseOrderBuilder().Build();
                 purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.Approved);
@@ -178,30 +204,37 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
             }
 
             [Test]
-            public void StatusIsNotShippedOrDelivered_ReturnsTrue()
+            public void returns_true_when_status_is_draft()
             {
                 var purchaseOrder = new PurchaseOrderBuilder().Build();
-                Assert.That(purchaseOrder.CanBeDeleted, Is.True);
-
-                purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.PendingApproval);
-                Assert.That(purchaseOrder.CanBeDeleted, Is.True);
-
-                purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.Approved);
-                Assert.That(purchaseOrder.CanBeDeleted, Is.True);
-
-                purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.Cancelled);
                 Assert.That(purchaseOrder.CanBeDeleted, Is.True);
             }
 
             [Test]
-            public void StatusIsShipped_ReturnsFalse()
+            public void returns_true_when_status_is_pending_approval()
+            {
+
+                var purchaseOrder = new PurchaseOrderBuilder().Build();
+                purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.PendingApproval);
+                Assert.That(purchaseOrder.CanBeDeleted, Is.True);
+            }
+
+            [Test]
+            public void returns_true_when_status_is_pending_approved()
+            {
+
+                var purchaseOrder = new PurchaseOrderBuilder().Build();
+                purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.PendingApproval);
+                purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.Approved);
+                Assert.That(purchaseOrder.CanBeDeleted, Is.True);
+            }
+
+            [Test]
+            public void returns_true_when_status_is_pending_cancelled()
             {
                 var purchaseOrder = new PurchaseOrderBuilder().Build();
-                // TODO: Use UpdateStatus instead of returning state machine and changing status on it
-                purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.Approved);
-                purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.Shipped);
-
-                Assert.That(purchaseOrder.CanBeDeleted, Is.False);
+                purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.Cancelled);
+                Assert.That(purchaseOrder.CanBeDeleted, Is.True);
             }
         }
 
@@ -209,11 +242,9 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
         public class UpdateStatusMethod
         {
             [Test]
-            public void CancelledStatus_RemovesShipmentReference()
+            public void removes_shipment_reference_when_cancelled()
             {
                 var purchaseOrder = new PurchaseOrderBuilder().Shipment(new ShipmentBuilder().Build()).Build();
-
-                Assert.That(purchaseOrder.Shipment, Is.Not.Null);
                 purchaseOrder.UpdateStatus(PurchaseOrderStatus.Trigger.Cancelled);
 
                 Assert.That(purchaseOrder.Shipment, Is.Null);
@@ -224,7 +255,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
         public class CanShipmentBeUpdatedMethod
         {
             [Test]
-            public void ShipmentIsNull_ReturnsTrue()
+            public void returns_true_when_shipment_is_null()
             {
                 var purchaseOrder = new PurchaseOrderBuilder().Build();
 
@@ -233,7 +264,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
             }
 
             [Test]
-            public void ShipmentStatusIsShipped_ReturnsFalse()
+            public void returns_false_when_shipment_is_shipped()
             {
                 var shipment = new ShipmentBuilder().Build();
                 var purchaseOrder = new PurchaseOrderBuilder().Shipment(shipment).Build();
@@ -245,7 +276,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
             }
 
             [Test]
-            public void ShipmentIsDelivered_ReturnsFalse()
+            public void returns_false_when_shipment_is_delivered()
             {
                 var shipment = new ShipmentBuilder().Build();
                 var purchaseOrder = new PurchaseOrderBuilder().Shipment(shipment).Build();

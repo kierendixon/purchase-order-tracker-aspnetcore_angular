@@ -8,7 +8,7 @@ namespace PurchaseOrderTracker.Application.Tests
     public class AutoMapperTests
     {
         [Test]
-        public void AutoMapperConfigurationAssertion_DoesNotThrowException()
+        public void configuration_is_valid()
         {
             Mapper.Initialize(cfg => cfg.AddProfiles(typeof(CreateCommand)));
             Mapper.AssertConfigurationIsValid();

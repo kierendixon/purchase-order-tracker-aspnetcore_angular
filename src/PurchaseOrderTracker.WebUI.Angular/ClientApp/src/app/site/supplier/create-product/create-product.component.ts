@@ -21,12 +21,10 @@ export class CreateProductComponent {
 
   onSubmit() {
     const command = this.buildCommand();
-    this.addProductService
-      .handle(command)
-      .subscribe(
-        () => this.activeModal.close('Product created'),
-        err => this.messagesService.addHttpResponseError(err)
-      );
+    this.addProductService.handle(command).subscribe(
+      () => this.activeModal.close('Product created'),
+      err => this.messagesService.addHttpResponseError(err)
+    );
   }
 
   private buildCommand(): CreateProductCommand {
@@ -34,7 +32,7 @@ export class CreateProductComponent {
       this.supplierId,
       this.model.prodCode,
       this.model.name,
-      this.model.categoryId,
+      parseInt(this.model.categoryId, 10),
       this.model.price
     );
   }
@@ -43,6 +41,6 @@ export class CreateProductComponent {
 export class CreateProductViewModel {
   prodCode: string;
   name: string;
-  categoryId: number;
+  categoryId: string;
   price: number;
 }

@@ -15,7 +15,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
         public class Constructor
         {
             [Test]
-            public void Always_AssignsValues()
+            public void assigns_values()
             {
                 var supplier = new SupplierBuilder().Build();
 
@@ -23,7 +23,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
             }
 
             [Test]
-            public void Always_DefaultIdentifier()
+            public void defaults_id()
             {
                 var supplier = new SupplierBuilder().Build();
 
@@ -31,7 +31,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
             }
 
             [Test]
-            public void Always_DefaultProductCategoriesAsEmptyCollection()
+            public void defaults_product_categories_as_empty_collection()
             {
                 var supplier = new SupplierBuilder().Build();
 
@@ -39,7 +39,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
             }
 
             [Test]
-            public void Always_DefaultProductsAsEmptyCollection()
+            public void defaults_products_as_empty_collection()
             {
                 var supplier = new SupplierBuilder().Build();
 
@@ -47,7 +47,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
             }
 
             [Test]
-            public void NullName_ThrowsArgumentNullException()
+            public void throws_ex_when_name_is_null()
             {
                 Assert.Throws<ValidationException>(() =>
                     new SupplierBuilder().Name(null).Build());
@@ -58,7 +58,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
         public class AddProductMethod
         {
             [Test]
-            public void ProductCategoryBelongsToDifferentSupplier_ExceptionThrown()
+            public void throws_ex_when_product_category_belongs_to_a_different_supplier()
             {
                 var category = new ProductCategoryBuilder()
                     .SupplierId(123)
@@ -72,7 +72,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
             }
 
             [Test]
-            public void ProductCategoryIsSameSupplier_ProductAdded()
+            public void adds_product_when_product_category_is_the_same_supplier()
             {
                 var category = new ProductCategoryBuilder()
                     .SupplierId(123)
@@ -92,7 +92,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
         public class RemoveProductMethod
         {
             [Test]
-            public void ProductBelongsToDifferentSupplier_ExceptionThrown()
+            public void throws_ex_when_product_category_belongs_to_a_different_supplier()
             {
                 var product = new ProductBuilder()
                     .SupplierId(123)
@@ -105,7 +105,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
             }
 
             [Test]
-            public void ProductBelongsToSupplier_ProductRemoved()
+            public void adds_product_when_product_category_is_the_same_supplier()
             {
                 var productCategory = new ProductCategoryBuilder()
                     .SupplierId(123)
@@ -126,7 +126,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
             }
 
             [Test]
-            public void ProductBelongsToSupplierButNotInProductsList_ExceptionThrown()
+            public void throws_ex_when_product_category_belongs_to_the_same_supplie_but_is_not_in_products_list()
             {
                 var product = new ProductBuilder()
                     .SupplierId(123)
