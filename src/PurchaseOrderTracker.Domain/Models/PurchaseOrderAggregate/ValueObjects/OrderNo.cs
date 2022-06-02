@@ -25,7 +25,7 @@ namespace PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate.ValueObjects
             return Value;
         }
 
-        protected override IEnumerable<object> GetAtomicValues()
+        protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return Value;
         }

@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Dynamic;
-using System.Resources;
 using Stateless;
 
 // To export to DOT graph format use 'string graph = state.ToDotGraph();'
@@ -68,7 +66,7 @@ namespace PurchaseOrderTracker.Domain.Models.ShipmentAggregate.ValueObjects
             return _state.ToString();
         }
 
-        protected override IEnumerable<object> GetAtomicValues()
+        protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return CurrentState;
         }

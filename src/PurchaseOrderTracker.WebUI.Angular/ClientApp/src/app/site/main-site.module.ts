@@ -11,10 +11,11 @@ import { MainSiteComponent } from './main-site.component';
 
 import { MainSiteLandingResolver } from './main-site-landing-resolver.service';
 import { MainSiteService } from './main-site.service';
+import { UserService } from './shared/nav-top/user.service';
 
 @NgModule({
   imports: [MainSiteRoutingModule, SharedModule, SupplierModule, ShipmentModule, PurchaseOrderModule],
   declarations: [MainSiteComponent, MainSiteLandingComponent],
-  providers: [MainSiteService, MainSiteLandingResolver]
+  providers: [MainSiteService, UserService, MainSiteLandingResolver]
 })
 export class MainSiteModule {}

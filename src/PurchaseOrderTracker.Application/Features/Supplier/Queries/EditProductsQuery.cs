@@ -91,15 +91,26 @@ namespace PurchaseOrderTracker.Application.Features.Supplier.Queries
                     throw new PurchaseOrderTrackerException($"Cannot find Supplier with id '${request.SupplierId}'");
                 }
 
-                IQueryable<Product> products;
+                IEnumerable<Product> products;
                 var productsAreFiltered = false;
                 if (request.ProductCodeFilter != null)
                 {
                     productsAreFiltered = true;
+
+                    // TODO: this doesn't work anymore with EFCore 3.1 because it throws the following ex:
+                    // No backing field could be found for property 'ProductId' of entity type 'ProductCode' and the property does not have a getter.
+                    // which is probably? due to the custom equals() implementation of the ProductCode's ValueObject base class
+                    //IQueryable<Product> products = _context.Product
+                    //    .Include(p => p.Category)
+                    //    .Where(p => p.SupplierId == request.SupplierId
+                    //            && p.ProductCode == request.ProductCodeFilter).AsQueryable();
+
                     products = _context.Product
-                        .Include(p => p.Category)
-                        .Where(p => p.SupplierId == request.SupplierId
-                                && p.ProductCode == request.ProductCodeFilter).AsQueryable();
+                            .Include(p => p.Category)
+                            .Where(p => p.SupplierId == request.SupplierId)
+                            // TODO this brings back results matching the supplierid instead of also filtering by productCode in the DB
+                            .AsEnumerable()
+                            .Where(p => p.ProductCode.Equals(request.ProductCodeFilter)).ToList();
                 }
                 else
                 {
@@ -111,7 +122,7 @@ namespace PurchaseOrderTracker.Application.Features.Supplier.Queries
 
                 var paginatedProducts =
                     new PagedList<Result.ProductViewModel>(
-                        _mapper.Map<IQueryable<Product>, IList<Result.ProductViewModel>>(products),
+                        _mapper.Map<IEnumerable<Product>, IList<Result.ProductViewModel>>(products),
                         request.PageNumber, request.PageSize);
 
                 // TODO: Can't resolve to Queryable? What happens in MVC project?

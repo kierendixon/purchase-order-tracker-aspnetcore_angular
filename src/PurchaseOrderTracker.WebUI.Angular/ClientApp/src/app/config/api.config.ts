@@ -1,4 +1,4 @@
-const baseApiUrl = 'http://localhost:4202/api';
+const baseApiUrl = '/identity';
 
 // account
 

@@ -10,6 +10,7 @@ export class MessagesHelper {
         // Error created from this codebase using new Error()
         return err.message;
       } else {
+        // TODO handle different error codes (500, 400, etc..)
         // The backend returned an unsuccessful response code
         const httpErr = err as HttpErrorResponse;
         return `Error returned from server. Code: ${httpErr.status}, body: ${JSON.stringify(httpErr.error)}`;

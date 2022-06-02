@@ -33,9 +33,26 @@ static_resources:
                   cluster: webapi
                   auto_host_rewrite: true
               - match:
+                  prefix: "/identity/"
+                route:
+                  cluster: identity
+                  auto_host_rewrite: true
+              - match:
+                  prefix: "/admin"
+                route:
+                  cluster: website-admin
+                  auto_host_rewrite: true
+                  prefix_rewrite: "/"
+              - match:
+                  prefix: "/admin/"
+                route:
+                  cluster: website-admin
+                  auto_host_rewrite: true
+                  prefix_rewrite: "/"
+              - match:
                   prefix: "/"
                 route:
-                  cluster: website
+                  cluster: website-main
                   auto_host_rewrite: true
           access_log:
           - name: envoy.access_loggers.file
@@ -65,10 +82,24 @@ static_resources:
       - socket_address:
           address: webapi
           port_value: 80
-    - name: website
+    - name: identity
       connect_timeout: 0.25s
       type: logical_dns
       hosts:
       - socket_address:
-          address: website
+          address: identity
+          port_value: 80
+    - name: website-main
+      connect_timeout: 0.25s
+      type: logical_dns
+      hosts:
+      - socket_address:
+          address: website-main
+          port_value: 80
+    - name: website-admin
+      connect_timeout: 0.25s
+      type: logical_dns
+      hosts:
+      - socket_address:
+          address: website-admin
           port_value: 80

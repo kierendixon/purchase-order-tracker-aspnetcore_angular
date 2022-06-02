@@ -1,0 +1,34 @@
+.nav-left {
+  // TODO
+  //background-color: #2d3f50;
+  //background: linear-gradient(180deg, #181a1dde 10%, #2d3f50 100%);
+  background-color: #efefef;
+  width: 14rem;
+
+  border-top: 1px solid rgb(95, 101, 108);
+
+  .nav-item {
+    &.active > a {
+      //color: white;
+      color: #007bff;
+    }
+
+    > a {
+      transition: color 0.5s ease;
+      // #color: #dbe5e7;
+      //color: rgba(255, 255, 255, 0.3);
+      color: #007bff;
+      font-weight: bold;
+      &:hover {
+        //color: darken(#dbe5e7, 10%);
+        //color: rgba(255, 255, 255, 0.8);
+        color: #007bff;
+      }
+    }
+  }
+
+  .navbar-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    margin: 0 1rem 1rem;
+  }
+}

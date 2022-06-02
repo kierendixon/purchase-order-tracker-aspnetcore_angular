@@ -16,7 +16,7 @@ namespace PurchaseOrderTracker.Persistence.Initialization
         public static void Initialize(PoTrackerDbContext context)
         {
             // uncomment to delete database on every startup
-            //context.Database.EnsureDeleted();
+            // context.Database.EnsureDeleted();
             var created = DbInitializerHelper.EnsureDatabaseCreated(context);
 
             if (created)

@@ -18,6 +18,13 @@ namespace PurchaseOrderTracker.Application.Features.PurchaseOrder.Commands
         public OrderNo OrderNo { get; }
         public int SupplierId { get; }
 
+        // TODO implement ToString in other commands/queries so that MediatrLoggingBehaviour prints useful log messages
+        public override string ToString()
+        {
+            return $"{nameof(OrderNo)}: {OrderNo}, {nameof(SupplierId)}: {SupplierId}";
+        }
+
+        // TODO convert to record type?
         public class Result
         {
             public Result(int orderId)
@@ -40,9 +47,9 @@ namespace PurchaseOrderTracker.Application.Features.PurchaseOrder.Commands
             public async Task<Result> Handle(CreateCommand request, CancellationToken cancellationToken)
             {
                 var supplier = await _context.Supplier.FindAsync(request.SupplierId);
-
                 var purchaseOrder = new Domain.Models.PurchaseOrderAggregate.PurchaseOrder(request.OrderNo, supplier);
                 _context.PurchaseOrder.Add(purchaseOrder);
+
                 await _context.SaveChangesAsync();
 
                 return new Result(purchaseOrder.Id);

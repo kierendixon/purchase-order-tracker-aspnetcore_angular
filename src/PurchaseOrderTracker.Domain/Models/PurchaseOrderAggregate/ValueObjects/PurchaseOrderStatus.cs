@@ -80,7 +80,7 @@ namespace PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate.ValueObjects
             return _state.ToString();
         }
 
-        protected override IEnumerable<object> GetAtomicValues()
+        protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return CurrentState;
         }

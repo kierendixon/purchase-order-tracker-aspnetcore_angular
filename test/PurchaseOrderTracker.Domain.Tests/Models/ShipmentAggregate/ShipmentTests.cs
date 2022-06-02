@@ -16,7 +16,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
         public class Constructor
         {
             [Test]
-            public void Always_AssignsValues()
+            public void assigns_values()
             {
                 var shipment = new ShipmentBuilder().Build();
 
@@ -32,7 +32,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void Always_DefaultIdentifier()
+            public void defaults_id()
             {
                 var shipment = new ShipmentBuilder().Build();
 
@@ -40,7 +40,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void Always_DefaultPurchaseOrdersAsEmptyCollection()
+            public void defaults_purchase_orders_as_empty_collection()
             {
                 var shipment = new ShipmentBuilder().Build();
 
@@ -48,7 +48,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void Always_DefaultStatusToOpen()
+            public void defaults_status_to_open()
             {
                 var shipment = new ShipmentBuilder().Build();
 
@@ -56,11 +56,11 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void NullCompany_ThrowsArgumentNullException()
+            public void throws_arg_null_ex_when_company_is_null()
             {
                 try
                 {
-                    var shipment = new ShipmentBuilder().Company(null).Build();
+                    _ = new ShipmentBuilder().Company(null).Build();
                     Assert.Fail("Expected exception to be thrown");
                 }
                 catch (Exception ex)
@@ -71,11 +71,11 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void NullTrackingId_ThrowsArgumentNullException()
+            public void throws_arg_null_ex_when_tracking_id_is_null()
             {
                 try
                 {
-                    var shipment = new ShipmentBuilder().TrackingId(null).Build();
+                    _ = new ShipmentBuilder().TrackingId(null).Build();
                     Assert.Fail("Expected exception to be thrown");
                 }
                 catch (Exception ex)
@@ -90,7 +90,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
         public class AddPurchaseOrderMethod
         {
             [Test]
-            public void OrderAlreadyAssignedToShipment_ExceptionThrown()
+            public void throws_ex_when_order_is_already_assigned_to_a_shipment()
             {
                 var shipment = new ShipmentBuilder().ShipmentId(123).Build();
                 var poShipment = new ShipmentBuilder().ShipmentId(789).Build();
@@ -101,7 +101,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void OrderStatusCancelled_ExceptionThrown()
+            public void throws_ex_when_order_status_is_cancelled()
             {
                 var shipment = new ShipmentBuilder().Build();
                 var purchaseOrder = new PurchaseOrderBuilder().Build();
@@ -111,7 +111,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void OrderStatusDelivered_ExceptionThrown()
+            public void throws_ex_when_order_status_is_delivered()
             {
                 var shipment = new ShipmentBuilder().Build();
                 var purchaseOrder = new PurchaseOrderBuilder().Build();
@@ -124,7 +124,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void OrderStatusDraft_ExceptionThrown()
+            public void throws_ex_when_order_status_is_draft()
             {
                 var shipment = new ShipmentBuilder().Build();
                 var purchaseOrder = new PurchaseOrderBuilder().Build();
@@ -133,7 +133,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void OrderStatusIsApproved_OrderAdded()
+            public void adds_order_when_order_status_is_approved()
             {
                 var shipment = new ShipmentBuilder().Build();
                 var purchaseOrder = new PurchaseOrderBuilder().Build();
@@ -145,7 +145,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void OrderStatusPendingApproval_ExceptionThrown()
+            public void throws_ex_when_order_status_is_pending_approval()
             {
                 var shipment = new ShipmentBuilder().Build();
                 var purchaseOrder = new PurchaseOrderBuilder().Build();
@@ -155,7 +155,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void OrderStatusShipped_ExceptionThrown()
+            public void throws_ex_when_order_status_is_shipped()
             {
                 var shipment = new ShipmentBuilder().Build();
                 var purchaseOrder = new PurchaseOrderBuilder().Build();
@@ -171,7 +171,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
         public class IsDelayedMethod
         {
             [Test]
-            public void Delayed_ReturnsTrue()
+            public void returns_true_when_shipment_is_delayed()
             {
                 var shipment = new ShipmentBuilder()
                     .EstimatedArrivalDate(DateTime.Today.AddDays(-1))
@@ -181,7 +181,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void DelayedButDelivered_ReturnsFalse()
+            public void returns_false_when_shipment_is_delayed_but_delivered()
             {
                 var shipment = new ShipmentBuilder()
                     .EstimatedArrivalDate(DateTime.Today.AddDays(-1))
@@ -193,7 +193,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void NotDelayed_ReturnsFalse()
+            public void returns_false_when_shipment_is_not_delayed()
             {
                 var shipment = new ShipmentBuilder()
                     .EstimatedArrivalDate(DateTime.Today.AddDays(1))
@@ -207,7 +207,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
         public class IsDelayedMoreThan7DaysMethod
         {
             [Test]
-            public void Delayed_ReturnsTrue()
+            public void returns_true_when_delayed_more_than_7_days()
             {
                 var shipment = new ShipmentBuilder()
                     .EstimatedArrivalDate(DateTime.Today.AddDays(-8))
@@ -217,7 +217,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void DelayedButDelivered_ReturnsFalse()
+            public void returns_false_when_shipment_is_delayed_but_delivered()
             {
                 var shipment = new ShipmentBuilder()
                     .EstimatedArrivalDate(DateTime.Today.AddDays(-8))
@@ -229,7 +229,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void DelayedExactly7Days_ReturnsFalse()
+            public void returns_false_when_shipment_is_delayed_exactly_7_days()
             {
                 var shipment = new ShipmentBuilder()
                     .EstimatedArrivalDate(DateTime.Today.AddDays(-7))
@@ -239,7 +239,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void DelayedLessThan7Days_ReturnsFalse()
+            public void returns_false_when_shipment_is_delayed_less_than_7_days()
             {
                 var shipment = new ShipmentBuilder()
                     .EstimatedArrivalDate(DateTime.Today.AddDays(-1))
@@ -249,7 +249,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void NotDelayed_ReturnsFalse()
+            public void returns_false_when_shipment_is_not_delayed()
             {
                 var shipment = new ShipmentBuilder()
                     .EstimatedArrivalDate(DateTime.Today.AddDays(1))
@@ -263,7 +263,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
         public class IsScheduledForDeliveryTodayMethod
         {
             [Test]
-            public void ScheduledToday_ReturnsTrue()
+            public void returns_true_when_scheduled_for_today()
             {
                 var shipment = new ShipmentBuilder()
                     .EstimatedArrivalDate(DateTime.Today)
@@ -273,7 +273,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void ScheduledTommorrow_ReturnsFalse()
+            public void returns_false_when_scheduled_for_tomorrow()
             {
                 var shipment = new ShipmentBuilder()
                     .EstimatedArrivalDate(DateTime.Today.AddDays(1))
@@ -283,7 +283,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void ScheduledYesterday_ReturnsFalse()
+            public void returns_false_when_scheduled_yesterday()
             {
                 var shipment = new ShipmentBuilder()
                     .EstimatedArrivalDate(DateTime.Today.AddDays(-1))
@@ -297,7 +297,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
         public class UpdateStatusMethod
         {
             [Test]
-            public void UpdateToDelivered_UpdatesAllPurchaseOrdersToDelivered()
+            public void when_delivered_also_updates_all_purchase_orders_to_delivered()
             {
                 var purchaseOrder1 = new PurchaseOrderBuilder().Build();
                 purchaseOrder1.UpdateStatus(PurchaseOrderStatus.Trigger.Approved);
@@ -320,7 +320,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             }
 
             [Test]
-            public void UpdateToShipped_UpdatesAllPurchaseOrdersToShipped()
+            public void when_shipped_also_updates_all_purchase_orders_to_shipped()
             {
                 var purchaseOrder1 = new PurchaseOrderBuilder().Build();
                 purchaseOrder1.UpdateStatus(PurchaseOrderStatus.Trigger.Approved);
@@ -346,38 +346,42 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
         public class CanBeDeletedMethod
         {
             [Test]
-            public void AwaitingShippingStatus_ReturnsTrue()
+            public void returns_true_when_awaiting_shipping()
             {
                 var shipment = new ShipmentBuilder().Build();
                 shipment.UpdateStatus(ShipmentStatus.Trigger.AwaitingShipping);
 
+                Assert.That(shipment.Status.CurrentState, Is.EqualTo(ShipmentStatus.State.AwaitingShipping));
                 Assert.That(shipment.CanBeDeleted, Is.True);
             }
 
             [Test]
-            public void DeliveredStatus_ReturnsFalse()
+            public void returns_false_when_delivered()
             {
                 var shipment = new ShipmentBuilder().Build();
                 shipment.UpdateStatus(ShipmentStatus.Trigger.Shipped);
                 shipment.UpdateStatus(ShipmentStatus.Trigger.Delivered);
 
+                Assert.That(shipment.Status.CurrentState, Is.EqualTo(ShipmentStatus.State.Delivered));
                 Assert.That(shipment.CanBeDeleted, Is.False);
             }
 
             [Test]
-            public void OpenStatus_ReturnsTrue()
+            public void returns_true_when_open()
             {
                 var shipment = new ShipmentBuilder().Build();
 
+                Assert.That(shipment.Status.CurrentState, Is.EqualTo(ShipmentStatus.State.Open));
                 Assert.That(shipment.CanBeDeleted, Is.True);
             }
 
             [Test]
-            public void ShippedStatus_ReturnsTrue()
+            public void returns_true_when_shipped()
             {
                 var shipment = new ShipmentBuilder().Build();
                 shipment.UpdateStatus(ShipmentStatus.Trigger.Shipped);
 
+                Assert.That(shipment.Status.CurrentState, Is.EqualTo(ShipmentStatus.State.Shipped));
                 Assert.That(shipment.CanBeDeleted, Is.True);
             }
         }

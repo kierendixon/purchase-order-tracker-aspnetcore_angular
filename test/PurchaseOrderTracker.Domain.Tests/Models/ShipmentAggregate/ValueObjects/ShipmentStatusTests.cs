@@ -9,7 +9,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate.ValueObject
         public class Constructor
         {
             [Test]
-            public void Always_DefaultsStatusToOpen()
+            public void defaults_to_open_status()
             {
                 var status = new ShipmentStatus();
                 Assert.That(status.CurrentState, Is.EqualTo(ShipmentStatus.State.Open));

@@ -1,0 +1,80 @@
+{
+  "name": "admin",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": "/admin",
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.25",
+    "@fortawesome/free-solid-svg-icons": "^5.11.2",
+    "@fortawesome/react-fontawesome": "^0.1.5",
+    "bootstrap": "^4.3.1",
+    "dayjs": "^1.10.6",
+    "react": "^16.10.1",
+    "react-dom": "^16.10.1",
+    "react-scripts": "4.0.3",
+    "reactstrap": "^8.9.0",
+    "typescript": "^4.3.4",
+    "web-vitals": "^1.1.2"
+  },
+  "scripts": {
+    "start": "cross-env PORT=4204 BROWSER=none react-scripts start",
+    "start:withstubs": "cross-env REACT_APP_USE_MSW=1 npm start",
+    "build": "react-scripts build",
+    "test": "cross-env REACT_APP_USE_MSW=1 react-scripts test",
+    "test:backstop": "backstop test --config test/visual/backstop.json",
+    "eject": "react-scripts eject",
+    "backstop:approve": "backstop approve --config test/visual/backstop.json"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest",
+      "prettier"
+    ],
+    "rules": {
+      "sort-imports": [
+        "warn",
+        {
+          "memberSyntaxSortOrder": [
+            "none",
+            "all",
+            "single",
+            "multiple"
+          ],
+          "allowSeparatedGroups": true
+        }
+      ]
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^12.0.0",
+    "@testing-library/user-event": "^13.2.1",
+    "@types/jest": "^26.0.23",
+    "@types/node": "^12.20.15",
+    "@types/react": "16.9.3",
+    "@types/react-dom": "16.9.1",
+    "@types/reactstrap": "^8.0.4",
+    "backstopjs": "^5.3.7",
+    "cross-env": "^7.0.3",
+    "eslint-config-prettier": "^8.3.0",
+    "msw": "^0.34.0",
+    "prettier": "2.3.1",
+    "sass": "^1.52.1"
+  },
+  "msw": {
+    "workerDirectory": "public"
+  }
+}

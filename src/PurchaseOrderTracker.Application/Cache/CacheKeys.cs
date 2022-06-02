@@ -1,6 +1,4 @@
-﻿using PurchaseOrderTracker.Application.Features.Reporting;
-
-namespace PurchaseOrderTracker.Application.Cache
+﻿namespace PurchaseOrderTracker.Application.Cache
 {
     public static class CacheKeys
     {

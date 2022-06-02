@@ -1,0 +1,39 @@
+{
+  "viewports": [
+    {
+      "label": "desktop",
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "onBeforeScript": "puppet/onBefore.js",
+  "onReadyScript": "puppet/onReady.js",
+  "scenarios": [
+    {
+      "label": "Landing page",
+      "url": "http://localhost:3000/admin"
+    },
+    {
+      "label": "New user form",
+      "url": "http://localhost:3000/admin/users",
+      "onReadyScript": "puppet/onReady.js",
+      "clickSelector": ".users-list .nav-link"
+    }
+  ],
+  "paths": {
+    "bitmaps_reference": "test/visual/backstop_data/bitmaps_reference",
+    "bitmaps_test": "test/visual/backstop_data/bitmaps_test",
+    "engine_scripts": "test/visual/backstop_data/engine_scripts",
+    "html_report": "test/visual/backstop_data/html_report",
+    "ci_report": "test/visual/backstop_data/ci_report"
+  },
+  "report": ["browser"],
+  "engine": "puppeteer",
+  "engineOptions": {
+    "args": ["--no-sandbox"]
+  },
+  "asyncCaptureLimit": 5,
+  "asyncCompareLimit": 50,
+  "debug": false,
+  "debugWindow": false
+}

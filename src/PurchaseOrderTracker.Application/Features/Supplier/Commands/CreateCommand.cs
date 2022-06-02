@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PurchaseOrderTracker.Application.Notifications;
 using PurchaseOrderTracker.Domain.Exceptions;
 using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
@@ -19,6 +20,11 @@ namespace PurchaseOrderTracker.Application.Features.Supplier.Commands
         }
 
         public SupplierName Name { get; }
+
+        public override string ToString()
+        {
+            return $"{nameof(Name)}: {Name}";
+        }
 
         public class Result
         {

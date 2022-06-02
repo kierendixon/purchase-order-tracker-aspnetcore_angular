@@ -9,7 +9,7 @@ import { MessagesHelper } from '../site/shared/messages/messages.helper';
   templateUrl: './account.component.html',
   styleUrls: ['./account.component.scss']
 })
-export class AccountComponent implements OnInit {
+export class AccountComponent /*implements OnInit*/ {
   private static invalidCredentialsUserMsg = 'Username or password is invalid';
 
   errorMessage: string;
@@ -17,16 +17,16 @@ export class AccountComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService) {}
 
-  ngOnInit() {
-    this.skipLoginIfAlreadyAuthenticated();
-  }
+  // ngOnInit() {
+  //   this.skipLoginIfAlreadyAuthenticated();
+  // }
 
-  // TODO: this causes the account page to display momentarily
-  skipLoginIfAlreadyAuthenticated() {
-    if (this.authService.currentUser != null) {
-      this.navigateToNextUrl();
-    }
-  }
+  // // TODO: this causes the account page to display momentarily
+  // skipLoginIfAlreadyAuthenticated() {
+  //   if (this.authService.currentUser != null) {
+  //     this.navigateToNextUrl();
+  //   }
+  // }
 
   navigateToNextUrl(): void {
     const returnUrl = this.route.snapshot.queryParams[returnUrlQueryParam];
