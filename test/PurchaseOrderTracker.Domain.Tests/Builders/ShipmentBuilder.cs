@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate;
+﻿using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate;
 using PurchaseOrderTracker.Domain.Models.ShipmentAggregate;
+using System;
+using System.Collections.Generic;
 
 namespace PurchaseOrderTracker.Domain.Tests.Builders
 {
@@ -11,7 +11,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Builders
         private string _company = "shipmentCompany";
         private string _destinationAddress = "shipmentDestinationAddress";
         private DateTime _estimatedArrivalDate = DateTime.Now;
-        private List<PurchaseOrder> _purchaseOrders = new List<PurchaseOrder>();
+        private List<PurchaseOrder> _purchaseOrders = new();
         private int? _shipmentId;
         private decimal _shippingCost = 999;
         private string _trackingId = "shipmentTrackingId";
@@ -71,7 +71,9 @@ namespace PurchaseOrderTracker.Domain.Tests.Builders
             shipment.AddPurchaseOrders(_purchaseOrders);
 
             if (_shipmentId != null)
+            {
                 shipment.SetPrivatePropertyValue(nameof(Shipment.Id), _shipmentId);
+            }
 
             return shipment;
         }

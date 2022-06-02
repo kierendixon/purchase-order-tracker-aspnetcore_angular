@@ -37,8 +37,8 @@ namespace PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate
 
         public IEnumerable<PurchaseOrderLine> LineItems => _lineItems.AsEnumerable();
 
-        public bool CanBeDeleted => Status.CurrentState != PurchaseOrderStatus.State.Shipped
-                                    && Status.CurrentState != PurchaseOrderStatus.State.Delivered;
+        public bool CanBeDeleted => Status.CurrentState is not PurchaseOrderStatus.State.Shipped
+                                    and not PurchaseOrderStatus.State.Delivered;
 
         public bool IsApprovedOrLaterStatus => IsApproved || IsDelivered || IsShipped;
         public bool IsApproved => Status.CurrentState == PurchaseOrderStatus.State.Approved;
@@ -110,11 +110,9 @@ namespace PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate
         {
             Status.Fire(trigger);
 
-            switch (trigger)
+            if (trigger == PurchaseOrderStatus.Trigger.Cancelled)
             {
-                case PurchaseOrderStatus.Trigger.Cancelled:
-                    HandleCancelledStatusChange();
-                    break;
+                HandleCancelledStatusChange();
             }
         }
 

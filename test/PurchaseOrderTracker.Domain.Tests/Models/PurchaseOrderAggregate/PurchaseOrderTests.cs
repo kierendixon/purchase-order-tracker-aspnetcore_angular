@@ -63,31 +63,15 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
             [Test]
             public void throws_null_arg_ex_when_order_no_is_null()
             {
-                try
-                {
-                    var product = new PurchaseOrder(null, new SupplierBuilder().Build());
-                    Assert.Fail("Expected exception to be thrown");
-                }
-                catch (Exception ex)
-                {
-                    Assert.That(ex, Is.InstanceOf<ArgumentNullException>());
-                    Assert.That(ex.Message.ToLower(), Contains.Substring("orderno"));
-                }
+                var ex = Assert.Throws<ArgumentNullException>(() => new PurchaseOrder(null, new SupplierBuilder().Build()));
+                Assert.That(ex.Message.ToLower(), Contains.Substring("supplier"));
             }
 
             [Test]
             public void throws_null_arg_ex_when_supplier_is_null()
             {
-                try
-                {
-                    var product = new PurchaseOrder(new OrderNo("orderNo"), null);
-                    Assert.Fail("Expected exception to be thrown");
-                }
-                catch (Exception ex)
-                {
-                    Assert.That(ex, Is.InstanceOf<ArgumentNullException>());
-                    Assert.That(ex.Message.ToLower(), Contains.Substring("supplier"));
-                }
+                var ex = Assert.Throws<ArgumentNullException>(() => new PurchaseOrder(new OrderNo("orderNo"), null));
+                Assert.That(ex.Message.ToLower(), Contains.Substring("supplier"));
             }
         }
 
@@ -119,7 +103,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
                     .Product(new ProductBuilder().SupplierId(123).Build())
                     .Build();
 
-                purchaseOrder.AddLineItem(lineItem);
+                Assert.DoesNotThrow(() => purchaseOrder.AddLineItem(lineItem));
             }
         }
 
@@ -153,7 +137,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
                 Assert.That(purchaseOrder.Status.CurrentState, Is.EqualTo(PurchaseOrderStatus.State.Cancelled));
                 Assert.Throws<PurchaseOrderTrackerException>(() => purchaseOrder.ChangeSupplier(newSupplier));
             }
-            
+
             [Test]
             public void changes_supplier_and_clears_line_items()
             {
@@ -213,7 +197,6 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
             [Test]
             public void returns_true_when_status_is_pending_approval()
             {
-
                 var purchaseOrder = new PurchaseOrderBuilder().Build();
                 purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.PendingApproval);
                 Assert.That(purchaseOrder.CanBeDeleted, Is.True);
@@ -222,7 +205,6 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
             [Test]
             public void returns_true_when_status_is_pending_approved()
             {
-
                 var purchaseOrder = new PurchaseOrderBuilder().Build();
                 purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.PendingApproval);
                 purchaseOrder.Status.Fire(PurchaseOrderStatus.Trigger.Approved);

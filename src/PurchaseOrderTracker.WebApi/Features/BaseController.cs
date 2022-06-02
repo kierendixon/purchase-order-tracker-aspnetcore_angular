@@ -9,13 +9,13 @@ namespace PurchaseOrderTracker.WebApi.Features
     [ApiController]
     public abstract class BaseController : ControllerBase
     {
-        protected readonly IMediator _mediator;
-        protected readonly IMapper _mapper;
+        protected IMediator Mediator { get; }
+        protected IMapper Mapper { get; }
 
         protected BaseController(IMediator mediator, IMapper mapper)
         {
-            _mediator = mediator;
-            _mapper = mapper;
+            Mediator = mediator;
+            Mapper = mapper;
         }
     }
 }

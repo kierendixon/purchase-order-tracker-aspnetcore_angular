@@ -73,7 +73,7 @@ namespace PurchaseOrderTracker.Identity.Features.Account
             private static bool IsUserAccountLocked(ApplicationUser user)
             {
                 // TODO user.LockoutEnd.DateTime ??
-                return user.LockoutEnabled == true
+                return user.LockoutEnabled
                     && user.LockoutEnd?.LocalDateTime > DateTime.Now;
             }
 

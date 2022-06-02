@@ -1,12 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using PurchaseOrderTracker.Domain.Exceptions;
 using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
-using PurchaseOrderTracker.Persistence;
-using PurchaseOrderTracker.Persistence.Initialization;
 
-namespace PurchaseOrderTracker.Identity.Persistence.Initialization
+namespace PurchaseOrderTracker.Persistence.Initialization
 {
     public static class IdentityDbInitializer
     {
@@ -18,7 +17,7 @@ namespace PurchaseOrderTracker.Identity.Persistence.Initialization
         public static void Initialize(IdentityDbContext context, UserManager<ApplicationUser> userManager)
         {
             // uncomment to delete database on every startup
-            //context.Database.EnsureDeleted();
+            // context.Database.EnsureDeleted();
             var created = DbInitializerHelper.EnsureDatabaseCreated(context);
 
             if (created)

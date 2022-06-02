@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using PurchaseOrderTracker.Domain.Exceptions;
 using PurchaseOrderTracker.Persistence;
 
-namespace PurchaseOrderTracker.Application.Features.PurchaseOrder
+namespace PurchaseOrderTracker.Application.Features.PurchaseOrder.Commands
 {
     public class DeleteCommand : IRequest
     {

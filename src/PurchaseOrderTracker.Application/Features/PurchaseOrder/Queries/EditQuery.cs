@@ -20,6 +20,8 @@ namespace PurchaseOrderTracker.Application.Features.PurchaseOrder.Queries
 
         public int PurchaseOrderId { get; }
 
+        // TODO: review suppression
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "<Pending>")]
         public class Result
         {
             public int Id { get; private set; }

@@ -1,12 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
-using PurchaseOrderTracker.Identity.Persistence;
 
-namespace PurchaseOrderTracker.Application.Features.User.Commands
+namespace PurchaseOrderTracker.Identity.Features.Users
 {
     public class CreateCommand : IRequest<CreateCommand.Result>
     {
@@ -32,22 +30,18 @@ namespace PurchaseOrderTracker.Application.Features.User.Commands
 
         public class Handler : IRequestHandler<CreateCommand, Result>
         {
-            private readonly IdentityDbContext _context;
-            private readonly IMapper _mapper;
             private readonly UserManager<ApplicationUser> _userManager;
 
-            public Handler(IdentityDbContext context, IMapper mapper, UserManager<ApplicationUser> userManager)
+            public Handler(UserManager<ApplicationUser> userManager)
             {
-                _context = context;
-                _mapper = mapper;
                 _userManager = userManager;
             }
 
             public async Task<Result> Handle(CreateCommand request, CancellationToken cancellationToken)
             {
-                    var user = new ApplicationUser(request.Username);
-                    var result = await _userManager.CreateAsync(user, request.Password);
-                
+                var user = new ApplicationUser(request.Username);
+                var result = await _userManager.CreateAsync(user, request.Password);
+
                 //if (!result.Succeeded)
                 //{
                 //    var errors = string.Join(",", result.Errors.Select(e => e.Description));

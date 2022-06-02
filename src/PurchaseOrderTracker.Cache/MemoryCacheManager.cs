@@ -4,11 +4,11 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using PurchaseOrderTracker.Application.Cache;
 
-namespace PurchaseOrderTracker.Persistence.Cache
+namespace PurchaseOrderTracker.Cache
 {
     public class MemoryCacheManager : ICacheManager
     {
-        private readonly TimeSpan _oneHour = new TimeSpan(1, 0, 0);
+        private readonly TimeSpan _oneHour = new(1, 0, 0);
         private readonly ILogger<MemoryCacheManager> _logger;
         private readonly IMemoryCache _cache;
 

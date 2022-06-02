@@ -48,8 +48,8 @@ namespace PurchaseOrderTracker.Domain.Models.ShipmentAggregate
         public bool CanTransitionToShipped => Status.PermittedTriggers.Contains(ShipmentStatus.Trigger.Shipped);
         public bool CanTransitionToDelivered => Status.PermittedTriggers.Contains(ShipmentStatus.Trigger.Delivered);
 
-        public bool CanBeAssignedToPurchaseOrder => Status.CurrentState != ShipmentStatus.State.Shipped &&
-                                                    Status.CurrentState != ShipmentStatus.State.Delivered;
+        public bool CanBeAssignedToPurchaseOrder => Status.CurrentState is not ShipmentStatus.State.Shipped and
+                                                    not ShipmentStatus.State.Delivered;
 
         public void AddPurchaseOrder(PurchaseOrder order)
         {
@@ -97,14 +97,13 @@ namespace PurchaseOrderTracker.Domain.Models.ShipmentAggregate
         {
             Status.Fire(trigger);
 
-            switch (trigger)
+            if (trigger == ShipmentStatus.Trigger.Shipped)
             {
-                case ShipmentStatus.Trigger.Shipped:
-                    HandleShippedStatusChange();
-                    break;
-                case ShipmentStatus.Trigger.Delivered:
-                    HandleDeliveredStatusChange();
-                    break;
+                HandleShippedStatusChange();
+            }
+            else if (trigger == ShipmentStatus.Trigger.Delivered)
+            {
+                HandleDeliveredStatusChange();
             }
         }
 

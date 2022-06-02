@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
-using PurchaseOrderTracker.Persistence;
 
 namespace PurchaseOrderTracker.Application.Features.User.Commands
 {
@@ -15,7 +12,7 @@ namespace PurchaseOrderTracker.Application.Features.User.Commands
     {
         public DeleteCommand(string id)
         {
-            Id = id?? throw new ArgumentNullException(nameof(id));
+            Id = id ?? throw new ArgumentNullException(nameof(id));
         }
 
         public string Id { get; }
@@ -28,19 +25,17 @@ namespace PurchaseOrderTracker.Application.Features.User.Commands
                 Errors = errors;
             }
 
-            public bool Succeeded { get;  }
+            public bool Succeeded { get; }
             public IEnumerable<IdentityError> Errors { get; }
         }
 
         public class Handler : IRequestHandler<DeleteCommand, Result>
         {
-            private readonly IMapper _mapper;
             private readonly UserManager<ApplicationUser> _userManager;
 
             // todo should application have a dependency on AspNet.Identity ?
-            public Handler(PoTrackerDbContext context, IMapper mapper, UserManager<ApplicationUser> userManager)
+            public Handler(UserManager<ApplicationUser> userManager)
             {
-                _mapper = mapper;
                 _userManager = userManager;
             }
 

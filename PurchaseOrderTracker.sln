@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{37D7D12E-DB01-4972-B41D-9CE9B8224C17}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{C13C7971-DB1F-472E-BE96-1BB3B504DB2F}"
+	ProjectSection(SolutionItems) = preProject
+		test\.editorconfig = test\.editorconfig
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0D4965ED-D335-4E8B-B614-719EE644C3AD}"
 	ProjectSection(SolutionItems) = preProject
@@ -13,8 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
-		codeanalysis-test.ruleset = codeanalysis-test.ruleset
-		codeanalysis.ruleset = codeanalysis.ruleset
 		docker-compose.yml = docker-compose.yml
 		envoy.debug.yaml = envoy.debug.yaml
 		envoy.yaml = envoy.yaml

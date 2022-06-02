@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
-using PurchaseOrderTracker.Persistence;
 
 namespace PurchaseOrderTracker.Application.Features.User.Commands
 {
@@ -20,9 +18,9 @@ namespace PurchaseOrderTracker.Application.Features.User.Commands
             IsAdmin = isAdmin;
         }
 
-        public string UserName { get;  }
-        public string OneTimePassword { get;  }
-        public bool IsAdmin { get;  }
+        public string UserName { get; }
+        public string OneTimePassword { get; }
+        public bool IsAdmin { get; }
 
         public class Result
         {
@@ -38,7 +36,7 @@ namespace PurchaseOrderTracker.Application.Features.User.Commands
                 UserId = userId ?? throw new ArgumentNullException(nameof(userId));
             }
 
-            public bool Succeeded { get;  }
+            public bool Succeeded { get; }
             public string UserId { get; }
             public IEnumerable<IdentityError> Errors { get; }
         }
@@ -49,7 +47,7 @@ namespace PurchaseOrderTracker.Application.Features.User.Commands
             private readonly UserManager<ApplicationUser> _userManager;
 
             // todo should application have a dependency on AspNet.Identity ?
-            public Handler(PoTrackerDbContext context, IMapper mapper, UserManager<ApplicationUser> userManager)
+            public Handler(IMapper mapper, UserManager<ApplicationUser> userManager)
             {
                 _mapper = mapper;
                 _userManager = userManager;

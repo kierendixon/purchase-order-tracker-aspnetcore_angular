@@ -3,7 +3,6 @@ using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate.ValueObjects;
 
 namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate.ValueObjects
 {
-
     public class PurchaseOrderStatusTests
     {
         [TestFixture]

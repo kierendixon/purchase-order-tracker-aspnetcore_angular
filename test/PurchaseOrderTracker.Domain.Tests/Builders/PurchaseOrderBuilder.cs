@@ -8,7 +8,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Builders
 {
     public class PurchaseOrderBuilder
     {
-        private List<PurchaseOrderLine> _lineItems = new List<PurchaseOrderLine>();
+        private List<PurchaseOrderLine> _lineItems = new();
         private string _orderNo = "orderNo";
         private Shipment _shipment;
         private Supplier _supplier = new SupplierBuilder().Build();
@@ -43,7 +43,9 @@ namespace PurchaseOrderTracker.Domain.Tests.Builders
             purchaseOrder.AddLineItems(_lineItems);
 
             if (_shipment != null)
+            {
                 purchaseOrder.SetPrivatePropertyValue(nameof(purchaseOrder.Shipment), _shipment);
+            }
 
             return purchaseOrder;
         }

@@ -11,14 +11,14 @@ namespace PurchaseOrderTracker.Identity.Persistence
         public IdentityDbContext(DbContextOptions<IdentityDbContext> options) : base(options) { }
 
         // TODO
-        protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //var storeOptions = GetStoreOptions();
-            var maxKeyLength = 0; // storeOptions?.MaxLengthForKeys ?? 0;
-            var encryptPersonalData = false; // storeOptions?.ProtectPersonalData ?? false;
-            //PersonalDataConverter converter = null;
+            //var maxKeyLength = 0; // storeOptions?.MaxLengthForKeys ?? 0;
+            //var encryptPersonalData = false; // storeOptions?.ProtectPersonalData ?? false;
+            ////PersonalDataConverter converter = null;
 
-            builder.Entity<ApplicationUser>(b =>
+            modelBuilder.Entity<ApplicationUser>(b =>
             {
                 b.HasKey(u => u.Id);
                 b.HasIndex(u => u.NormalizedUserName).HasDatabaseName("UserNameIndex").IsUnique();

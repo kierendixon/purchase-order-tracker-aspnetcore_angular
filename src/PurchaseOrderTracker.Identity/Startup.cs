@@ -15,11 +15,11 @@ using Microsoft.Extensions.Hosting;
 using AutoMapper;
 using MediatR;
 using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
-using PurchaseOrderTracker.Identity.Features.Account;
 using PurchaseOrderTracker.Identity.Persistence;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using PurchaseOrderTracker.AspNet.Common.HealthChecks;
 using System.IO;
+using PurchaseOrderTracker.Identity.Identity;
 
 namespace PurchaseOrderTracker.Identity
 {
@@ -65,7 +65,7 @@ namespace PurchaseOrderTracker.Identity
     {
         public const string Scheme = CookieAuthenticationDefaults.AuthenticationScheme;
 
-        private static readonly Action<CookieAuthenticationOptions> _configureCookies = opt =>
+        private static readonly Action<CookieAuthenticationOptions> ConfigureCookies = opt =>
         {
             opt.ExpireTimeSpan = TimeSpan.FromMinutes(10);
             opt.Cookie.Name = "pot.session";
@@ -111,7 +111,7 @@ namespace PurchaseOrderTracker.Identity
             IWebHostEnvironment environment)
         {
             services.AddAuthentication(Scheme)
-                .AddCookie(_configureCookies);
+                .AddCookie(ConfigureCookies);
 
             services.AddDbContext<IdentityDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("IdentityDatabase")));

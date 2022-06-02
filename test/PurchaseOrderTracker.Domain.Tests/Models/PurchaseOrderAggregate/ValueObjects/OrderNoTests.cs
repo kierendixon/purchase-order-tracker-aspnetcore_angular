@@ -38,10 +38,10 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate.ValueO
                 Assert.Throws<ValidationException>(() => new OrderNo(orderNoValue));
             }
         }
+
         [TestFixture]
         public class Equality
         {
-
             [Test]
             public void is_equal_to_another_order_no_with_the_same_value_when_using_equals_method()
             {
@@ -51,7 +51,6 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate.ValueO
             [Test]
             public void is_not_equal_to_another_order_no_with_a_different_value_when_using_equals_method()
             {
-
                 Assert.That(new OrderNo("1234").Equals(new OrderNo("12345")), Is.False);
             }
 
@@ -62,7 +61,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate.ValueO
             }
 
             [Test]
-            public void s_not_equal_to_another_order_no_with_a_different_value_when_using_equality_operator()
+            public void is_not_equal_to_another_order_no_with_a_different_value_when_using_equality_operator()
             {
                 Assert.That(new OrderNo("1234") == new OrderNo("12345"), Is.False);
             }

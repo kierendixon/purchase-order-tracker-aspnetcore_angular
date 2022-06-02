@@ -36,8 +36,7 @@ namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder
             //    .ConstructUsing(src => new Inquiry.Result.PurchaseOrderViewModel(src.Id, src.OrderNo,
             //        src.CreatedDate, src.Supplier.Name, src.Status.CurrentState.ToString()))
             //    .ForCtorParam("currentState", opt => opt.MapFrom(src => src.Status.CurrentState.ToString()));
-
-            CreateMap<Domain.Models.PurchaseOrderAggregate.PurchaseOrder, InquiryQueryResultDto.PurchaseOrderDto>()
+            CreateMap<Domain.Models.PurchaseOrderAggregate.PurchaseOrder, PurchaseOrderDto>()
                 .ForCtorParam(
                     nameof(PurchaseOrderDto.Status).FirstCharacterToLower(),
                     opt => opt.MapFrom(src => src.Status.CurrentState.ToString()));

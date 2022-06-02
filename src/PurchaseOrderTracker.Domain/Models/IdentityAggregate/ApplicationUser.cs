@@ -11,7 +11,8 @@ namespace PurchaseOrderTracker.Domain.Models.IdentityAggregate
             SecurityStamp = Guid.NewGuid().ToString();
         }
 
-        public ApplicationUser(string userName) : this()
+        public ApplicationUser(string userName)
+            : this()
         {
             UserName = userName;
         }
@@ -71,6 +72,8 @@ namespace PurchaseOrderTracker.Domain.Models.IdentityAggregate
         /// Returns the username for this user.
         /// </summary>
         public override string ToString()
-            => UserName;
+        {
+            return UserName;
+        }
     }
 }

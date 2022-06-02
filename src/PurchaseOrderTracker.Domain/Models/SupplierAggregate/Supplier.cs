@@ -1,8 +1,8 @@
-﻿using System;
+﻿using PurchaseOrderTracker.Domain.Exceptions;
+using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using PurchaseOrderTracker.Domain.Exceptions;
-using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
 
 namespace PurchaseOrderTracker.Domain.Models.SupplierAggregate
 {
@@ -29,6 +29,7 @@ namespace PurchaseOrderTracker.Domain.Models.SupplierAggregate
         public IEnumerable<ProductCategory> ProductCategories => _productCategories;
         public IEnumerable<Product> Products => _products;
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Critical Code Smell", "S2302:\"nameof\" should be used", Justification = "'product' text is part of the exception message string")]
         public void AddProduct(Product product)
         {
             if (!OwnsCategory(product.Category))

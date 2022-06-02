@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate;
 using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate.ValueObjects;
 using PurchaseOrderTracker.Domain.Models.ShipmentAggregate;
 using PurchaseOrderTracker.Domain.Models.ShipmentAggregate.ValueObjects;
 using PurchaseOrderTracker.Domain.Models.SupplierAggregate;
 using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PurchaseOrderTracker.Persistence.Initialization
 {
     public static class PoTrackerDbInitializer
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S138:Functions should not have too many lines of code", Justification = "<Pending>")]
         public static void Initialize(PoTrackerDbContext context)
         {
             // uncomment to delete database on every startup

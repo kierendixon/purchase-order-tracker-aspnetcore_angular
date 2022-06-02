@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
-using PurchaseOrderTracker.Identity.Persistence;
 using PurchaseOrderTracker.Persistence;
 
 namespace PurchaseOrderTracker.WebApi.Features.User
@@ -16,7 +15,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
         IQueryableUserStore<ApplicationUser>,
         IUserLockoutStore<ApplicationUser>
     // TODO
-    //IUserSecurityStampStore<ApplicationUser>,
+    // IUserSecurityStampStore<ApplicationUser>,
     {
         public UserStore(IdentityDbContext context, IdentityErrorDescriber describer = null)
         {
@@ -29,8 +28,8 @@ namespace PurchaseOrderTracker.WebApi.Features.User
         private DbSet<ApplicationUser> UsersSet { get { return _context.Set<ApplicationUser>(); } }
 
         private bool _disposed;
-        private IdentityErrorDescriber _errorDescriber;
-        private IdentityDbContext _context;
+        private readonly IdentityErrorDescriber _errorDescriber;
+        private readonly IdentityDbContext _context;
 
         public async Task<IdentityResult> CreateAsync(ApplicationUser user, CancellationToken cancellationToken = default)
         {
@@ -40,6 +39,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             _context.Add(user);
             await _context.SaveChangesAsync(cancellationToken);
             return IdentityResult.Success;
@@ -65,6 +65,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
+
             return IdentityResult.Success;
         }
 
@@ -86,6 +87,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
+
             return IdentityResult.Success;
         }
 
@@ -112,6 +114,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             return Task.FromResult(user.Id);
         }
 
@@ -123,6 +126,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             return Task.FromResult(user.UserName);
         }
 
@@ -134,6 +138,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             user.UserName = userName;
             return Task.CompletedTask;
         }
@@ -146,6 +151,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             return Task.FromResult(user.NormalizedUserName);
         }
 
@@ -157,6 +163,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             user.NormalizedUserName = normalizedName;
             return Task.CompletedTask;
         }
@@ -169,6 +176,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             user.PasswordHash = passwordHash;
             return Task.CompletedTask;
         }
@@ -181,6 +189,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             return Task.FromResult(user.PasswordHash);
         }
 
@@ -192,6 +201,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             return Task.FromResult(user.Id);
         }
 
@@ -203,6 +213,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             return Task.FromResult(user.UserName);
         }
 
@@ -220,9 +231,11 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             user.UserName = userName;
             return Task.CompletedTask;
         }
+
         public virtual Task<DateTimeOffset?> GetLockoutEndDateAsync(ApplicationUser user, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -231,6 +244,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             return Task.FromResult(user.LockoutEnd);
         }
 
@@ -242,6 +256,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             user.LockoutEnd = lockoutEnd;
             return Task.CompletedTask;
         }
@@ -254,6 +269,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             user.AccessFailedCount++;
             return Task.FromResult(user.AccessFailedCount);
         }
@@ -266,6 +282,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             user.AccessFailedCount = 0;
             return Task.CompletedTask;
         }
@@ -278,6 +295,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             return Task.FromResult(user.AccessFailedCount);
         }
 
@@ -289,6 +307,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             return Task.FromResult(user.LockoutEnabled);
         }
 
@@ -300,6 +319,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             user.LockoutEnabled = enabled;
             return Task.CompletedTask;
         }

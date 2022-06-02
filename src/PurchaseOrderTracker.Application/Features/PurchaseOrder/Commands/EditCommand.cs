@@ -64,15 +64,7 @@ namespace PurchaseOrderTracker.Application.Features.PurchaseOrder.Commands
             {
                 if (order.Shipment != null && command.ShipmentId == null)
                 {
-                    if (command.ShipmentId == null)
-                    {
-                        order.Shipment = null;
-                    }
-                    else if (order.Shipment.Id != command.ShipmentId)
-                    {
-                        var shipment = await _context.Shipment.FindAsync(command.ShipmentId);
-                        order.Shipment = shipment;
-                    }
+                    order.Shipment = null;
                 }
                 else if (order.Shipment == null && command.ShipmentId != null)
                 {

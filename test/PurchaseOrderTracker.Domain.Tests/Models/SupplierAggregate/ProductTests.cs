@@ -36,17 +36,9 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate
             [Test]
             public void throws_ex_when_name_is_null()
             {
-                try
-                {
-                    var category = new ProductCategoryBuilder().Build();
-                    _ = new Product(new ProductCode("code1"), null, category, 999);
-                    Assert.Fail("Expected exception to be thrown");
-                }
-                catch (Exception ex)
-                {
-                    Assert.That(ex, Is.InstanceOf<ArgumentNullException>());
-                    Assert.That(ex.Message.ToLower(), Contains.Substring("name"));
-                }
+                var category = new ProductCategoryBuilder().Build();
+                var ex = Assert.Throws<ArgumentNullException>(() => new Product(new ProductCode("code1"), null, category, 999));
+                Assert.That(ex.Message.ToLower(), Contains.Substring("name"));
             }
 
             [Test]

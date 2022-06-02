@@ -15,6 +15,7 @@ namespace PurchaseOrderTracker.Cache
             _cache = cacheManager;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0046:Convert to conditional expression", Justification = "code becomes harder to read")]
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
             var cacheAttribute = typeof(TResponse).GetTypeInfo().GetCustomAttribute<CacheAttribute>();

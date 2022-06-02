@@ -18,7 +18,7 @@ namespace PurchaseOrderTracker.WebApi.Features.Reporting
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ShipmentsSummaryQuery.Result>> ShipmentsSummary()
         {
-            return await _mediator.Send(new ShipmentsSummaryQuery());
+            return await Mediator.Send(new ShipmentsSummaryQuery());
         }
     }
 }

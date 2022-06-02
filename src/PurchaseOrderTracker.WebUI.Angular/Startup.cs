@@ -96,21 +96,22 @@ namespace PurchaseOrderTracker.WebUI.Angular
         public static void AddCustomAuthentication(this IServiceCollection services)
         {
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(_configureCookies);
+                .AddCookie(ConfigureCookies);
         }
 
         public static void AddCustomAuthorization(this IServiceCollection services)
         {
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("Administrator",
+                options.AddPolicy(
+                    "Administrator",
                     new AuthorizationPolicyBuilder()
                         .RequireClaim(ClaimTypes.Role, "admin")
                         .Build());
             });
         }
 
-        private static readonly Action<CookieAuthenticationOptions> _configureCookies = opt =>
+        private static readonly Action<CookieAuthenticationOptions> ConfigureCookies = opt =>
         {
             opt.ExpireTimeSpan = TimeSpan.FromMinutes(10);
             opt.Cookie.Name = "pot.session";
@@ -123,13 +124,14 @@ namespace PurchaseOrderTracker.WebUI.Angular
             {
                 if (IsAjaxRequest(context.Request))
                 {
-                    //context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
+                    // context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 }
                 else
                 {
                     context.Response.Redirect(context.RedirectUri);
                 }
+
                 return Task.CompletedTask;
             };
 
@@ -144,6 +146,7 @@ namespace PurchaseOrderTracker.WebUI.Angular
                 {
                     context.Response.Redirect(context.RedirectUri);
                 }
+
                 return Task.CompletedTask;
             };
 
@@ -151,12 +154,13 @@ namespace PurchaseOrderTracker.WebUI.Angular
             {
                 if (IsAjaxRequest(context.Request))
                 {
-                    //context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
+                    // context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
                 }
                 else
                 {
                     context.Response.Redirect(context.RedirectUri);
                 }
+
                 return Task.CompletedTask;
             };
 
@@ -170,6 +174,7 @@ namespace PurchaseOrderTracker.WebUI.Angular
                 {
                     context.Response.Redirect(context.RedirectUri);
                 }
+
                 return Task.CompletedTask;
             };
         };
@@ -184,6 +189,7 @@ namespace PurchaseOrderTracker.WebUI.Angular
 
     public static class ApplicationBuilderExtensions
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0045:Convert to conditional expression", Justification = "makes env.IsDevelopment() statements harder to read")]
         public static void UseCustomErrorHandler(this IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

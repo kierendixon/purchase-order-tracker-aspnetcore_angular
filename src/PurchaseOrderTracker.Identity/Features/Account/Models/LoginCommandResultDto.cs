@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace PurchaseOrderTracker.Identity.Features.Account.Models
+﻿namespace PurchaseOrderTracker.Identity.Features.Account.Models
 {
     public class LoginCommandResultDto
     {
@@ -9,6 +7,6 @@ namespace PurchaseOrderTracker.Identity.Features.Account.Models
             IsAdmin = isAdmin;
         }
 
-        public bool IsAdmin { get;  }
+        public bool IsAdmin { get; }
     }
 }

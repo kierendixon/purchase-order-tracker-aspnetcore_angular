@@ -41,7 +41,7 @@ namespace PurchaseOrderTracker.Persistence
             });
 
             // TODO
-            //entity.HasIndex(c => new { c.SupplierId, c.Name }).IsUnique();
+            // entity.HasIndex(c => new { c.SupplierId, c.Name }).IsUnique();
         }
 
         private void ConfigurePurchaseOrder(EntityTypeBuilder<PurchaseOrder> entity)

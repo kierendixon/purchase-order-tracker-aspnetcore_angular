@@ -64,6 +64,7 @@ namespace PurchaseOrderTracker.Application.Features.Supplier.Commands
                 return new Result(request.SupplierId);
             }
 
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0046:Convert to conditional expression", Justification = "would result in nested ternery")]
             private async Task<ProductCategory> DetermineNewCategory(
                 PoTrackerDbContext context,
                 Domain.Models.SupplierAggregate.Supplier supplier,

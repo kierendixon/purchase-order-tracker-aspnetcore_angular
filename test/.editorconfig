@@ -1,0 +1,21 @@
+[**Tests.cs]
+# Override public method's naming style for test methods to support the preferred naming convention
+###################################################################################################
+dotnet_naming_style.all_lower_with_underscore_separator.capitalization = all_lower
+dotnet_naming_style.all_lower_with_underscore_separator.word_separator = _
+dotnet_naming_symbols.public_methods.applicable_kinds = method
+dotnet_naming_symbols.public_methods.applicable_accessibilities = public
+dotnet_naming_rule.method_rule.symbols              = public_methods
+dotnet_naming_rule.method_rule.style                = all_lower_with_underscore_separator
+dotnet_naming_rule.method_rule.severity             = error
+
+# Disable select code quality rules
+###################################
+
+# Remove the underscores from member name
+# Justification: test method naming convention uses underscores
+dotnet_diagnostic.CA1707.severity = none
+
+# Identical expressions should not be used on both sides of a binary operator
+# Justification: used intentionally in tests to validate equality comparison
+dotnet_diagnostic.S1764.severity = none

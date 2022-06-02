@@ -34,8 +34,7 @@ namespace PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate.ValueObjects
             Cancelled
         }
 
-        public bool IsStateBeforeApproved => CurrentState == State.Draft
-                                             || CurrentState == State.PendingApproval;
+        public bool IsStateBeforeApproved => CurrentState is State.Draft or State.PendingApproval;
 
         public State CurrentState
         {

@@ -61,7 +61,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.SupplierAggregate.ValueObject
             }
 
             [Test]
-            public void s_not_equal_to_another_product_code_with_a_different_value_when_using_equality_operator()
+            public void is_not_equal_to_another_product_code_with_a_different_value_when_using_equality_operator()
             {
                 Assert.That(new ProductCode("1234") == new ProductCode("12345"), Is.False);
             }

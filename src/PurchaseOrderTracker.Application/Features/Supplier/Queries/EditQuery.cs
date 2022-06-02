@@ -36,10 +36,9 @@ namespace PurchaseOrderTracker.Application.Features.Supplier.Queries
             // TODO: rename or move to webapi layer
             public class SupplierViewModel
             {
-                //public SupplierViewModel()
-                //{
-                //}
-
+                // public SupplierViewModel()
+                // {
+                // }
                 public SupplierViewModel(int id, string name)
                 {
                     Id = id;
@@ -54,13 +53,12 @@ namespace PurchaseOrderTracker.Application.Features.Supplier.Queries
         public class Handler : IRequestHandler<EditQuery, Result>
         {
             private readonly PoTrackerDbContext _context;
-            private readonly IConfigurationProvider _configuration;
+            //private readonly IConfigurationProvider _configuration;
             private readonly IMapper _mapper;
 
-            public Handler(PoTrackerDbContext context, IMapper mapper, IConfigurationProvider configuration)
+            public Handler(PoTrackerDbContext context, IMapper mapper)
             {
                 _context = context;
-                _configuration = configuration;
                 _mapper = mapper;
             }
 
@@ -74,13 +72,12 @@ namespace PurchaseOrderTracker.Application.Features.Supplier.Queries
                 }
 
                 // TODO
-                // System.ArgumentException: Expression of type 
-                // 'PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects.SupplierName' 
+                // System.ArgumentException: Expression of type
+                // 'PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects.SupplierName'
                 // cannot be used for constructor parameter of type 'System.String'
-                //var suppliers = await suppliersQueryable
+                // var suppliers = await suppliersQueryable
                 //   .ProjectTo<Result.SupplierViewModel>(_configuration)
                 //   .ToListAsync();
-
                 var suppliers = await suppliersQueryable.ToListAsync();
                 var supplersViewModels = _mapper.Map<List<Result.SupplierViewModel>>(suppliers);
 

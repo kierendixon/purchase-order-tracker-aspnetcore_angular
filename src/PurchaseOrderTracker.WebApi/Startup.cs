@@ -27,7 +27,6 @@ using PurchaseOrderTracker.AspNet.Common.HealthChecks;
 using PurchaseOrderTracker.Cache;
 using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
 using PurchaseOrderTracker.Persistence;
-using PurchaseOrderTracker.Persistence.Cache;
 using PurchaseOrderTracker.WebApi.Features.User;
 using PurchaseOrderTracker.WebApi.Logging;
 using PurchaseOrderTracker.WebApi.Mvc;
@@ -36,15 +35,14 @@ namespace PurchaseOrderTracker.WebApi
 {
     public class Startup
     {
-
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             _configuration = configuration;
             _env = env;
         }
 
-        private IConfiguration _configuration { get; }
-        private IWebHostEnvironment _env { get; }
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _env;
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -76,9 +74,9 @@ namespace PurchaseOrderTracker.WebApi
             services.AddScoped<ILookupNormalizer, UpperInvariantLookupNormalizer>();
             services.AddScoped<IdentityErrorDescriber>();
             // TODO
-            //services.AddScoped<ISecurityStampValidator, SecurityStampValidator<ApplicationUser>>();
-            //services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AdditionalUserClaimsPrincipalFactory>();
-            //services.AddScoped<IUserConfirmation<ApplicationUser>, DefaultUserConfirmation<ApplicationUser>>();
+            // services.AddScoped<ISecurityStampValidator, SecurityStampValidator<ApplicationUser>>();
+            // services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AdditionalUserClaimsPrincipalFactory>();
+            // services.AddScoped<IUserConfirmation<ApplicationUser>, DefaultUserConfirmation<ApplicationUser>>();
             services.AddScoped<IUserStore<ApplicationUser>, UserStore>();
 
             services.Configure<IdentityOptions>(opt =>
@@ -219,7 +217,8 @@ namespace PurchaseOrderTracker.WebApi
                 endpoints.MapControllers()
                     .RequireAuthorization();
 
-                endpoints.MapHealthChecks("/health",
+                endpoints.MapHealthChecks(
+                    "/health",
                     new HealthCheckOptions()
                     {
                         ResponseWriter = HealthCheckResponseWriter.WriteDetailedJsonResponse
@@ -237,21 +236,22 @@ namespace PurchaseOrderTracker.WebApi
         public static void AddCustomAuthentication(this IServiceCollection services)
         {
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(_configureCookies);
+                .AddCookie(ConfigureCookies);
         }
 
         public static void AddCustomAuthorization(this IServiceCollection services)
         {
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(RoleAdministrator,
+                options.AddPolicy(
+                    RoleAdministrator,
                     new AuthorizationPolicyBuilder()
                         .RequireClaim(ClaimTypes.Role, "admin")
                         .Build());
             });
         }
 
-        private static readonly Action<CookieAuthenticationOptions> _configureCookies = opt =>
+        private static readonly Action<CookieAuthenticationOptions> ConfigureCookies = opt =>
         {
             opt.ExpireTimeSpan = TimeSpan.FromMinutes(10);
             opt.Cookie.Name = "pot.session";
@@ -264,13 +264,14 @@ namespace PurchaseOrderTracker.WebApi
             {
                 if (IsAjaxRequest(context.Request))
                 {
-                    //context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
+                    // context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 }
                 else
                 {
                     context.Response.Redirect(context.RedirectUri);
                 }
+
                 return Task.CompletedTask;
             };
 
@@ -285,6 +286,7 @@ namespace PurchaseOrderTracker.WebApi
                 {
                     context.Response.Redirect(context.RedirectUri);
                 }
+
                 return Task.CompletedTask;
             };
 
@@ -292,12 +294,13 @@ namespace PurchaseOrderTracker.WebApi
             {
                 if (IsAjaxRequest(context.Request))
                 {
-                    //context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
+                    // context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
                 }
                 else
                 {
                     context.Response.Redirect(context.RedirectUri);
                 }
+
                 return Task.CompletedTask;
             };
 
@@ -311,6 +314,7 @@ namespace PurchaseOrderTracker.WebApi
                 {
                     context.Response.Redirect(context.RedirectUri);
                 }
+
                 return Task.CompletedTask;
             };
         };

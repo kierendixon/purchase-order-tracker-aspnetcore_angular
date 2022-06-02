@@ -16,6 +16,9 @@ namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder.Models
         public int PurchaseOrderId { get; }
         public string PurchaseOrderOrderNo { get; }
         public List<PurchaseOrderLineDto> LineItems { get; }
+
+        // TODO review suppression
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "<Pending>")]
         public Dictionary<int, string> ProductOptions { get; set; }
 
         public class PurchaseOrderLineDto

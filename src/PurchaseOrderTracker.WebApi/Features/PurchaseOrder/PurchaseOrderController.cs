@@ -5,7 +5,6 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PurchaseOrderTracker.Application.Features.PurchaseOrder;
 using PurchaseOrderTracker.Application.Features.PurchaseOrder.Commands;
 using PurchaseOrderTracker.Application.Features.PurchaseOrder.Queries;
 using PurchaseOrderTracker.Application.PagedList;
@@ -30,7 +29,7 @@ namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder
         public async Task<ActionResult<CreateCommand.Result>> Create(CreateCommandDto dto)
         {
             var command = new CreateCommand(new OrderNo(dto.OrderNo), dto.SupplierId.Value);
-            var result = await _mediator.Send(command);
+            var result = await Mediator.Send(command);
 
             return StatusCode(StatusCodes.Status201Created, result);
         }
@@ -39,7 +38,7 @@ namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<CreateQuery.Result>> Create()
         {
-            return await _mediator.Send(new CreateQuery());
+            return await Mediator.Send(new CreateQuery());
         }
 
         [HttpGet("{purchaseOrderId}")]
@@ -47,14 +46,14 @@ namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<EditQuery.Result>> Edit(int purchaseOrderId)
         {
-            return await _mediator.Send(new EditQuery(purchaseOrderId));
+            return await Mediator.Send(new EditQuery(purchaseOrderId));
         }
 
         [HttpPost("{purchaseOrderId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<EditQuery.Result>> Edit(
-            [Required]int? purchaseOrderId,
+            [Required] int? purchaseOrderId,
             EditCommandDto dto)
         {
             var command = new EditCommand(
@@ -63,7 +62,7 @@ namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder
                 new OrderNo(dto.OrderNo),
                 dto.ShipmentId);
 
-            return await _mediator.Send(command);
+            return await Mediator.Send(command);
         }
 
         [HttpDelete("{purchaseOrderId}")]
@@ -71,7 +70,7 @@ namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Delete(int purchaseOrderId)
         {
-            await _mediator.Send(new DeleteCommand(purchaseOrderId));
+            await Mediator.Send(new DeleteCommand(purchaseOrderId));
             return Ok();
         }
 
@@ -80,8 +79,8 @@ namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<EditLineItemsQueryResultDto>> EditLineItems(int purchaseOrderId)
         {
-            var result = await _mediator.Send(new EditLineItemsQuery(purchaseOrderId));
-            return _mapper.Map<EditLineItemsQueryResultDto>(result);
+            var result = await Mediator.Send(new EditLineItemsQuery(purchaseOrderId));
+            return Mapper.Map<EditLineItemsQueryResultDto>(result);
         }
 
         [HttpPut("{purchaseOrderId}/line-items")]
@@ -93,9 +92,9 @@ namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder
         {
             var command = new CreateLineItemCommand(purchaseOrderId, dto.ProductId.Value,
                 dto.PurchaseQty.Value, dto.PurchasePrice);
-            var result = await _mediator.Send(command);
+            var result = await Mediator.Send(command);
 
-            //TODO: don't return the purchase order id. Should return line item instead
+            // TODO: don't return the purchase order id. Should return line item instead
             return StatusCode(StatusCodes.Status201Created, result);
         }
 
@@ -114,7 +113,7 @@ namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder
                 dto.PurchaseQty.Value,
                 dto.PurchasePrice.Value);
 
-            return await _mediator.Send(command);
+            return await Mediator.Send(command);
         }
 
         [HttpDelete("{purchaseOrderId}/line-items/{lineItemId}")]
@@ -124,7 +123,7 @@ namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder
             int purchaseOrderId,
             int lineItemId)
         {
-            return await _mediator.Send(new DeleteLineItemCommand(purchaseOrderId, lineItemId));
+            return await Mediator.Send(new DeleteLineItemCommand(purchaseOrderId, lineItemId));
         }
 
         [HttpPost("{purchaseOrderId}/status")]
@@ -134,7 +133,7 @@ namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder
             int purchaseOrderId,
             EditStatusCommandDto dto)
         {
-            await _mediator.Send(new EditStatusCommand(purchaseOrderId, dto.UpdatedStatus.Value));
+            await Mediator.Send(new EditStatusCommand(purchaseOrderId, dto.UpdatedStatus.Value));
             return Ok();
         }
 
@@ -146,9 +145,9 @@ namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder
             int? pageNumber,
             [Required] QueryType? queryType)
         {
-            var result = await _mediator.Send(new InquiryQuery(pageSize, pageNumber, queryType.Value));
+            var result = await Mediator.Send(new InquiryQuery(pageSize, pageNumber, queryType.Value));
             var pagedListDto = new StaticPagedList<PurchaseOrderDto>(
-                _mapper.Map<List<PurchaseOrderDto>>(result.PagedList), result.PagedList);
+                Mapper.Map<List<PurchaseOrderDto>>(result.PagedList), result.PagedList);
 
             return new InquiryQueryResultDto(pagedListDto.ToMinimal());
         }

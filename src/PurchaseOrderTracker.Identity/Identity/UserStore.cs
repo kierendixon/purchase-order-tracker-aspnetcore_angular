@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
 using PurchaseOrderTracker.Identity.Persistence;
 
-namespace PurchaseOrderTracker.Identity.Features.Account
+namespace PurchaseOrderTracker.Identity.Identity
 {
     // based on https://github.com/dotnet/aspnetcore/blob/main/src/Identity/Extensions.Stores/src/UserStoreBase.cs
     public class UserStore :
@@ -28,8 +28,8 @@ namespace PurchaseOrderTracker.Identity.Features.Account
         private DbSet<ApplicationUser> UsersSet { get { return _context.Set<ApplicationUser>(); } }
 
         private bool _disposed;
-        private IdentityErrorDescriber _errorDescriber;
-        private IdentityDbContext _context;
+        private readonly IdentityErrorDescriber _errorDescriber;
+        private readonly IdentityDbContext _context;
 
         public async Task<IdentityResult> CreateAsync(ApplicationUser user, CancellationToken cancellationToken = default)
         {
@@ -222,7 +222,7 @@ namespace PurchaseOrderTracker.Identity.Features.Account
             user.UserName = userName;
             return Task.CompletedTask;
         }
-        public virtual Task<DateTimeOffset?> GetLockoutEndDateAsync(ApplicationUser user, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task<DateTimeOffset?> GetLockoutEndDateAsync(ApplicationUser user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -233,7 +233,7 @@ namespace PurchaseOrderTracker.Identity.Features.Account
             return Task.FromResult(user.LockoutEnd);
         }
 
-        public virtual Task SetLockoutEndDateAsync(ApplicationUser user, DateTimeOffset? lockoutEnd, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task SetLockoutEndDateAsync(ApplicationUser user, DateTimeOffset? lockoutEnd, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -245,7 +245,7 @@ namespace PurchaseOrderTracker.Identity.Features.Account
             return Task.CompletedTask;
         }
 
-        public virtual Task<int> IncrementAccessFailedCountAsync(ApplicationUser user, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task<int> IncrementAccessFailedCountAsync(ApplicationUser user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -257,7 +257,7 @@ namespace PurchaseOrderTracker.Identity.Features.Account
             return Task.FromResult(user.AccessFailedCount);
         }
 
-        public virtual Task ResetAccessFailedCountAsync(ApplicationUser user, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task ResetAccessFailedCountAsync(ApplicationUser user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -269,7 +269,7 @@ namespace PurchaseOrderTracker.Identity.Features.Account
             return Task.CompletedTask;
         }
 
-        public virtual Task<int> GetAccessFailedCountAsync(ApplicationUser user, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task<int> GetAccessFailedCountAsync(ApplicationUser user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -280,7 +280,7 @@ namespace PurchaseOrderTracker.Identity.Features.Account
             return Task.FromResult(user.AccessFailedCount);
         }
 
-        public virtual Task<bool> GetLockoutEnabledAsync(ApplicationUser user, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task<bool> GetLockoutEnabledAsync(ApplicationUser user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -291,7 +291,7 @@ namespace PurchaseOrderTracker.Identity.Features.Account
             return Task.FromResult(user.LockoutEnabled);
         }
 
-        public virtual Task SetLockoutEnabledAsync(ApplicationUser user, bool enabled, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task SetLockoutEnabledAsync(ApplicationUser user, bool enabled, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();

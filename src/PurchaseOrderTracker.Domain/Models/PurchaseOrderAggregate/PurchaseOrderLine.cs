@@ -1,5 +1,5 @@
-﻿using System;
-using PurchaseOrderTracker.Domain.Models.SupplierAggregate;
+﻿using PurchaseOrderTracker.Domain.Models.SupplierAggregate;
+using System;
 
 namespace PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate
 {

@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using PurchaseOrderTracker.Application.Notifications;
 using PurchaseOrderTracker.Domain.Exceptions;
 using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
@@ -45,9 +44,15 @@ namespace PurchaseOrderTracker.Application.Features.Supplier.Commands
                 _supplierId = supplierId;
             }
 
-            public int GetEntityId() => _supplierId;
+            public int GetEntityId()
+            {
+                return _supplierId;
+            }
 
-            public Type GetEntityType() => typeof(Domain.Models.SupplierAggregate.Supplier);
+            public Type GetEntityType()
+            {
+                return typeof(Domain.Models.SupplierAggregate.Supplier);
+            }
         }
 
         public class Handler : IRequestHandler<CreateCommand, Result>

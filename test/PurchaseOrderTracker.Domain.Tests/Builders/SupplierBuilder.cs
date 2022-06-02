@@ -6,10 +6,10 @@ namespace PurchaseOrderTracker.Domain.Tests.Builders
 {
     public class SupplierBuilder
     {
-        private List<ProductCategory> _categories = new List<ProductCategory>();
+        private List<ProductCategory> _categories = new();
         private int? _id;
-        private SupplierName _name = new SupplierName("supplierName");
-        private List<Product> _products = new List<Product>();
+        private SupplierName _name = new("supplierName");
+        private List<Product> _products = new();
 
         public SupplierBuilder Id(int id)
         {
@@ -39,7 +39,10 @@ namespace PurchaseOrderTracker.Domain.Tests.Builders
         {
             var supplier = new Supplier(_name);
             if (_id != null)
+            {
                 supplier.SetPrivatePropertyValue(nameof(supplier.Id), _id);
+            }
+
             supplier.AddCategorys(_categories);
             supplier.AddProducts(_products);
 

@@ -17,7 +17,7 @@ namespace PurchaseOrderTracker.Persistence.Initialization
                 }
                 catch (SqlException ex)
                 {
-                    if (ex.Number != 53 && ex.Number != 18456)
+                    if (ex.Number is not 53 and not 18456)
                     {
                         throw;
                     }

@@ -26,8 +26,8 @@ namespace PurchaseOrderTracker.WebApi.Features.Shipment
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<CreateCommand.Result>> Create(CreateCommandDto dto)
         {
-            var command = _mapper.Map<CreateCommand>(dto);
-            var result = await _mediator.Send(command);
+            var command = Mapper.Map<CreateCommand>(dto);
+            var result = await Mediator.Send(command);
 
             return StatusCode(StatusCodes.Status201Created, result);
         }
@@ -37,7 +37,7 @@ namespace PurchaseOrderTracker.WebApi.Features.Shipment
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<EditQuery.Result>> Get(int shipmentId)
         {
-            return await _mediator.Send(new EditQuery(shipmentId));
+            return await Mediator.Send(new EditQuery(shipmentId));
         }
 
         [HttpPost("{shipmentId}")]
@@ -50,15 +50,15 @@ namespace PurchaseOrderTracker.WebApi.Features.Shipment
             var command = new EditCommand(shipmentId, dto.TrackingId, dto.Company, dto.EstimatedArrivalDate,
                 dto.Comments, dto.ShippingCost, dto.DestinationAddress);
 
-            return await _mediator.Send(command);
+            return await Mediator.Send(command);
         }
 
         [HttpDelete("{shipmentId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> Delete([Required]int? shipmentId)
+        public async Task<ActionResult> Delete([Required] int? shipmentId)
         {
-            await _mediator.Send(new DeleteCommand(shipmentId.Value));
+            await Mediator.Send(new DeleteCommand(shipmentId.Value));
             return Ok();
         }
 
@@ -70,7 +70,7 @@ namespace PurchaseOrderTracker.WebApi.Features.Shipment
             EditStatusCommandDto dto)
         {
             var command = new EditStatusCommand(shipmentId, dto.UpdatedStatus.Value);
-            await _mediator.Send(command);
+            await Mediator.Send(command);
 
             return Ok();
         }
@@ -83,9 +83,9 @@ namespace PurchaseOrderTracker.WebApi.Features.Shipment
             int? pageNumber,
             [Required] InquiryQuery.QueryType? queryType)
         {
-            var result = await _mediator.Send(new InquiryQuery(pageSize, pageNumber, queryType.Value));
+            var result = await Mediator.Send(new InquiryQuery(pageSize, pageNumber, queryType.Value));
             var pagedListDto = new StaticPagedList<ShipmentDto>(
-                _mapper.Map<List<ShipmentDto>>(result.PagedList), result.PagedList);
+                Mapper.Map<List<ShipmentDto>>(result.PagedList), result.PagedList);
 
             return new InquiryQueryResultDto(pagedListDto.ToMinimal());
         }

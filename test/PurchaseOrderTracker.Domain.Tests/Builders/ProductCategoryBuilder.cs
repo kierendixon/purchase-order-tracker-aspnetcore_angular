@@ -5,7 +5,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Builders
 {
     public class ProductCategoryBuilder
     {
-        private ProductCategoryName _name = new ProductCategoryName("furniture");
+        private ProductCategoryName _name = new("furniture");
         private int? _supplierId;
 
         public ProductCategoryBuilder Name(string name)
@@ -24,7 +24,10 @@ namespace PurchaseOrderTracker.Domain.Tests.Builders
         {
             var category = new ProductCategory(_name);
             if (_supplierId != null)
+            {
                 category.SetPrivatePropertyValue(nameof(category.SupplierId), _supplierId);
+            }
+
             return category;
         }
     }

@@ -17,8 +17,8 @@ namespace PurchaseOrderTracker.WebApi.Features.Supplier.Models
 
         public double? Price { get; set; }
 
-        //TODO
-        //[BindNever]
+        // TODO
+        // [BindNever]
         public Dictionary<int, string> CategoryOptions { get; }
     }
 }

@@ -60,7 +60,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             {
                 try
                 {
-                    _ = new ShipmentBuilder().Company(null).Build();
+                    new ShipmentBuilder().Company(null).Build();
                     Assert.Fail("Expected exception to be thrown");
                 }
                 catch (Exception ex)
@@ -75,7 +75,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.ShipmentAggregate
             {
                 try
                 {
-                    _ = new ShipmentBuilder().TrackingId(null).Build();
+                    new ShipmentBuilder().TrackingId(null).Build();
                     Assert.Fail("Expected exception to be thrown");
                 }
                 catch (Exception ex)

@@ -36,6 +36,9 @@ namespace PurchaseOrderTracker.Application.Features.PurchaseOrder.Queries
             public int PurchaseOrderId { get; }
             public OrderNo PurchaseOrderOrderNo { get; }
             public IEnumerable<PurchaseOrderLine> LineItems { get; }
+
+            // TODO review suppression
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "<Pending>")]
             public Dictionary<int, ProductName> ProductOptions { get; set; }
         }
 

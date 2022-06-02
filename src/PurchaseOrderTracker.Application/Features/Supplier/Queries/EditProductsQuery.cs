@@ -100,11 +100,10 @@ namespace PurchaseOrderTracker.Application.Features.Supplier.Queries
                     // TODO: this doesn't work anymore with EFCore 3.1 because it throws the following ex:
                     // No backing field could be found for property 'ProductId' of entity type 'ProductCode' and the property does not have a getter.
                     // which is probably? due to the custom equals() implementation of the ProductCode's ValueObject base class
-                    //IQueryable<Product> products = _context.Product
+                    // IQueryable<Product> products = _context.Product
                     //    .Include(p => p.Category)
                     //    .Where(p => p.SupplierId == request.SupplierId
                     //            && p.ProductCode == request.ProductCodeFilter).AsQueryable();
-
                     products = _context.Product
                             .Include(p => p.Category)
                             .Where(p => p.SupplierId == request.SupplierId)
@@ -128,7 +127,6 @@ namespace PurchaseOrderTracker.Application.Features.Supplier.Queries
                 // TODO: Can't resolve to Queryable? What happens in MVC project?
                 //                var paginatedProducts = await
                 //                    products.ProjectToPagedList<Result.ProductViewModel>(query.PageNumber, query.PageSize);
-
                 return new Result(supplier.Id, supplier.Name, paginatedProducts.ToMinimal(),
                     supplier.ProductCategories.ToDictionary(c => c.Id, c => c.Name.Value), productsAreFiltered);
             }

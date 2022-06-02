@@ -21,14 +21,14 @@ namespace PurchaseOrderTracker.WebApi.Features.User
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type =typeof(GetUsersQuery.Result))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetUsersQuery.Result))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetUsersQuery.Result))]
         public async Task<ActionResult<GetUsersQuery.Result>> Get(
             [Required][Range(1, 20)] int? pageSize,
             string filter,
             int page = 1)
         {
-            return await _mediator.Send(new GetUsersQuery(pageSize, filter, page));
+            return await Mediator.Send(new GetUsersQuery(pageSize, filter, page));
         }
 
         [HttpPost]
@@ -36,16 +36,13 @@ namespace PurchaseOrderTracker.WebApi.Features.User
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(CreateCommand.Result))]
         public async Task<ActionResult> Create([FromBody] CreateCommand command)
         {
-            var result = await _mediator.Send(command);
-            if (result.Succeeded)
-            {
-                return new JsonResult(result)
+            var result = await Mediator.Send(command);
+            return result.Succeeded
+                ? new JsonResult(result)
                 {
                     StatusCode = StatusCodes.Status201Created,
-                };
-            }
-
-            return BadRequest(result);
+                }
+                : BadRequest(result);
         }
 
         [HttpPost("{id}")]
@@ -53,7 +50,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(UpdateCommand.Result))]
         public async Task<ActionResult> Update([FromBody] UpdateCommand command)
         {
-            var result = await _mediator.Send(command);
+            var result = await Mediator.Send(command);
             return result.Succeeded ? Ok(result) : BadRequest(result);
         }
 
@@ -62,7 +59,7 @@ namespace PurchaseOrderTracker.WebApi.Features.User
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(DeleteCommand.Result))]
         public async Task<ActionResult> Delete(string id)
         {
-            var result = await _mediator.Send(new DeleteCommand(id));
+            var result = await Mediator.Send(new DeleteCommand(id));
             return result.Succeeded ? Ok(result) : BadRequest(result);
         }
     }

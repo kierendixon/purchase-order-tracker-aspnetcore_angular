@@ -31,7 +31,6 @@ namespace PurchaseOrderTracker.Application.Features.Supplier.Commands
                 // TODO
                 // if (!supplier.CanBeDeleted)
                 //    throw new PurchaseOrderTrackerException("Supplier cannot be deleted");
-
                 _context.Supplier.Remove(supplier);
                 await _context.SaveChangesAsync();
             }

@@ -29,7 +29,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
             {
                 try
                 {
-                    var line = new PurchaseOrderLineBuilder().Product(null).Build();
+                    new PurchaseOrderLineBuilder().Product(null).Build();
                     Assert.Fail("Expected exception to be thrown");
                 }
                 catch (Exception ex)

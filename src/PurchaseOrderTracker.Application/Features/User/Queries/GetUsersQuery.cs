@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
-using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
 using PurchaseOrderTracker.Persistence;
 using X.PagedList;
 
@@ -18,16 +17,14 @@ namespace PurchaseOrderTracker.Application.Features.User.Queries
             Filter = filter;
             PageNumber = pageNumber ?? 1;
 
+            // TODO
+            //if (PageSize is < 5 or > 100)
+            //{
+            //}
 
-            //TODO
-            if(PageSize < 5 || PageSize > 100)
-            {
-
-            }
-
-            if( PageNumber < 1) {
-
-            }
+            //if (PageNumber < 1)
+            //{
+            //}
         }
 
         public int PageSize { get; }
@@ -36,17 +33,17 @@ namespace PurchaseOrderTracker.Application.Features.User.Queries
 
         public class Result
         {
-            public Result(PagedList<Result.User> pagedList)
+            public Result(PagedList<ResultUser> pagedList)
             {
                 PagedList = pagedList;
             }
 
-            public PagedList<Result.User> PagedList { get; }
+            public PagedList<ResultUser> PagedList { get; }
 
-            public class User
+            public class ResultUser
             {
                 // todo should bother with argument validaiton?
-                public User(string id, string userName, bool isAdmin, DateTimeOffset? lockoutEnd)
+                public ResultUser(string id, string userName, bool isAdmin, DateTimeOffset? lockoutEnd)
                 {
                     Id = id;
                     IsAdmin = isAdmin;
@@ -78,33 +75,15 @@ namespace PurchaseOrderTracker.Application.Features.User.Queries
                 //// the database instead of projecting because of a bug in EF Core 2.1
                 //// https://github.com/aspnet/EntityFrameworkCore/issues/13546
                 ///// ????? TODO
-                // todo use ProjectToPagedList 
+                // todo use ProjectToPagedList
                 // and fix whatever issues it has (have they been fixed in soruce libraries??)
-                //
-                //
-                //
-                //
-                //
-                //
-                //
-                //
-                //
-                //
-                //
-                //
-                //
-                //
-                //
-                //
-
-
                 var users = (await _context.Users.ToListAsync()).AsQueryable();
                 if (request.Filter != null)
                 {
                     users = users.Where(u => u.UserName.Contains(request.Filter, StringComparison.OrdinalIgnoreCase));
                 }
 
-                var paginatedUsers = new PagedList<Result.User>(_mapper.Map<Result.User[]>(users), request.PageNumber, request.PageSize);
+                var paginatedUsers = new PagedList<Result.ResultUser>(_mapper.Map<Result.ResultUser[]>(users), request.PageNumber, request.PageSize);
 
                 return new Result(paginatedUsers);
             }

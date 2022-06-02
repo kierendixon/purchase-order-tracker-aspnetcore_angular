@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -61,24 +62,15 @@ namespace PurchaseOrderTracker.Application.Features.PurchaseOrder.Queries
                     .ToListAsync())
                     .AsQueryable();
 
-                switch (request.InquiryQueryType)
+                orders = request.InquiryQueryType switch
                 {
-                    case QueryType.All:
-                        orders = orders.AsQueryable();
-                        break;
-                    case QueryType.Open:
-                        orders = orders.Where(o => o.IsOpen).AsQueryable();
-                        break;
-                    case QueryType.ScheduledForDeliveryToday:
-                        orders = orders.Where(o => o.Shipment != null && o.Shipment.IsScheduledForDeliveryToday()).AsQueryable();
-                        break;
-                    case QueryType.Delayed:
-                        orders = orders.Where(o => o.Shipment != null && o.Shipment.IsDelayed()).AsQueryable();
-                        break;
-                    case QueryType.DelayedMoreThan7Days:
-                        orders = orders.Where(o => o.Shipment != null && o.Shipment.IsDelayedMoreThan7Days()).AsQueryable();
-                        break;
-                }
+                    QueryType.All => orders.AsQueryable(),
+                    QueryType.Open => orders.Where(o => o.IsOpen).AsQueryable(),
+                    QueryType.ScheduledForDeliveryToday => orders.Where(o => o.Shipment != null && o.Shipment.IsScheduledForDeliveryToday()).AsQueryable(),
+                    QueryType.Delayed => orders.Where(o => o.Shipment != null && o.Shipment.IsDelayed()).AsQueryable(),
+                    QueryType.DelayedMoreThan7Days => orders.Where(o => o.Shipment != null && o.Shipment.IsDelayedMoreThan7Days()).AsQueryable(),
+                    _ => throw new InvalidOperationException(),
+                };
 
                 // Can't project with AutoMapper due to bugs. See notes in MappingProfile.cs
                 // var pageOfOrders = await orders.ToList().AsQueryable().

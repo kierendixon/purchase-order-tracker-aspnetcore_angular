@@ -57,33 +57,30 @@ namespace PurchaseOrderTracker.Application.Features.Supplier.Queries
         public class Handler : IRequestHandler<EditProductCategoriesQuery, Result>
         {
             private readonly PoTrackerDbContext _context;
-            private readonly IConfigurationProvider _configuration;
+            //private readonly IConfigurationProvider _configuration;
             private readonly IMapper _mapper;
 
-            public Handler(PoTrackerDbContext context, IConfigurationProvider configuration, IMapper mapper)
+            public Handler(PoTrackerDbContext context, IMapper mapper)
             {
                 _context = context;
-                _configuration = configuration;
                 _mapper = mapper;
             }
 
             public async Task<Result> Handle(EditProductCategoriesQuery request, CancellationToken cancellationToken)
             {
-                // TODO System.ArgumentException: Expression of type 
-                // 'PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects.ProductCategoryName' cannot be 
+                // TODO System.ArgumentException: Expression of type
+                // 'PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects.ProductCategoryName' cannot be
                 // used for constructor parameter of type 'System.String'
-                //var paginatedCategories = await _context.ProductCategory
+                // var paginatedCategories = await _context.ProductCategory
                 //    .Where(c => c.SupplierId == request.SupplierId)
                 //    .ProjectToPagedList<Result.CategoryViewModel>(_configuration, request.PageNumber, request.PageSize);
-
-                
                 var totalCategories = await _context.ProductCategory
                     .Where(c => c.SupplierId == request.SupplierId)
                     .CountAsync();
                 var paginatedCategories = await _context.ProductCategory
                     .Where(c => c.SupplierId == request.SupplierId)
                     .OrderBy(c => c.Id)
-                    // TODO: The first paginated page of categories loads correctly but queries for 
+                    // TODO: The first paginated page of categories loads correctly but queries for
                     // subsequent pages return 0 product categories instead of the expected amount
                     .Take(request.PageSize)
                     .Skip((request.PageNumber - 1) * request.PageSize)

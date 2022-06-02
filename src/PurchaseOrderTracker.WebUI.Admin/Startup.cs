@@ -1,24 +1,22 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
-using PurchaseOrderTracker.WebUI.Admin.Logging;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using PurchaseOrderTracker.AspNet.Common.HealthChecks;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Configuration;
+using PurchaseOrderTracker.WebUI.Admin.Logging;
+using System;
 using System.IO;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace PurchaseOrderTracker.WebUI.Admin
 {
@@ -91,7 +89,7 @@ namespace PurchaseOrderTracker.WebUI.Admin
 
     public static class ServiceCollectionExtensions
     {
-        private static readonly string _executingAssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+        //private static readonly string _executingAssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
 
         public static void AddCustomRazorPages(this IServiceCollection services)
         {
@@ -107,7 +105,7 @@ namespace PurchaseOrderTracker.WebUI.Admin
             {
                 services.AddSpaStaticFiles(opt =>
                 {
-                    opt.RootPath = "ClientApp/build"; ;
+                    opt.RootPath = "ClientApp/build";
                 });
             }
         }
@@ -118,7 +116,7 @@ namespace PurchaseOrderTracker.WebUI.Admin
             {
                 opt.Headers.Add(HeaderNames.Referer);
                 // TODO get guid from Activity class instead?
-                opt.Headers.Add("X-Correlation-ID", ctx => new StringValues(Guid.NewGuid().ToString())); 
+                opt.Headers.Add("X-Correlation-ID", ctx => new StringValues(Guid.NewGuid().ToString()));
             });
         }
 
@@ -155,7 +153,7 @@ namespace PurchaseOrderTracker.WebUI.Admin
         public static void AddCustomAuthentication(this IServiceCollection services)
         {
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(_configureCookies);
+                .AddCookie(ConfigureCookies);
         }
 
         public static void AddCustomAuthorization(this IServiceCollection services)
@@ -169,7 +167,7 @@ namespace PurchaseOrderTracker.WebUI.Admin
             });
         }
 
-        private static readonly Action<CookieAuthenticationOptions> _configureCookies = opt =>
+        private static readonly Action<CookieAuthenticationOptions> ConfigureCookies = opt =>
         {
             opt.ExpireTimeSpan = TimeSpan.FromMinutes(10);
             opt.Cookie.Name = "pot.session";
@@ -243,6 +241,7 @@ namespace PurchaseOrderTracker.WebUI.Admin
 
     public static class ApplicationBuilderExtensions
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0045:Convert to conditional expression", Justification = "env.IsDevelopment() statements are easier to read without this")]
         public static void UseCustomErrorHandler(this IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -292,14 +291,14 @@ namespace PurchaseOrderTracker.WebUI.Admin
 
         public static void UseCustomSpaFallback(this IApplicationBuilder app, IWebHostEnvironment env)
         {
-                app.UseSpa(spa =>
+            app.UseSpa(spa =>
+            {
+                if (env.IsDevelopment())
                 {
-                    if (env.IsDevelopment())
-                    {
-                        spa.Options.SourcePath = "ClientApp";
-                        spa.UseProxyToSpaDevelopmentServer("http://localhost:4204");
-                    }
-                });
+                    spa.Options.SourcePath = "ClientApp";
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4204");
+                }
+            });
         }
     }
 }

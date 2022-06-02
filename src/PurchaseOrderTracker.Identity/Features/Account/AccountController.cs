@@ -4,12 +4,9 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PurchaseOrderTracker.Identity;
-using PurchaseOrderTracker.Identity.Features;
-using PurchaseOrderTracker.Identity.Features.Account;
 using PurchaseOrderTracker.Identity.Features.Account.Models;
 
-namespace PurchaseOrderTracker.WebApi.Features.Account
+namespace PurchaseOrderTracker.Identity.Features.Account
 {
     [Route("identity/[controller]/[action]")] // TODO shouldnt need identity prefix. Set this in basecontroller?
     public class AccountController : BaseController
@@ -26,14 +23,9 @@ namespace PurchaseOrderTracker.WebApi.Features.Account
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login(LoginCommandDto dto)
         {
-            var result = await _mediator.Send(new LoginCommand(dto.UserName, dto.Password));
+            var result = await Mediator.Send(new LoginCommand(dto.UserName, dto.Password));
 
-            if (result.Succeeded)
-            {
-                return Ok();
-            }
-
-            return Unauthorized();
+            return result.Succeeded ? Ok() : Unauthorized();
         }
 
         [HttpPost]

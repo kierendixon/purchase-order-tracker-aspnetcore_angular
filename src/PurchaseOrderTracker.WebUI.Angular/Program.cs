@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using PurchaseOrderTracker.WebUI.Angular;
 
-namespace PurchaseOrderTracker.Web
+namespace PurchaseOrderTracker.WebUI.Angular
 {
     public class Program
     {
@@ -11,11 +10,13 @@ namespace PurchaseOrderTracker.Web
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+        }
     }
 }
