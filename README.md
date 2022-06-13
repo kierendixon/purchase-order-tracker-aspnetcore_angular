@@ -49,6 +49,7 @@ The core technologies used include:
 # Developer Environment Setup
 
 1. Install Visual Studio IDE 2022 (v17.2 or higher)
+1. [Install .NET SDK 5.0.503](https://dotnet.microsoft.com/en-us/download/dotnet/5.0) (which is part of .NET 5.0.9)
 1. Install Visual Studio IDE extensions:
    1. [Output Enhancer](https://marketplace.visualstudio.com/items?itemName=NikolayBalakin.Outputenhancer)
 1. Configure Visual Studio IDE:

@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0.303 AS build
 
 # setup node
 # https://github.com/aspnet/Announcements/issues/298 (Migrating from aspnetcore docker repos to dotnet)
