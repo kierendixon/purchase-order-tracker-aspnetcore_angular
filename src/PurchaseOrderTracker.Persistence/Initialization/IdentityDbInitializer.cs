@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using PurchaseOrderTracker.Domain.Exceptions;
@@ -23,7 +22,7 @@ namespace PurchaseOrderTracker.Persistence.Initialization
             if (created)
             {
                 CreateUser(userManager, BasicUserUserName, BasicUserPassword).Wait();
-                CreateUser(userManager, SuperUserUserName, SuperUserPassword).Wait();
+                CreateUser(userManager, SuperUserUserName, SuperUserPassword, true).Wait();
 
                 for (var i = 0; i < 50; i++)
                 {
@@ -32,9 +31,12 @@ namespace PurchaseOrderTracker.Persistence.Initialization
             }
         }
 
-        private static async Task CreateUser(UserManager<ApplicationUser> userManager, string username, string password)
+        private static async Task CreateUser(UserManager<ApplicationUser> userManager, string username, string password, bool isAdmin = false)
         {
-            var user = new ApplicationUser(username);
+            var user = new ApplicationUser(username)
+            {
+                IsAdmin = isAdmin
+            };
             var result = await userManager.CreateAsync(user, password);
 
             if (!result.Succeeded)

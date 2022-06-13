@@ -24,7 +24,8 @@ Execute the following commands:
 1. `docker build --tag purchase-order-tracker-identity -f src/PurchaseOrderTracker.Identity/Dockerfile .`
 1. `docker-compose up`
 
-Once the containers are started you can access the application at http://localhost:4890
+Once the containers are started you can access the application at http://localhost:4890  
+Login with non-admin account basic/basic or admin account super/super.
 
 # Technical Details
 
