@@ -64,7 +64,7 @@ namespace PurchaseOrderTracker.Domain.Tests.Models.PurchaseOrderAggregate
             public void throws_null_arg_ex_when_order_no_is_null()
             {
                 var ex = Assert.Throws<ArgumentNullException>(() => new PurchaseOrder(null, new SupplierBuilder().Build()));
-                Assert.That(ex.Message.ToLower(), Contains.Substring("supplier"));
+                Assert.That(ex.Message.ToLower(), Contains.Substring("orderno"));
             }
 
             [Test]
