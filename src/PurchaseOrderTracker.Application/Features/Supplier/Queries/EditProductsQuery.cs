@@ -104,10 +104,10 @@ namespace PurchaseOrderTracker.Application.Features.Supplier.Queries
                     //    .Include(p => p.Category)
                     //    .Where(p => p.SupplierId == request.SupplierId
                     //            && p.ProductCode == request.ProductCodeFilter).AsQueryable();
+                    // TODO this brings back results matching the supplierid instead of also filtering by productCode in the DB
                     products = _context.Product
                             .Include(p => p.Category)
                             .Where(p => p.SupplierId == request.SupplierId)
-                            // TODO this brings back results matching the supplierid instead of also filtering by productCode in the DB
                             .AsEnumerable()
                             .Where(p => p.ProductCode.Equals(request.ProductCodeFilter)).ToList();
                 }
