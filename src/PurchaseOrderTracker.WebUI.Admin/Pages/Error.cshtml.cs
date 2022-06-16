@@ -5,9 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace PurchaseOrderTracker.WebUI.Admin.Pages
 {
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-#pragma warning disable SA1649 // File name must match first type name
     public class ErrorModel : PageModel
-#pragma warning restore SA1649 // File name must match first type name
     {
         public string RequestId { get; set; }
 
