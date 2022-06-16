@@ -50,12 +50,11 @@ The core technologies used include:
 # Developer Environment Setup
 
 1. Install Visual Studio IDE 2022 (v17.2 or higher)
-1. [Install .NET SDK 5.0.503](https://dotnet.microsoft.com/en-us/download/dotnet/5.0) (which is part of .NET 5.0.9)
 1. Install Visual Studio IDE extensions:
    1. [Output Enhancer](https://marketplace.visualstudio.com/items?itemName=NikolayBalakin.Outputenhancer)
 1. Configure Visual Studio IDE:
    1. Tools -> Options -> Text Editor -> Code Cleanup -> select "Run Code Cleanup profile on Save"
-1. Install NodeJs (v16.14.2)
+1. [Install .NET SDK 5.0.503](https://dotnet.microsoft.com/en-us/download/dotnet/5.0) (which is part of .NET 5.0.9)
 1. Install Visual Studio Code (v1.61 or higher)
 1. Install VS Code extensions:
    1. [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
@@ -65,6 +64,8 @@ The core technologies used include:
    1. [Angular DevTools](https://chrome.google.com/webstore/detail/angular-devtools/ienfalfjdbdpebioblfackkekamfmbnh?hl=en)
    1. [React DevTools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en)
    1. [Redux DevTools](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=en)
+1. Install NodeJs (v16.14.2)
+1. Install Docker and switch to Linux containers
 1. Install SQL Server Management Studio (v17 or higher)
 
 ## Debugging
