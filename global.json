@@ -1,7 +1,5 @@
 {
   "sdk": {
-	"comment": "require a specific dotnet version due to `error IDE0130: Namespace 'PurchaseOrderTracker.Persistence' does not match folder structure, expected 'PurchaseOrderTracker.Persistence.'`",
-	"comment": "see https://github.com/dotnet/roslyn/issues/55014",
-    "version": "5.0.303"
+    "version": "6.0.301"
   }
 }

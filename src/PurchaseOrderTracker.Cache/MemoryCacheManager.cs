@@ -38,7 +38,7 @@ namespace PurchaseOrderTracker.Cache
 
         private void EvictionCallback(object key, object value, EvictionReason reason, object state)
         {
-            _logger.LogDebug($"Cache entry was evicted. Key={key} Reason={reason} State={state}");
+            _logger.LogDebug("Cache entry was evicted. Key={Key} Reason={Reason} State={State}", key, reason, state);
         }
     }
 }

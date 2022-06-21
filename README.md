@@ -54,7 +54,7 @@ The core technologies used include:
    1. [Output Enhancer](https://marketplace.visualstudio.com/items?itemName=NikolayBalakin.Outputenhancer)
 1. Configure Visual Studio IDE:
    1. Tools -> Options -> Text Editor -> Code Cleanup -> select "Run Code Cleanup profile on Save"
-1. [Install .NET SDK 5.0.503](https://dotnet.microsoft.com/en-us/download/dotnet/5.0) (which is part of .NET 5.0.9)
+1. [Install .NET SDK 6.0.301](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) (which is part of .NET 6.0.6)
 1. Install Visual Studio Code (v1.61 or higher)
 1. Install VS Code extensions:
    1. [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
@@ -83,7 +83,7 @@ The following ports must be free:
 - 4891 - Envoy Proxy
 - 5111 - Identity Server
 
-Once everything is started up access the application via Envoy Proxy at http://localhost:4891
+Once everything is started up, access the application via Envoy Proxy at http://localhost:4891
 
 ### SQL Server
 

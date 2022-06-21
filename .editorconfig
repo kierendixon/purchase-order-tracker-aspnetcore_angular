@@ -166,18 +166,24 @@ dotnet_diagnostic.CA2227.severity = error
 #######################################################################################################################
 # Disable select Net Analyzer code quality rules which are enabled by default
 
-# The behavior of 'string.Contains(string)' could vary based on the current user's locale settings.
-# Justification: Not necessary for this project
-dotnet_diagnostic.CA1307.severity = none
 # Specify CultureInfo
 # Justification: Not necessary for this project
 dotnet_diagnostic.CA1304.severity = none
+# The behavior of 'x' could vary based on the current user's locale settings
+# Justification: Not necessary for this project
+dotnet_diagnostic.CA1305.severity = none
+# The behavior of 'string.Contains(string)' could vary based on the current user's locale settings.
+# Justification: Not necessary for this project
+dotnet_diagnostic.CA1307.severity = none
 # Forward the CancellationToken parameter to methods that take one
 # Justification: TODO: remove once violations are fixed
 dotnet_diagnostic.CA2016.severity = warning
 # Mark members as static
 # Justification: Personal preference not to use this
 dotnet_diagnostic.CA1822.severity = none
+# Use the LoggerMessage delegates
+# Justification: high performant logging is not required by this application
+dotnet_diagnostic.CA1848.severity = none
 
 
 #######################################################################################################################

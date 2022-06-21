@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0.303 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0.301 AS build
 
 # setup node
 # https://github.com/aspnet/Announcements/issues/298 (Migrating from aspnetcore docker repos to dotnet)
@@ -38,6 +38,9 @@ RUN dotnet publish --no-restore -c Release -o /out
 
 # build runtime container
 # AS runtime
-FROM mcr.microsoft.com/dotnet/aspnet:5.0
+FROM mcr.microsoft.com/dotnet/aspnet:6.0.3
 WORKDIR /app
 COPY --from=build /out .
+
+
+# TODO: run frontend tests
