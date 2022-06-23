@@ -18,10 +18,7 @@ You don't need to install anything other than Docker itself because multi-stage 
 
 Execute the following commands:
 
-1. `docker build --tag purchase-order-tracker-webapi -f src/PurchaseOrderTracker.WebApi/Dockerfile .`
-1. `docker build --tag purchase-order-tracker-angular -f src/PurchaseOrderTracker.WebUI.Angular/Dockerfile .`
-1. `docker build --tag purchase-order-tracker-admin -f src/PurchaseOrderTracker.WebUI.Admin/Dockerfile .`
-1. `docker build --tag purchase-order-tracker-identity -f src/PurchaseOrderTracker.Identity/Dockerfile .`
+1. `docker-compose build`
 1. `docker-compose up`
 
 Once the containers are started you can access the application at http://localhost:4890  

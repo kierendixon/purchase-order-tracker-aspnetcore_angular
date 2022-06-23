@@ -2,6 +2,9 @@ version: "3.7"
 services:
   website-main:
     image: "purchase-order-tracker-angular"
+    build:
+      context: .
+      dockerfile: src/PurchaseOrderTracker.WebUI.Angular/Dockerfile
     entrypoint: ["dotnet", "PurchaseOrderTracker.WebUI.Angular.dll"]
     working_dir: "/app"
     depends_on:
@@ -17,6 +20,9 @@ services:
       - DataProtection:KeysDirectory=/data
   website-admin:
     image: "purchase-order-tracker-admin"
+    build:
+      context: .
+      dockerfile: src/PurchaseOrderTracker.WebUI.Admin/Dockerfile
     entrypoint: ["dotnet", "PurchaseOrderTracker.WebUI.Admin.dll"]
     working_dir: "/app"
     depends_on:
@@ -32,6 +38,9 @@ services:
       - DataProtection:KeysDirectory=/data
   webapi:
     image: "purchase-order-tracker-webapi"
+    build:
+      context: .
+      dockerfile: src/PurchaseOrderTracker.WebAPI/Dockerfile
     entrypoint: ["dotnet", "PurchaseOrderTracker.WebApi.dll"]
     working_dir: "/app"
     depends_on:
@@ -49,6 +58,9 @@ services:
       - sensitive-data:/data
   identity:
     image: "purchase-order-tracker-identity"
+    build:
+      context: .
+      dockerfile: src/PurchaseOrderTracker.Identity/Dockerfile
     entrypoint: ["dotnet", "PurchaseOrderTracker.Identity.dll"]
     working_dir: "/app"
     depends_on:
