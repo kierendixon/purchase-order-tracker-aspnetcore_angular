@@ -7,61 +7,60 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
 
-namespace PurchaseOrderTracker.Application.Features.User.Commands
+namespace PurchaseOrderTracker.Application.Features.User.Commands;
+
+public class CreateCommand : IRequest<CreateCommand.Result>
 {
-    public class CreateCommand : IRequest<CreateCommand.Result>
+    public CreateCommand(string username, string oneTimePassword, bool isAdmin)
     {
-        public CreateCommand(string username, string oneTimePassword, bool isAdmin)
+        UserName = username ?? throw new ArgumentNullException(nameof(username));
+        OneTimePassword = oneTimePassword ?? throw new ArgumentNullException(nameof(oneTimePassword));
+        IsAdmin = isAdmin;
+    }
+
+    public string UserName { get; }
+    public string OneTimePassword { get; }
+    public bool IsAdmin { get; }
+
+    public class Result
+    {
+        public Result(bool succeeded, IEnumerable<IdentityError> errors)
         {
-            UserName = username ?? throw new ArgumentNullException(nameof(username));
-            OneTimePassword = oneTimePassword ?? throw new ArgumentNullException(nameof(oneTimePassword));
-            IsAdmin = isAdmin;
+            Succeeded = succeeded;
+            Errors = errors;
         }
 
-        public string UserName { get; }
-        public string OneTimePassword { get; }
-        public bool IsAdmin { get; }
-
-        public class Result
+        public Result(bool succeeded, string userId)
         {
-            public Result(bool succeeded, IEnumerable<IdentityError> errors)
-            {
-                Succeeded = succeeded;
-                Errors = errors;
-            }
-
-            public Result(bool succeeded, string userId)
-            {
-                Succeeded = succeeded;
-                UserId = userId ?? throw new ArgumentNullException(nameof(userId));
-            }
-
-            public bool Succeeded { get; }
-            public string UserId { get; }
-            public IEnumerable<IdentityError> Errors { get; }
+            Succeeded = succeeded;
+            UserId = userId ?? throw new ArgumentNullException(nameof(userId));
         }
 
-        public class Handler : IRequestHandler<CreateCommand, Result>
+        public bool Succeeded { get; }
+        public string UserId { get; }
+        public IEnumerable<IdentityError> Errors { get; }
+    }
+
+    public class Handler : IRequestHandler<CreateCommand, Result>
+    {
+        private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        // todo should application have a dependency on AspNet.Identity ?
+        public Handler(IMapper mapper, UserManager<ApplicationUser> userManager)
         {
-            private readonly IMapper _mapper;
-            private readonly UserManager<ApplicationUser> _userManager;
+            _mapper = mapper;
+            _userManager = userManager;
+        }
 
-            // todo should application have a dependency on AspNet.Identity ?
-            public Handler(IMapper mapper, UserManager<ApplicationUser> userManager)
-            {
-                _mapper = mapper;
-                _userManager = userManager;
-            }
+        public async Task<Result> Handle(CreateCommand request, CancellationToken cancellationToken)
+        {
+            var user = _mapper.Map<ApplicationUser>(request);
+            var result = await _userManager.CreateAsync(user, request.OneTimePassword);
 
-            public async Task<Result> Handle(CreateCommand request, CancellationToken cancellationToken)
-            {
-                var user = _mapper.Map<ApplicationUser>(request);
-                var result = await _userManager.CreateAsync(user, request.OneTimePassword);
-
-                return result.Succeeded
-                    ? new Result(result.Succeeded, user.Id)
-                    : new Result(result.Succeeded, result.Errors);
-            }
+            return result.Succeeded
+                ? new Result(result.Succeeded, user.Id)
+                : new Result(result.Succeeded, result.Errors);
         }
     }
 }

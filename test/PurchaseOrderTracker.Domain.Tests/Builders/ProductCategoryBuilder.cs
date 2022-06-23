@@ -1,34 +1,33 @@
 ﻿using PurchaseOrderTracker.Domain.Models.SupplierAggregate;
 using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
 
-namespace PurchaseOrderTracker.Domain.Tests.Builders
+namespace PurchaseOrderTracker.Domain.Tests.Builders;
+
+public class ProductCategoryBuilder
 {
-    public class ProductCategoryBuilder
+    private ProductCategoryName _name = new("furniture");
+    private int? _supplierId;
+
+    public ProductCategoryBuilder Name(string name)
     {
-        private ProductCategoryName _name = new("furniture");
-        private int? _supplierId;
+        _name = new ProductCategoryName(name);
+        return this;
+    }
 
-        public ProductCategoryBuilder Name(string name)
+    public ProductCategoryBuilder SupplierId(int id)
+    {
+        _supplierId = id;
+        return this;
+    }
+
+    public ProductCategory Build()
+    {
+        var category = new ProductCategory(_name);
+        if (_supplierId != null)
         {
-            _name = new ProductCategoryName(name);
-            return this;
+            category.SetPrivatePropertyValue(nameof(category.SupplierId), _supplierId);
         }
 
-        public ProductCategoryBuilder SupplierId(int id)
-        {
-            _supplierId = id;
-            return this;
-        }
-
-        public ProductCategory Build()
-        {
-            var category = new ProductCategory(_name);
-            if (_supplierId != null)
-            {
-                category.SetPrivatePropertyValue(nameof(category.SupplierId), _supplierId);
-            }
-
-            return category;
-        }
+        return category;
     }
 }

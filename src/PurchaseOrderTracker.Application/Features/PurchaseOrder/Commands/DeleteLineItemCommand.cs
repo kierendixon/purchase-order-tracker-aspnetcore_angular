@@ -6,48 +6,47 @@ using Microsoft.EntityFrameworkCore;
 using PurchaseOrderTracker.Persistence;
 using static PurchaseOrderTracker.Application.Features.PurchaseOrder.Commands.DeleteLineItemCommand;
 
-namespace PurchaseOrderTracker.Application.Features.PurchaseOrder.Commands
+namespace PurchaseOrderTracker.Application.Features.PurchaseOrder.Commands;
+
+public class DeleteLineItemCommand : IRequest<Result>
 {
-    public class DeleteLineItemCommand : IRequest<Result>
+    public DeleteLineItemCommand(int purchaseOrderId, int lineItemId)
     {
-        public DeleteLineItemCommand(int purchaseOrderId, int lineItemId)
+        PurchaseOrderId = purchaseOrderId;
+        LineItemId = lineItemId;
+    }
+
+    public int PurchaseOrderId { get; set; }
+    public int LineItemId { get; set; }
+
+    public class Result
+    {
+        public Result(int purchaseOrderId)
         {
             PurchaseOrderId = purchaseOrderId;
-            LineItemId = lineItemId;
         }
 
-        public int PurchaseOrderId { get; set; }
-        public int LineItemId { get; set; }
+        public int PurchaseOrderId { get; }
+    }
 
-        public class Result
+    public class Handler : IRequestHandler<DeleteLineItemCommand, Result>
+    {
+        private readonly PoTrackerDbContext _context;
+
+        public Handler(PoTrackerDbContext context)
         {
-            public Result(int purchaseOrderId)
-            {
-                PurchaseOrderId = purchaseOrderId;
-            }
-
-            public int PurchaseOrderId { get; }
+            _context = context;
         }
 
-        public class Handler : IRequestHandler<DeleteLineItemCommand, Result>
+        public async Task<Result> Handle(DeleteLineItemCommand request, CancellationToken cancellationToken)
         {
-            private readonly PoTrackerDbContext _context;
+            var purchaseOrder = await _context.PurchaseOrder.Include(o => o.LineItems).SingleAsync(o => o.Id == request.PurchaseOrderId);
+            var lineItem = purchaseOrder.LineItems.Single(li => li.Id == request.LineItemId);
 
-            public Handler(PoTrackerDbContext context)
-            {
-                _context = context;
-            }
+            purchaseOrder.RemoveLineItem(lineItem);
+            await _context.SaveChangesAsync();
 
-            public async Task<Result> Handle(DeleteLineItemCommand request, CancellationToken cancellationToken)
-            {
-                var purchaseOrder = await _context.PurchaseOrder.Include(o => o.LineItems).SingleAsync(o => o.Id == request.PurchaseOrderId);
-                var lineItem = purchaseOrder.LineItems.Single(li => li.Id == request.LineItemId);
-
-                purchaseOrder.RemoveLineItem(lineItem);
-                await _context.SaveChangesAsync();
-
-                return new Result(request.PurchaseOrderId);
-            }
+            return new Result(request.PurchaseOrderId);
         }
     }
 }

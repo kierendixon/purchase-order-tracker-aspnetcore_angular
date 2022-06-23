@@ -1,12 +1,11 @@
-﻿namespace PurchaseOrderTracker.Identity.Features.Account.Models
-{
-    public class LoginCommandResultDto
-    {
-        public LoginCommandResultDto(bool isAdmin)
-        {
-            IsAdmin = isAdmin;
-        }
+﻿namespace PurchaseOrderTracker.Identity.Features.Account.Models;
 
-        public bool IsAdmin { get; }
+public class LoginCommandResultDto
+{
+    public LoginCommandResultDto(bool isAdmin)
+    {
+        IsAdmin = isAdmin;
     }
+
+    public bool IsAdmin { get; }
 }

@@ -5,55 +5,54 @@ using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate.ValueObjects;
 using PurchaseOrderTracker.Persistence;
 using static PurchaseOrderTracker.Application.Features.PurchaseOrder.Commands.CreateCommand;
 
-namespace PurchaseOrderTracker.Application.Features.PurchaseOrder.Commands
+namespace PurchaseOrderTracker.Application.Features.PurchaseOrder.Commands;
+
+public class CreateCommand : IRequest<Result>
 {
-    public class CreateCommand : IRequest<Result>
+    public CreateCommand(OrderNo orderNo, int supplierId)
     {
-        public CreateCommand(OrderNo orderNo, int supplierId)
+        OrderNo = orderNo;
+        SupplierId = supplierId;
+    }
+
+    public OrderNo OrderNo { get; }
+    public int SupplierId { get; }
+
+    // TODO implement ToString in other commands/queries so that MediatrLoggingBehaviour prints useful log messages
+    public override string ToString()
+    {
+        return $"{nameof(OrderNo)}: {OrderNo}, {nameof(SupplierId)}: {SupplierId}";
+    }
+
+    // TODO convert to record type?
+    public class Result
+    {
+        public Result(int orderId)
         {
-            OrderNo = orderNo;
-            SupplierId = supplierId;
+            OrderId = orderId;
         }
 
-        public OrderNo OrderNo { get; }
-        public int SupplierId { get; }
+        public int OrderId { get; }
+    }
 
-        // TODO implement ToString in other commands/queries so that MediatrLoggingBehaviour prints useful log messages
-        public override string ToString()
+    public class Handler : IRequestHandler<CreateCommand, Result>
+    {
+        private readonly PoTrackerDbContext _context;
+
+        public Handler(PoTrackerDbContext context)
         {
-            return $"{nameof(OrderNo)}: {OrderNo}, {nameof(SupplierId)}: {SupplierId}";
+            _context = context;
         }
 
-        // TODO convert to record type?
-        public class Result
+        public async Task<Result> Handle(CreateCommand request, CancellationToken cancellationToken)
         {
-            public Result(int orderId)
-            {
-                OrderId = orderId;
-            }
+            var supplier = await _context.Supplier.FindAsync(request.SupplierId);
+            var purchaseOrder = new Domain.Models.PurchaseOrderAggregate.PurchaseOrder(request.OrderNo, supplier);
+            _context.PurchaseOrder.Add(purchaseOrder);
 
-            public int OrderId { get; }
-        }
+            await _context.SaveChangesAsync();
 
-        public class Handler : IRequestHandler<CreateCommand, Result>
-        {
-            private readonly PoTrackerDbContext _context;
-
-            public Handler(PoTrackerDbContext context)
-            {
-                _context = context;
-            }
-
-            public async Task<Result> Handle(CreateCommand request, CancellationToken cancellationToken)
-            {
-                var supplier = await _context.Supplier.FindAsync(request.SupplierId);
-                var purchaseOrder = new Domain.Models.PurchaseOrderAggregate.PurchaseOrder(request.OrderNo, supplier);
-                _context.PurchaseOrder.Add(purchaseOrder);
-
-                await _context.SaveChangesAsync();
-
-                return new Result(purchaseOrder.Id);
-            }
+            return new Result(purchaseOrder.Id);
         }
     }
 }

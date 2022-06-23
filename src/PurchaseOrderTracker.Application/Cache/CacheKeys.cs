@@ -1,7 +1,6 @@
-﻿namespace PurchaseOrderTracker.Application.Cache
+﻿namespace PurchaseOrderTracker.Application.Cache;
+
+public static class CacheKeys
 {
-    public static class CacheKeys
-    {
-        public const string ShipmentsSummaryResult = "ShipmentsSummary.Result";
-    }
+    public const string ShipmentsSummaryResult = "ShipmentsSummary.Result";
 }

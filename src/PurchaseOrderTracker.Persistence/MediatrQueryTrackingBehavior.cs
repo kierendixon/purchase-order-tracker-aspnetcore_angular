@@ -3,25 +3,24 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace PurchaseOrderTracker.Persistence
+namespace PurchaseOrderTracker.Persistence;
+
+public class MediatrQueryTrackingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
 {
-    public class MediatrQueryTrackingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    private readonly PoTrackerDbContext _context;
+
+    public MediatrQueryTrackingBehavior(PoTrackerDbContext context)
     {
-        private readonly PoTrackerDbContext _context;
+        _context = context;
+    }
 
-        public MediatrQueryTrackingBehavior(PoTrackerDbContext context)
+    public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+    {
+        if (request.GetType().FullName.Contains("Command"))
         {
-            _context = context;
+            _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
         }
 
-        public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
-        {
-            if (request.GetType().FullName.Contains("Command"))
-            {
-                _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
-            }
-
-            return await next();
-        }
+        return await next();
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace PurchaseOrderTracker.Application.Identity
+﻿namespace PurchaseOrderTracker.Application.Identity;
+
+public interface ICurrentUser
 {
-    public interface ICurrentUser
-    {
-        string Username { get; }
-    }
+    string Username { get; }
 }

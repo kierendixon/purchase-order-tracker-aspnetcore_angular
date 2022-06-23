@@ -1,17 +1,16 @@
 ﻿using System;
 
-namespace PurchaseOrderTracker.Domain.Exceptions
-{
-    public class PurchaseOrderTrackerException : Exception
-    {
-        public PurchaseOrderTrackerException(string message)
-            : base(message)
-        {
-        }
+namespace PurchaseOrderTracker.Domain.Exceptions;
 
-        public PurchaseOrderTrackerException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+public class PurchaseOrderTrackerException : Exception
+{
+    public PurchaseOrderTrackerException(string message)
+        : base(message)
+    {
+    }
+
+    public PurchaseOrderTrackerException(string message, Exception innerException)
+        : base(message, innerException)
+    {
     }
 }

@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using PurchaseOrderTracker.Domain.Models.PurchaseOrderAggregate.ValueObjects;
 
-namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder.Models
+namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder.Models;
+
+public class EditStatusCommandDto
 {
-    public class EditStatusCommandDto
-    {
-        [Required]
-        public PurchaseOrderStatus.Trigger? UpdatedStatus { get; set; }
-    }
+    [Required]
+    public PurchaseOrderStatus.Trigger? UpdatedStatus { get; set; }
 }

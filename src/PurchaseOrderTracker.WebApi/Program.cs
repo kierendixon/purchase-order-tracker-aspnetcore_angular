@@ -33,299 +33,298 @@ using PurchaseOrderTracker.WebApi.Features.User;
 using PurchaseOrderTracker.WebApi.Logging;
 using PurchaseOrderTracker.WebApi.Mvc;
 
-namespace PurchaseOrderTracker.WebApi
+namespace PurchaseOrderTracker.WebApi;
+
+public class Program
 {
-    public class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
+        var builder = WebApplication.CreateBuilder(args);
+        ConfigureServices(builder.Services, builder.Configuration, builder.Environment);
+
+        var app = builder.Build();
+        ConfigureApp(app);
+
+        InitializeDatabase(app);
+
+        app.Run();
+    }
+
+    private static void InitializeDatabase(WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+
+        var services = scope.ServiceProvider;
+        var logger = services.GetRequiredService<ILogger<Program>>();
+
+        try
         {
-            var builder = WebApplication.CreateBuilder(args);
-            ConfigureServices(builder.Services, builder.Configuration, builder.Environment);
+            logger.LogInformation("Initializing the application database...");
+            var poTrackerDbContext = services.GetRequiredService<PoTrackerDbContext>();
+            PoTrackerDbInitializer.Initialize(poTrackerDbContext);
 
-            var app = builder.Build();
-            ConfigureApp(app);
-
-            InitializeDatabase(app);
-
-            app.Run();
+            logger.LogInformation("Initializing the identity database...");
+            var context = services.GetRequiredService<IdentityDbContext>();
+            var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+            IdentityDbInitializer.Initialize(context, userManager);
         }
-
-        private static void InitializeDatabase(WebApplication app)
+        catch (Exception ex)
         {
-            using var scope = app.Services.CreateScope();
-
-            var services = scope.ServiceProvider;
-            var logger = services.GetRequiredService<ILogger<Program>>();
-
-            try
-            {
-                logger.LogInformation("Initializing the application database...");
-                var poTrackerDbContext = services.GetRequiredService<PoTrackerDbContext>();
-                PoTrackerDbInitializer.Initialize(poTrackerDbContext);
-
-                logger.LogInformation("Initializing the identity database...");
-                var context = services.GetRequiredService<IdentityDbContext>();
-                var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-                IdentityDbInitializer.Initialize(context, userManager);
-            }
-            catch (Exception ex)
-            {
-                // TODO if can't connect to database wait and try again
-                logger.LogError(ex, "An error occurred initializing the database");
-                throw;
-            }
-        }
-
-        private static void ConfigureServices(IServiceCollection services, IConfiguration config, IWebHostEnvironment env)
-        {
-            services.AddAutoMapper(new[] {
-                typeof(Program), // WebApi assembly
-                typeof(CreateCommand) // Application assembly
-            });
-            services.AddCustomMediatR();
-            services.AddCustomSwagger();
-            services.AddCustomAuthentication();
-            services.AddCustomAuthorization();
-            services.AddCustomControllers();
-            services.AddHttpContextAccessor();
-            services.AddCustomHealthChecks();
-            services.AddMemoryCache();
-            services.AddSingleton<ICacheManager, MemoryCacheManager>();
-
-            services.AddDbContext<PoTrackerDbContext>(opt =>
-                opt.UseSqlServer(config.GetConnectionString("PoTrackerDatabase")));
-            services.AddDbContext<IdentityDbContext>(options =>
-                options.UseSqlServer(config.GetConnectionString("IdentityDatabase")));
-
-            // TODO
-            // Add UserManager and its dependencies
-            services.AddScoped<UserManager<ApplicationUser>>();
-            services.AddScoped<IUserValidator<ApplicationUser>, UserValidator<ApplicationUser>>();
-            services.AddScoped<IPasswordValidator<ApplicationUser>, PasswordValidator<ApplicationUser>>();
-            services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
-            services.AddScoped<ILookupNormalizer, UpperInvariantLookupNormalizer>();
-            services.AddScoped<IdentityErrorDescriber>();
-            // TODO
-            // services.AddScoped<ISecurityStampValidator, SecurityStampValidator<ApplicationUser>>();
-            // services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AdditionalUserClaimsPrincipalFactory>();
-            // services.AddScoped<IUserConfirmation<ApplicationUser>, DefaultUserConfirmation<ApplicationUser>>();
-            services.AddScoped<IUserStore<ApplicationUser>, UserStore>();
-
-            services.Configure<IdentityOptions>(opt =>
-            {
-                // relax password requirements for testing purposes
-                opt.Password.RequireDigit = false;
-                opt.Password.RequireLowercase = false;
-                opt.Password.RequireNonAlphanumeric = false;
-                opt.Password.RequireUppercase = false;
-                opt.Password.RequiredLength = 3;
-                opt.Password.RequiredUniqueChars = 1;
-
-                opt.Lockout.MaxFailedAccessAttempts = 3;
-                opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // this is the default in ASP.Net Identity
-            });
-
-            var dataProtection = services.AddDataProtection()
-                .SetApplicationName("PurchaseOrderTrackerApp");
-
-            if (!env.IsDevelopment())
-            {
-                // not secure - keys will be saved to file system unencrypted
-                dataProtection.PersistKeysToFileSystem(new DirectoryInfo(config["DataProtection:KeysDirectory"]));
-            }
-        }
-
-        private static void ConfigureApp(WebApplication app)
-        {
-            app.UseHttpLogging();
-            app.UseMiddleware<EnforceRequestHeadersMiddleware>();
-            app.UseCustomEndpoints();
-            app.UseCustomSwagger(app.Environment);
+            // TODO if can't connect to database wait and try again
+            logger.LogError(ex, "An error occurred initializing the database");
+            throw;
         }
     }
 
-    public static class ServiceCollectionExtensions
+    private static void ConfigureServices(IServiceCollection services, IConfiguration config, IWebHostEnvironment env)
     {
-        public static void AddCustomMediatR(this IServiceCollection services)
+        services.AddAutoMapper(new[] {
+            typeof(Program), // WebApi assembly
+            typeof(CreateCommand) // Application assembly
+        });
+        services.AddCustomMediatR();
+        services.AddCustomSwagger();
+        services.AddCustomAuthentication();
+        services.AddCustomAuthorization();
+        services.AddCustomControllers();
+        services.AddHttpContextAccessor();
+        services.AddCustomHealthChecks();
+        services.AddMemoryCache();
+        services.AddSingleton<ICacheManager, MemoryCacheManager>();
+
+        services.AddDbContext<PoTrackerDbContext>(opt =>
+            opt.UseSqlServer(config.GetConnectionString("PoTrackerDatabase")));
+        services.AddDbContext<IdentityDbContext>(options =>
+            options.UseSqlServer(config.GetConnectionString("IdentityDatabase")));
+
+        // TODO
+        // Add UserManager and its dependencies
+        services.AddScoped<UserManager<ApplicationUser>>();
+        services.AddScoped<IUserValidator<ApplicationUser>, UserValidator<ApplicationUser>>();
+        services.AddScoped<IPasswordValidator<ApplicationUser>, PasswordValidator<ApplicationUser>>();
+        services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
+        services.AddScoped<ILookupNormalizer, UpperInvariantLookupNormalizer>();
+        services.AddScoped<IdentityErrorDescriber>();
+        // TODO
+        // services.AddScoped<ISecurityStampValidator, SecurityStampValidator<ApplicationUser>>();
+        // services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AdditionalUserClaimsPrincipalFactory>();
+        // services.AddScoped<IUserConfirmation<ApplicationUser>, DefaultUserConfirmation<ApplicationUser>>();
+        services.AddScoped<IUserStore<ApplicationUser>, UserStore>();
+
+        services.Configure<IdentityOptions>(opt =>
         {
-            services.AddMediatR(new[]
-            {
-                typeof(Program), // WebApi assembly
-                typeof(CreateCommand) // Application assembly
-            });
+            // relax password requirements for testing purposes
+            opt.Password.RequireDigit = false;
+            opt.Password.RequireLowercase = false;
+            opt.Password.RequireNonAlphanumeric = false;
+            opt.Password.RequireUppercase = false;
+            opt.Password.RequiredLength = 3;
+            opt.Password.RequiredUniqueChars = 1;
 
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(MediatrLoggingBehaviour<,>));
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(MediatrElapsedTimeBehaviour<,>));
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(MediatrQueryTrackingBehavior<,>));
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(MediatrCacheBehaviour<,>));
-        }
+            opt.Lockout.MaxFailedAccessAttempts = 3;
+            opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // this is the default in ASP.Net Identity
+        });
 
-        public static void AddCustomSwagger(this IServiceCollection services)
+        var dataProtection = services.AddDataProtection()
+            .SetApplicationName("PurchaseOrderTrackerApp");
+
+        if (!env.IsDevelopment())
         {
-            services.AddSwaggerGen(opt =>
-            {
-                var info = new OpenApiInfo
-                {
-                    Version = "v1",
-                    Title = "Purchase Order Tracker API"
-                };
-                opt.SwaggerDoc("v1", info);
-
-                opt.CustomOperationIds(apiDesc =>
-                    apiDesc.ActionDescriptor.RouteValues["controller"]
-                    + "_"
-                    + (apiDesc.ActionDescriptor.RouteValues["action"] ?? string.Empty)
-                    + apiDesc.HttpMethod);
-
-                // disambiguate types with the same name
-                opt.CustomSchemaIds(type => type.FullName);
-            });
-        }
-
-        public static void AddCustomControllers(this IServiceCollection services)
-        {
-            services.AddControllersWithViews()
-                .AddJsonOptions(opt =>
-                {
-                    var converters = opt.JsonSerializerOptions.Converters;
-                    converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
-                });
-        }
-
-        public static void AddCustomHealthChecks(this IServiceCollection services)
-        {
-            services.AddHealthChecks()
-                .AddDbContextCheck<PoTrackerDbContext>()
-                .AddDbContextCheck<IdentityDbContext>();
+            // not secure - keys will be saved to file system unencrypted
+            dataProtection.PersistKeysToFileSystem(new DirectoryInfo(config["DataProtection:KeysDirectory"]));
         }
     }
 
-    public static class WebApplicationExtensions
+    private static void ConfigureApp(WebApplication app)
     {
-        public static void UseCustomSwagger(this WebApplication app, IWebHostEnvironment env)
+        app.UseHttpLogging();
+        app.UseMiddleware<EnforceRequestHeadersMiddleware>();
+        app.UseCustomEndpoints();
+        app.UseCustomSwagger(app.Environment);
+    }
+}
+
+public static class ServiceCollectionExtensions
+{
+    public static void AddCustomMediatR(this IServiceCollection services)
+    {
+        services.AddMediatR(new[]
         {
-            if (env.IsDevelopment())
-            {
-                var swaggerSpecUrl = "/swagger/v1/swagger.json";
-                var swaggerSpecName = "Purchase Order Tracker API";
+            typeof(Program), // WebApi assembly
+            typeof(CreateCommand) // Application assembly
+        });
 
-                app.UseSwagger();
-                app.UseSwaggerUI(opt =>
-                {
-                    opt.SwaggerEndpoint(swaggerSpecUrl, swaggerSpecName);
-                });
-            }
-        }
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(MediatrLoggingBehaviour<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(MediatrElapsedTimeBehaviour<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(MediatrQueryTrackingBehavior<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(MediatrCacheBehaviour<,>));
+    }
 
-        public static void UseCustomEndpoints(this WebApplication app)
+    public static void AddCustomSwagger(this IServiceCollection services)
+    {
+        services.AddSwaggerGen(opt =>
         {
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.MapControllers().RequireAuthorization();
-            app.MapHealthChecks("/health", new HealthCheckOptions()
+            var info = new OpenApiInfo
             {
-                ResponseWriter = HealthCheckResponseWriter.WriteDetailedJsonResponse
+                Version = "v1",
+                Title = "Purchase Order Tracker API"
+            };
+            opt.SwaggerDoc("v1", info);
+
+            opt.CustomOperationIds(apiDesc =>
+                apiDesc.ActionDescriptor.RouteValues["controller"]
+                + "_"
+                + (apiDesc.ActionDescriptor.RouteValues["action"] ?? string.Empty)
+                + apiDesc.HttpMethod);
+
+            // disambiguate types with the same name
+            opt.CustomSchemaIds(type => type.FullName);
+        });
+    }
+
+    public static void AddCustomControllers(this IServiceCollection services)
+    {
+        services.AddControllersWithViews()
+            .AddJsonOptions(opt =>
+            {
+                var converters = opt.JsonSerializerOptions.Converters;
+                converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+            });
+    }
+
+    public static void AddCustomHealthChecks(this IServiceCollection services)
+    {
+        services.AddHealthChecks()
+            .AddDbContextCheck<PoTrackerDbContext>()
+            .AddDbContextCheck<IdentityDbContext>();
+    }
+}
+
+public static class WebApplicationExtensions
+{
+    public static void UseCustomSwagger(this WebApplication app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
+        {
+            var swaggerSpecUrl = "/swagger/v1/swagger.json";
+            var swaggerSpecName = "Purchase Order Tracker API";
+
+            app.UseSwagger();
+            app.UseSwaggerUI(opt =>
+            {
+                opt.SwaggerEndpoint(swaggerSpecUrl, swaggerSpecName);
             });
         }
     }
 
-    // TODO move duplicate code to shared library
-    public static class IdentityServiceCollectionExtensions
+    public static void UseCustomEndpoints(this WebApplication app)
     {
-        public const string RoleAdministrator = "administrator";
+        app.UseAuthentication();
+        app.UseAuthorization();
 
-        public static void AddCustomAuthentication(this IServiceCollection services)
+        app.MapControllers().RequireAuthorization();
+        app.MapHealthChecks("/health", new HealthCheckOptions()
         {
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(ConfigureCookies);
-        }
+            ResponseWriter = HealthCheckResponseWriter.WriteDetailedJsonResponse
+        });
+    }
+}
 
-        public static void AddCustomAuthorization(this IServiceCollection services)
+// TODO move duplicate code to shared library
+public static class IdentityServiceCollectionExtensions
+{
+    public const string RoleAdministrator = "administrator";
+
+    public static void AddCustomAuthentication(this IServiceCollection services)
+    {
+        services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(ConfigureCookies);
+    }
+
+    public static void AddCustomAuthorization(this IServiceCollection services)
+    {
+        services.AddAuthorization(options =>
         {
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy(
-                    RoleAdministrator,
-                    new AuthorizationPolicyBuilder()
-                        .RequireClaim(ClaimTypes.Role, "admin")
-                        .Build());
-            });
-        }
+            options.AddPolicy(
+                RoleAdministrator,
+                new AuthorizationPolicyBuilder()
+                    .RequireClaim(ClaimTypes.Role, "admin")
+                    .Build());
+        });
+    }
 
-        private static readonly Action<CookieAuthenticationOptions> ConfigureCookies = opt =>
+    private static readonly Action<CookieAuthenticationOptions> ConfigureCookies = opt =>
+    {
+        opt.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+        opt.Cookie.Name = "pot.session";
+        opt.LoginPath = new PathString("/account");
+
+        // override default CookieAuthenticationEvents to use different IsAjaxRequest logic
+        // https://github.com/dotnet/aspnetcore/blob/52eff90fbcfca39b7eb58baad597df6a99a542b0/src/Security/Authentication/Cookies/src/CookieAuthenticationHandler.cs
+        // https://github.com/dotnet/aspnetcore/blob/52eff90fbcfca39b7eb58baad597df6a99a542b0/src/Security/Authentication/Cookies/src/CookieAuthenticationEvents.cs
+        opt.Events.OnRedirectToLogin = context =>
         {
-            opt.ExpireTimeSpan = TimeSpan.FromMinutes(10);
-            opt.Cookie.Name = "pot.session";
-            opt.LoginPath = new PathString("/account");
-
-            // override default CookieAuthenticationEvents to use different IsAjaxRequest logic
-            // https://github.com/dotnet/aspnetcore/blob/52eff90fbcfca39b7eb58baad597df6a99a542b0/src/Security/Authentication/Cookies/src/CookieAuthenticationHandler.cs
-            // https://github.com/dotnet/aspnetcore/blob/52eff90fbcfca39b7eb58baad597df6a99a542b0/src/Security/Authentication/Cookies/src/CookieAuthenticationEvents.cs
-            opt.Events.OnRedirectToLogin = context =>
+            if (IsAjaxRequest(context.Request))
             {
-                if (IsAjaxRequest(context.Request))
-                {
-                    // context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
-                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                }
-                else
-                {
-                    context.Response.Redirect(context.RedirectUri);
-                }
-
-                return Task.CompletedTask;
-            };
-
-            opt.Events.OnRedirectToAccessDenied = context =>
+                // context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            }
+            else
             {
-                if (IsAjaxRequest(context.Request))
-                {
-                    // context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
-                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                }
-                else
-                {
-                    context.Response.Redirect(context.RedirectUri);
-                }
+                context.Response.Redirect(context.RedirectUri);
+            }
 
-                return Task.CompletedTask;
-            };
-
-            opt.Events.OnRedirectToLogout = context =>
-            {
-                if (IsAjaxRequest(context.Request))
-                {
-                    // context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
-                }
-                else
-                {
-                    context.Response.Redirect(context.RedirectUri);
-                }
-
-                return Task.CompletedTask;
-            };
-
-            opt.Events.OnRedirectToReturnUrl = context =>
-            {
-                if (IsAjaxRequest(context.Request))
-                {
-                    // context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
-                }
-                else
-                {
-                    context.Response.Redirect(context.RedirectUri);
-                }
-
-                return Task.CompletedTask;
-            };
+            return Task.CompletedTask;
         };
 
-        // can alternatively check the request path: context.Request.Path.StartsWithSegments("/api")
-        private static bool IsAjaxRequest(HttpRequest request)
+        opt.Events.OnRedirectToAccessDenied = context =>
         {
-            return !(request.Headers.TryGetValue("accept", out var acceptValues)
-                && acceptValues.Contains("text/html", StringComparer.InvariantCultureIgnoreCase));
-        }
+            if (IsAjaxRequest(context.Request))
+            {
+                // context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            }
+            else
+            {
+                context.Response.Redirect(context.RedirectUri);
+            }
+
+            return Task.CompletedTask;
+        };
+
+        opt.Events.OnRedirectToLogout = context =>
+        {
+            if (IsAjaxRequest(context.Request))
+            {
+                // context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
+            }
+            else
+            {
+                context.Response.Redirect(context.RedirectUri);
+            }
+
+            return Task.CompletedTask;
+        };
+
+        opt.Events.OnRedirectToReturnUrl = context =>
+        {
+            if (IsAjaxRequest(context.Request))
+            {
+                // context.Response.Headers[HeaderNames.Location] = context.RedirectUri;
+            }
+            else
+            {
+                context.Response.Redirect(context.RedirectUri);
+            }
+
+            return Task.CompletedTask;
+        };
+    };
+
+    // can alternatively check the request path: context.Request.Path.StartsWithSegments("/api")
+    private static bool IsAjaxRequest(HttpRequest request)
+    {
+        return !(request.Headers.TryGetValue("accept", out var acceptValues)
+            && acceptValues.Contains("text/html", StringComparer.InvariantCultureIgnoreCase));
     }
 }

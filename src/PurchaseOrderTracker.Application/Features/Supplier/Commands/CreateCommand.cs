@@ -9,86 +9,85 @@ using PurchaseOrderTracker.Domain.Exceptions;
 using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
 using PurchaseOrderTracker.Persistence;
 
-namespace PurchaseOrderTracker.Application.Features.Supplier.Commands
+namespace PurchaseOrderTracker.Application.Features.Supplier.Commands;
+
+public class CreateCommand : IRequest<CreateCommand.Result>
 {
-    public class CreateCommand : IRequest<CreateCommand.Result>
+    public CreateCommand(SupplierName name)
     {
-        public CreateCommand(SupplierName name)
+        Name = name ?? throw new ArgumentNullException(nameof(name));
+    }
+
+    public SupplierName Name { get; }
+
+    public override string ToString()
+    {
+        return $"{nameof(Name)}: {Name}";
+    }
+
+    public class Result
+    {
+        public Result(int supplierId)
         {
-            Name = name ?? throw new ArgumentNullException(nameof(name));
+            SupplierId = supplierId;
         }
 
-        public SupplierName Name { get; }
+        public int SupplierId { get; }
+    }
 
-        public override string ToString()
+    public class Notification : ICreateNotification
+    {
+        private readonly int _supplierId;
+
+        public Notification(int supplierId)
         {
-            return $"{nameof(Name)}: {Name}";
+            _supplierId = supplierId;
         }
 
-        public class Result
+        public int GetEntityId()
         {
-            public Result(int supplierId)
-            {
-                SupplierId = supplierId;
-            }
-
-            public int SupplierId { get; }
+            return _supplierId;
         }
 
-        public class Notification : ICreateNotification
+        public Type GetEntityType()
         {
-            private readonly int _supplierId;
+            return typeof(Domain.Models.SupplierAggregate.Supplier);
+        }
+    }
 
-            public Notification(int supplierId)
-            {
-                _supplierId = supplierId;
-            }
+    public class Handler : IRequestHandler<CreateCommand, Result>
+    {
+        private readonly PoTrackerDbContext _context;
+        private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-            public int GetEntityId()
-            {
-                return _supplierId;
-            }
-
-            public Type GetEntityType()
-            {
-                return typeof(Domain.Models.SupplierAggregate.Supplier);
-            }
+        public Handler(PoTrackerDbContext context, IMapper mapper, IMediator mediator)
+        {
+            _context = context;
+            _mapper = mapper;
+            _mediator = mediator;
         }
 
-        public class Handler : IRequestHandler<CreateCommand, Result>
+        public async Task<Result> Handle(CreateCommand request, CancellationToken cancellationToken)
         {
-            private readonly PoTrackerDbContext _context;
-            private readonly IMapper _mapper;
-            private readonly IMediator _mediator;
-
-            public Handler(PoTrackerDbContext context, IMapper mapper, IMediator mediator)
+            try
             {
-                _context = context;
-                _mapper = mapper;
-                _mediator = mediator;
+                var supplier = _mapper.Map<Domain.Models.SupplierAggregate.Supplier>(request);
+                _context.Supplier.Add(supplier);
+                await _context.SaveChangesAsync();
+
+                await _mediator.Publish(new Notification(supplier.Id));
+
+                return new Result(supplier.Id);
             }
-
-            public async Task<Result> Handle(CreateCommand request, CancellationToken cancellationToken)
+            catch (DbUpdateException ex)
             {
-                try
+                if (ex.IsDuplicateKeyError())
                 {
-                    var supplier = _mapper.Map<Domain.Models.SupplierAggregate.Supplier>(request);
-                    _context.Supplier.Add(supplier);
-                    await _context.SaveChangesAsync();
-
-                    await _mediator.Publish(new Notification(supplier.Id));
-
-                    return new Result(supplier.Id);
+                    throw new PurchaseOrderTrackerException($"A supplier with the name {request.Name} already exists");
                 }
-                catch (DbUpdateException ex)
-                {
-                    if (ex.IsDuplicateKeyError())
-                    {
-                        throw new PurchaseOrderTrackerException($"A supplier with the name {request.Name} already exists");
-                    }
 
-                    throw;
-                }
+                throw;
             }
         }
     }

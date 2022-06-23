@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace PurchaseOrderTracker.Application.Cache
+namespace PurchaseOrderTracker.Application.Cache;
+
+public interface ICacheManager
 {
-    public interface ICacheManager
-    {
-        Task<TItem> GetOrCreateAsync<TItem>(object key, Func<Task<TItem>> action);
-        void RemoveSupplierCache();
-    }
+    Task<TItem> GetOrCreateAsync<TItem>(object key, Func<Task<TItem>> action);
+    void RemoveSupplierCache();
 }

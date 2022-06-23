@@ -11,74 +11,73 @@ using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
 using PurchaseOrderTracker.Persistence;
 using static PurchaseOrderTracker.Application.Features.Supplier.Commands.CreateProductCommand;
 
-namespace PurchaseOrderTracker.Application.Features.Supplier.Commands
+namespace PurchaseOrderTracker.Application.Features.Supplier.Commands;
+
+public class CreateProductCommand : IRequest<Result>
 {
-    public class CreateProductCommand : IRequest<Result>
+    public CreateProductCommand(int supplierId, ProductCode productCode, ProductName productName,
+        int categoryId, double? price, Dictionary<int, string> categoryOptions)
     {
-        public CreateProductCommand(int supplierId, ProductCode productCode, ProductName productName,
-            int categoryId, double? price, Dictionary<int, string> categoryOptions)
+        SupplierId = supplierId;
+        ProductCode = productCode;
+        ProductName = productName;
+        CategoryId = categoryId;
+        Price = price;
+        CategoryOptions = categoryOptions;
+    }
+
+    public int SupplierId { get; }
+    public ProductCode ProductCode { get; }
+    public ProductName ProductName { get; }
+    public int CategoryId { get; }
+    public double? Price { get; }
+    public Dictionary<int, string> CategoryOptions { get; }
+
+    public class Result
+    {
+        public Result(int supplierId)
         {
             SupplierId = supplierId;
-            ProductCode = productCode;
-            ProductName = productName;
-            CategoryId = categoryId;
-            Price = price;
-            CategoryOptions = categoryOptions;
         }
 
         public int SupplierId { get; }
-        public ProductCode ProductCode { get; }
-        public ProductName ProductName { get; }
-        public int CategoryId { get; }
-        public double? Price { get; }
-        public Dictionary<int, string> CategoryOptions { get; }
+    }
 
-        public class Result
+    public class Handler : IRequestHandler<CreateProductCommand, Result>
+    {
+        private readonly PoTrackerDbContext _context;
+        private readonly IMapper _mapper;
+
+        public Handler(PoTrackerDbContext context, IMapper mapper)
         {
-            public Result(int supplierId)
-            {
-                SupplierId = supplierId;
-            }
-
-            public int SupplierId { get; }
+            _context = context;
+            _mapper = mapper;
         }
 
-        public class Handler : IRequestHandler<CreateProductCommand, Result>
+        public async Task<Result> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            private readonly PoTrackerDbContext _context;
-            private readonly IMapper _mapper;
-
-            public Handler(PoTrackerDbContext context, IMapper mapper)
+            try
             {
-                _context = context;
-                _mapper = mapper;
+                // TODO await after executing all database queries
+                // TODO check if returned supplier and category are found
+                var supplier = await _context.Supplier.FindAsync(request.SupplierId);
+                var category = _context.ProductCategory.Single(c => c.Id == request.CategoryId);
+                var product = _mapper.Map<Product>(request);
+                product.Category = category;
+
+                supplier.AddProduct(product);
+                await _context.SaveChangesAsync();
+
+                return new Result(request.SupplierId);
             }
-
-            public async Task<Result> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+            catch (DbUpdateException ex)
             {
-                try
+                if (ex.IsDuplicateKeyError())
                 {
-                    // TODO await after executing all database queries
-                    // TODO check if returned supplier and category are found
-                    var supplier = await _context.Supplier.FindAsync(request.SupplierId);
-                    var category = _context.ProductCategory.Single(c => c.Id == request.CategoryId);
-                    var product = _mapper.Map<Product>(request);
-                    product.Category = category;
-
-                    supplier.AddProduct(product);
-                    await _context.SaveChangesAsync();
-
-                    return new Result(request.SupplierId);
+                    throw new PurchaseOrderTrackerException("A duplicate product already exists");
                 }
-                catch (DbUpdateException ex)
-                {
-                    if (ex.IsDuplicateKeyError())
-                    {
-                        throw new PurchaseOrderTrackerException("A duplicate product already exists");
-                    }
 
-                    throw;
-                }
+                throw;
             }
         }
     }

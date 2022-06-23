@@ -4,46 +4,45 @@ using Microsoft.AspNetCore.Identity;
 using PurchaseOrderTracker.Domain.Exceptions;
 using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
 
-namespace PurchaseOrderTracker.Persistence.Initialization
+namespace PurchaseOrderTracker.Persistence.Initialization;
+
+public static class IdentityDbInitializer
 {
-    public static class IdentityDbInitializer
+    private const string BasicUserUserName = "basic";
+    private const string BasicUserPassword = "basic";
+    private const string SuperUserUserName = "super";
+    private const string SuperUserPassword = "super";
+
+    public static void Initialize(IdentityDbContext context, UserManager<ApplicationUser> userManager)
     {
-        private const string BasicUserUserName = "basic";
-        private const string BasicUserPassword = "basic";
-        private const string SuperUserUserName = "super";
-        private const string SuperUserPassword = "super";
+        // uncomment to delete database on every startup
+        // context.Database.EnsureDeleted();
+        var created = DbInitializerHelper.EnsureDatabaseCreated(context);
 
-        public static void Initialize(IdentityDbContext context, UserManager<ApplicationUser> userManager)
+        if (created)
         {
-            // uncomment to delete database on every startup
-            // context.Database.EnsureDeleted();
-            var created = DbInitializerHelper.EnsureDatabaseCreated(context);
+            CreateUser(userManager, BasicUserUserName, BasicUserPassword).Wait();
+            CreateUser(userManager, SuperUserUserName, SuperUserPassword, true).Wait();
 
-            if (created)
+            for (var i = 0; i < 50; i++)
             {
-                CreateUser(userManager, BasicUserUserName, BasicUserPassword).Wait();
-                CreateUser(userManager, SuperUserUserName, SuperUserPassword, true).Wait();
-
-                for (var i = 0; i < 50; i++)
-                {
-                    CreateUser(userManager, $"TestUser{i}", $"testuser{1}").Wait();
-                }
+                CreateUser(userManager, $"TestUser{i}", $"testuser{1}").Wait();
             }
         }
+    }
 
-        private static async Task CreateUser(UserManager<ApplicationUser> userManager, string username, string password, bool isAdmin = false)
+    private static async Task CreateUser(UserManager<ApplicationUser> userManager, string username, string password, bool isAdmin = false)
+    {
+        var user = new ApplicationUser(username)
         {
-            var user = new ApplicationUser(username)
-            {
-                IsAdmin = isAdmin
-            };
-            var result = await userManager.CreateAsync(user, password);
+            IsAdmin = isAdmin
+        };
+        var result = await userManager.CreateAsync(user, password);
 
-            if (!result.Succeeded)
-            {
-                var errors = string.Join(",", result.Errors.Select(e => e.Description));
-                throw new PurchaseOrderTrackerException($"Failed to create user while initializing identity database: {errors}");
-            }
+        if (!result.Succeeded)
+        {
+            var errors = string.Join(",", result.Errors.Select(e => e.Description));
+            throw new PurchaseOrderTrackerException($"Failed to create user while initializing identity database: {errors}");
         }
     }
 }

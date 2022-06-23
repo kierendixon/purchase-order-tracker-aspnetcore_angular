@@ -8,78 +8,77 @@ using PurchaseOrderTracker.Persistence;
 using X.PagedList;
 using static PurchaseOrderTracker.Application.Features.PurchaseOrder.Queries.InquiryQuery;
 
-namespace PurchaseOrderTracker.Application.Features.PurchaseOrder.Queries
+namespace PurchaseOrderTracker.Application.Features.PurchaseOrder.Queries;
+
+public class InquiryQuery : IRequest<Result>
 {
-    public class InquiryQuery : IRequest<Result>
+    public InquiryQuery(int? pageSize, int? pageNumber, QueryType inquiryQueryType)
     {
-        public InquiryQuery(int? pageSize, int? pageNumber, QueryType inquiryQueryType)
+        PageSize = pageSize ?? 5;
+        PageNumber = pageNumber ?? 1;
+        InquiryQueryType = inquiryQueryType;
+    }
+
+    public enum QueryType
+    {
+        Open,
+        All,
+        ScheduledForDeliveryToday,
+        Delayed,
+        DelayedMoreThan7Days
+    }
+
+    public int PageSize { get; }
+    public int PageNumber { get; }
+    public QueryType InquiryQueryType { get; }
+
+    public class Result
+    {
+        public Result(PagedList<Domain.Models.PurchaseOrderAggregate.PurchaseOrder> pagedList)
         {
-            PageSize = pageSize ?? 5;
-            PageNumber = pageNumber ?? 1;
-            InquiryQueryType = inquiryQueryType;
+            PagedList = pagedList;
         }
 
-        public enum QueryType
+        public PagedList<Domain.Models.PurchaseOrderAggregate.PurchaseOrder> PagedList { get; }
+    }
+
+    public class Handler : IRequestHandler<InquiryQuery, Result>
+    {
+        private readonly PoTrackerDbContext _context;
+
+        public Handler(PoTrackerDbContext context)
         {
-            Open,
-            All,
-            ScheduledForDeliveryToday,
-            Delayed,
-            DelayedMoreThan7Days
+            _context = context;
         }
 
-        public int PageSize { get; }
-        public int PageNumber { get; }
-        public QueryType InquiryQueryType { get; }
-
-        public class Result
+        public async Task<Result> Handle(InquiryQuery request, CancellationToken cancellationToken)
         {
-            public Result(PagedList<Domain.Models.PurchaseOrderAggregate.PurchaseOrder> pagedList)
+            // Need to call ToList() which fetches all fields from
+            // the database instead of projecting because of a bug in EF Core 2.1
+            // https://github.com/aspnet/EntityFrameworkCore/issues/13546
+            var orders = (await _context.PurchaseOrder
+                .Include(o => o.Supplier)
+                .Include(o => o.Shipment)
+                .ToListAsync())
+                .AsQueryable();
+
+            orders = request.InquiryQueryType switch
             {
-                PagedList = pagedList;
-            }
+                QueryType.All => orders.AsQueryable(),
+                QueryType.Open => orders.Where(o => o.IsOpen).AsQueryable(),
+                QueryType.ScheduledForDeliveryToday => orders.Where(o => o.Shipment != null && o.Shipment.IsScheduledForDeliveryToday()).AsQueryable(),
+                QueryType.Delayed => orders.Where(o => o.Shipment != null && o.Shipment.IsDelayed()).AsQueryable(),
+                QueryType.DelayedMoreThan7Days => orders.Where(o => o.Shipment != null && o.Shipment.IsDelayedMoreThan7Days()).AsQueryable(),
+                _ => throw new InvalidOperationException(),
+            };
 
-            public PagedList<Domain.Models.PurchaseOrderAggregate.PurchaseOrder> PagedList { get; }
-        }
+            // Can't project with AutoMapper due to bugs. See notes in MappingProfile.cs
+            // var pageOfOrders = await orders.ToList().AsQueryable().
+            //    ProjectToPagedList<Result.PurchaseOrderViewModel>(_configuration, query.PageNumber, query.PageSize);
+            var paginatedOrders = new PagedList<Domain.Models.PurchaseOrderAggregate.PurchaseOrder>(
+                orders, request.PageNumber, request.PageSize);
 
-        public class Handler : IRequestHandler<InquiryQuery, Result>
-        {
-            private readonly PoTrackerDbContext _context;
-
-            public Handler(PoTrackerDbContext context)
-            {
-                _context = context;
-            }
-
-            public async Task<Result> Handle(InquiryQuery request, CancellationToken cancellationToken)
-            {
-                // Need to call ToList() which fetches all fields from
-                // the database instead of projecting because of a bug in EF Core 2.1
-                // https://github.com/aspnet/EntityFrameworkCore/issues/13546
-                var orders = (await _context.PurchaseOrder
-                    .Include(o => o.Supplier)
-                    .Include(o => o.Shipment)
-                    .ToListAsync())
-                    .AsQueryable();
-
-                orders = request.InquiryQueryType switch
-                {
-                    QueryType.All => orders.AsQueryable(),
-                    QueryType.Open => orders.Where(o => o.IsOpen).AsQueryable(),
-                    QueryType.ScheduledForDeliveryToday => orders.Where(o => o.Shipment != null && o.Shipment.IsScheduledForDeliveryToday()).AsQueryable(),
-                    QueryType.Delayed => orders.Where(o => o.Shipment != null && o.Shipment.IsDelayed()).AsQueryable(),
-                    QueryType.DelayedMoreThan7Days => orders.Where(o => o.Shipment != null && o.Shipment.IsDelayedMoreThan7Days()).AsQueryable(),
-                    _ => throw new InvalidOperationException(),
-                };
-
-                // Can't project with AutoMapper due to bugs. See notes in MappingProfile.cs
-                // var pageOfOrders = await orders.ToList().AsQueryable().
-                //    ProjectToPagedList<Result.PurchaseOrderViewModel>(_configuration, query.PageNumber, query.PageSize);
-                var paginatedOrders = new PagedList<Domain.Models.PurchaseOrderAggregate.PurchaseOrder>(
-                    orders, request.PageNumber, request.PageSize);
-
-                return new Result(paginatedOrders);
-            }
+            return new Result(paginatedOrders);
         }
     }
 }

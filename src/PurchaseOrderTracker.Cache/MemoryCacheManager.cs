@@ -4,41 +4,40 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using PurchaseOrderTracker.Application.Cache;
 
-namespace PurchaseOrderTracker.Cache
+namespace PurchaseOrderTracker.Cache;
+
+public class MemoryCacheManager : ICacheManager
 {
-    public class MemoryCacheManager : ICacheManager
+    private readonly TimeSpan _oneHour = new(1, 0, 0);
+    private readonly ILogger<MemoryCacheManager> _logger;
+    private readonly IMemoryCache _cache;
+
+    public MemoryCacheManager(IMemoryCache cache, ILogger<MemoryCacheManager> logger)
     {
-        private readonly TimeSpan _oneHour = new(1, 0, 0);
-        private readonly ILogger<MemoryCacheManager> _logger;
-        private readonly IMemoryCache _cache;
+        _cache = cache;
+        _logger = logger;
+    }
 
-        public MemoryCacheManager(IMemoryCache cache, ILogger<MemoryCacheManager> logger)
+    public Task<TItem> GetOrCreateAsync<TItem>(object key, Func<Task<TItem>> action)
+    {
+        var cacheEntryOptions = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(_oneHour)
+            .RegisterPostEvictionCallback(EvictionCallback, this);
+
+        return _cache.GetOrCreateAsync(key, cacheEntry =>
         {
-            _cache = cache;
-            _logger = logger;
-        }
+            cacheEntry.SetOptions(cacheEntryOptions);
+            return action();
+        });
+    }
 
-        public Task<TItem> GetOrCreateAsync<TItem>(object key, Func<Task<TItem>> action)
-        {
-            var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetSlidingExpiration(_oneHour)
-                .RegisterPostEvictionCallback(EvictionCallback, this);
+    public void RemoveSupplierCache()
+    {
+        _cache.Remove(CacheKeys.ShipmentsSummaryResult);
+    }
 
-            return _cache.GetOrCreateAsync(key, cacheEntry =>
-            {
-                cacheEntry.SetOptions(cacheEntryOptions);
-                return action();
-            });
-        }
-
-        public void RemoveSupplierCache()
-        {
-            _cache.Remove(CacheKeys.ShipmentsSummaryResult);
-        }
-
-        private void EvictionCallback(object key, object value, EvictionReason reason, object state)
-        {
-            _logger.LogDebug("Cache entry was evicted. Key={Key} Reason={Reason} State={State}", key, reason, state);
-        }
+    private void EvictionCallback(object key, object value, EvictionReason reason, object state)
+    {
+        _logger.LogDebug("Cache entry was evicted. Key={Key} Reason={Reason} State={State}", key, reason, state);
     }
 }

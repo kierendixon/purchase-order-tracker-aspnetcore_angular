@@ -3,22 +3,21 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace PurchaseOrderTracker.Application.Logging
+namespace PurchaseOrderTracker.Application.Logging;
+
+public class MediatrLoggingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
 {
-    public class MediatrLoggingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    private readonly ILogger _logger;
+
+    public MediatrLoggingBehaviour(ILogger<MediatrLoggingBehaviour<TRequest, TResponse>> logger)
     {
-        private readonly ILogger _logger;
+        _logger = logger;
+    }
 
-        public MediatrLoggingBehaviour(ILogger<MediatrLoggingBehaviour<TRequest, TResponse>> logger)
-        {
-            _logger = logger;
-        }
+    public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+    {
+        _logger.LogDebug("{FullName} [{Request}]", request.GetType().FullName, request);
 
-        public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
-        {
-            _logger.LogDebug("{FullName} [{Request}]", request.GetType().FullName, request);
-
-            return await next();
-        }
+        return await next();
     }
 }

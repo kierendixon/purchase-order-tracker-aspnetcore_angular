@@ -1,12 +1,11 @@
 ﻿using System;
 using MediatR;
 
-namespace PurchaseOrderTracker.Application.Notifications
+namespace PurchaseOrderTracker.Application.Notifications;
+
+// TODO implement in more commands
+public interface ICreateNotification : INotification
 {
-    // TODO implement in more commands
-    public interface ICreateNotification : INotification
-    {
-        int GetEntityId();
-        Type GetEntityType();
-    }
+    int GetEntityId();
+    Type GetEntityType();
 }

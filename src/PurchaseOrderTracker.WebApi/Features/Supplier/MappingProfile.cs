@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using PurchaseOrderTracker.WebApi.Features.Supplier.Models;
 
-namespace PurchaseOrderTracker.WebApi.Features.Supplier
+namespace PurchaseOrderTracker.WebApi.Features.Supplier;
+
+public class MappingProfile : Profile
 {
-    public class MappingProfile : Profile
+    public MappingProfile()
     {
-        public MappingProfile()
-        {
-            CreateMap<Domain.Models.SupplierAggregate.Supplier, InquiryQueryResultDto.SupplierDto>();
-        }
+        CreateMap<Domain.Models.SupplierAggregate.Supplier, InquiryQueryResultDto.SupplierDto>();
     }
 }
 

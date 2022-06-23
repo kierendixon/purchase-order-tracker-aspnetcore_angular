@@ -2,51 +2,50 @@
 using PurchaseOrderTracker.Domain.Models.SupplierAggregate;
 using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
 
-namespace PurchaseOrderTracker.Domain.Tests.Builders
+namespace PurchaseOrderTracker.Domain.Tests.Builders;
+
+public class SupplierBuilder
 {
-    public class SupplierBuilder
+    private List<ProductCategory> _categories = new();
+    private int? _id;
+    private SupplierName _name = new("supplierName");
+    private List<Product> _products = new();
+
+    public SupplierBuilder Id(int id)
     {
-        private List<ProductCategory> _categories = new();
-        private int? _id;
-        private SupplierName _name = new("supplierName");
-        private List<Product> _products = new();
+        _id = id;
+        return this;
+    }
 
-        public SupplierBuilder Id(int id)
+    public SupplierBuilder Name(string name)
+    {
+        _name = new SupplierName(name);
+        return this;
+    }
+
+    public SupplierBuilder Products(List<Product> products)
+    {
+        _products = products;
+        return this;
+    }
+
+    public SupplierBuilder ProductCategories(List<ProductCategory> categories)
+    {
+        _categories = categories;
+        return this;
+    }
+
+    public Supplier Build()
+    {
+        var supplier = new Supplier(_name);
+        if (_id != null)
         {
-            _id = id;
-            return this;
+            supplier.SetPrivatePropertyValue(nameof(supplier.Id), _id);
         }
 
-        public SupplierBuilder Name(string name)
-        {
-            _name = new SupplierName(name);
-            return this;
-        }
+        supplier.AddCategorys(_categories);
+        supplier.AddProducts(_products);
 
-        public SupplierBuilder Products(List<Product> products)
-        {
-            _products = products;
-            return this;
-        }
-
-        public SupplierBuilder ProductCategories(List<ProductCategory> categories)
-        {
-            _categories = categories;
-            return this;
-        }
-
-        public Supplier Build()
-        {
-            var supplier = new Supplier(_name);
-            if (_id != null)
-            {
-                supplier.SetPrivatePropertyValue(nameof(supplier.Id), _id);
-            }
-
-            supplier.AddCategorys(_categories);
-            supplier.AddProducts(_products);
-
-            return supplier;
-        }
+        return supplier;
     }
 }

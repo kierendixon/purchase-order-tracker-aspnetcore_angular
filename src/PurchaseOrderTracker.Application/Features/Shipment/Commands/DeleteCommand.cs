@@ -5,41 +5,40 @@ using Microsoft.EntityFrameworkCore;
 using PurchaseOrderTracker.Domain.Exceptions;
 using PurchaseOrderTracker.Persistence;
 
-namespace PurchaseOrderTracker.Application.Features.Shipment.Commands
+namespace PurchaseOrderTracker.Application.Features.Shipment.Commands;
+
+public class DeleteCommand : IRequest
 {
-    public class DeleteCommand : IRequest
+    public DeleteCommand(int shipmentId)
     {
-        public DeleteCommand(int shipmentId)
+        ShipmentId = shipmentId;
+    }
+
+    public int ShipmentId { get; set; }
+
+    public class Handler : AsyncRequestHandler<DeleteCommand>
+    {
+        private readonly PoTrackerDbContext _context;
+
+        public Handler(PoTrackerDbContext context)
         {
-            ShipmentId = shipmentId;
+            _context = context;
         }
 
-        public int ShipmentId { get; set; }
-
-        public class Handler : AsyncRequestHandler<DeleteCommand>
+        protected override async Task Handle(DeleteCommand request, CancellationToken cancellationToken)
         {
-            private readonly PoTrackerDbContext _context;
+            var shipment = await _context.Shipment.SingleAsync(s => s.Id == request.ShipmentId);
+            ThrowExceptionIfCannotBeDeleted(shipment);
+            _context.Shipment.Remove(shipment);
 
-            public Handler(PoTrackerDbContext context)
+            await _context.SaveChangesAsync();
+        }
+
+        private void ThrowExceptionIfCannotBeDeleted(Domain.Models.ShipmentAggregate.Shipment shipment)
+        {
+            if (!shipment.CanBeDeleted)
             {
-                _context = context;
-            }
-
-            protected override async Task Handle(DeleteCommand request, CancellationToken cancellationToken)
-            {
-                var shipment = await _context.Shipment.SingleAsync(s => s.Id == request.ShipmentId);
-                ThrowExceptionIfCannotBeDeleted(shipment);
-                _context.Shipment.Remove(shipment);
-
-                await _context.SaveChangesAsync();
-            }
-
-            private void ThrowExceptionIfCannotBeDeleted(Domain.Models.ShipmentAggregate.Shipment shipment)
-            {
-                if (!shipment.CanBeDeleted)
-                {
-                    throw new PurchaseOrderTrackerException("Shipment cannot be deleted");
-                }
+                throw new PurchaseOrderTrackerException("Shipment cannot be deleted");
             }
         }
     }

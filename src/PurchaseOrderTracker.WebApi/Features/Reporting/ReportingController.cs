@@ -5,20 +5,19 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PurchaseOrderTracker.Application.Features.Reporting.Queries;
 
-namespace PurchaseOrderTracker.WebApi.Features.Reporting
-{
-    public class ReportingController : BaseController
-    {
-        public ReportingController(IMediator mediator, IMapper mapper)
-            : base(mediator, mapper)
-        {
-        }
+namespace PurchaseOrderTracker.WebApi.Features.Reporting;
 
-        [HttpGet("[action]")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ShipmentsSummaryQuery.Result>> ShipmentsSummary()
-        {
-            return await Mediator.Send(new ShipmentsSummaryQuery());
-        }
+public class ReportingController : BaseController
+{
+    public ReportingController(IMediator mediator, IMapper mapper)
+        : base(mediator, mapper)
+    {
+    }
+
+    [HttpGet("[action]")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<ShipmentsSummaryQuery.Result>> ShipmentsSummary()
+    {
+        return await Mediator.Send(new ShipmentsSummaryQuery());
     }
 }

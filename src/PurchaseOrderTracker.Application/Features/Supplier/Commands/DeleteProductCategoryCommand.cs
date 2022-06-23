@@ -5,38 +5,37 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PurchaseOrderTracker.Persistence;
 
-namespace PurchaseOrderTracker.Application.Features.Supplier.Commands
+namespace PurchaseOrderTracker.Application.Features.Supplier.Commands;
+
+public class DeleteProductCategoryCommand : IRequest
 {
-    public class DeleteProductCategoryCommand : IRequest
+    public DeleteProductCategoryCommand(int supplierId, int categoryId)
     {
-        public DeleteProductCategoryCommand(int supplierId, int categoryId)
+        SupplierId = supplierId;
+        CategoryId = categoryId;
+    }
+
+    public int SupplierId { get; }
+    public int? CategoryId { get; }
+
+    public class Handler : AsyncRequestHandler<DeleteProductCategoryCommand>
+    {
+        private readonly PoTrackerDbContext _context;
+
+        public Handler(PoTrackerDbContext context)
         {
-            SupplierId = supplierId;
-            CategoryId = categoryId;
+            _context = context;
         }
 
-        public int SupplierId { get; }
-        public int? CategoryId { get; }
-
-        public class Handler : AsyncRequestHandler<DeleteProductCategoryCommand>
+        // TODO: don't allow category to be deleted if it is being used by a product
+        protected override async Task Handle(DeleteProductCategoryCommand request, CancellationToken cancellationToken)
         {
-            private readonly PoTrackerDbContext _context;
+            var supplier = await _context.Supplier.FindAsync(request.SupplierId);
+            var category = await _context.Entry(supplier).Collection(s => s.ProductCategories).Query()
+                .Where(c => c.Id == request.CategoryId).SingleAsync();
 
-            public Handler(PoTrackerDbContext context)
-            {
-                _context = context;
-            }
-
-            // TODO: don't allow category to be deleted if it is being used by a product
-            protected override async Task Handle(DeleteProductCategoryCommand request, CancellationToken cancellationToken)
-            {
-                var supplier = await _context.Supplier.FindAsync(request.SupplierId);
-                var category = await _context.Entry(supplier).Collection(s => s.ProductCategories).Query()
-                    .Where(c => c.Id == request.CategoryId).SingleAsync();
-
-                supplier.RemoveCategory(category);
-                await _context.SaveChangesAsync();
-            }
+            supplier.RemoveCategory(category);
+            await _context.SaveChangesAsync();
         }
     }
 }

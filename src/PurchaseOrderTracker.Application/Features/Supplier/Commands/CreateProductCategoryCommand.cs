@@ -8,46 +8,45 @@ using PurchaseOrderTracker.Domain.Models.SupplierAggregate;
 using PurchaseOrderTracker.Domain.Models.SupplierAggregate.ValueObjects;
 using PurchaseOrderTracker.Persistence;
 
-namespace PurchaseOrderTracker.Application.Features.Supplier.Commands
+namespace PurchaseOrderTracker.Application.Features.Supplier.Commands;
+
+public class CreateProductCategoryCommand : IRequest
 {
-    public class CreateProductCategoryCommand : IRequest
+    public CreateProductCategoryCommand(int supplierId, ProductCategoryName name)
     {
-        public CreateProductCategoryCommand(int supplierId, ProductCategoryName name)
+        SupplierId = supplierId;
+        Name = name ?? throw new ArgumentNullException(nameof(name));
+    }
+
+    public int SupplierId { get; }
+    public ProductCategoryName Name { get; }
+
+    public class Handler : AsyncRequestHandler<CreateProductCategoryCommand>
+    {
+        private readonly PoTrackerDbContext _context;
+
+        public Handler(PoTrackerDbContext context)
         {
-            SupplierId = supplierId;
-            Name = name ?? throw new ArgumentNullException(nameof(name));
+            _context = context;
         }
 
-        public int SupplierId { get; }
-        public ProductCategoryName Name { get; }
-
-        public class Handler : AsyncRequestHandler<CreateProductCategoryCommand>
+        protected override async Task Handle(CreateProductCategoryCommand request, CancellationToken cancellationToken)
         {
-            private readonly PoTrackerDbContext _context;
-
-            public Handler(PoTrackerDbContext context)
+            try
             {
-                _context = context;
+                var supplier = await _context.Supplier.FindAsync(request.SupplierId);
+                supplier.AddCategory(new ProductCategory(request.Name));
+
+                await _context.SaveChangesAsync();
             }
-
-            protected override async Task Handle(CreateProductCategoryCommand request, CancellationToken cancellationToken)
+            catch (DbUpdateException ex)
             {
-                try
+                if (ex.IsDuplicateKeyError())
                 {
-                    var supplier = await _context.Supplier.FindAsync(request.SupplierId);
-                    supplier.AddCategory(new ProductCategory(request.Name));
-
-                    await _context.SaveChangesAsync();
+                    throw new PurchaseOrderTrackerException("A duplicate product category already exists");
                 }
-                catch (DbUpdateException ex)
-                {
-                    if (ex.IsDuplicateKeyError())
-                    {
-                        throw new PurchaseOrderTrackerException("A duplicate product category already exists");
-                    }
 
-                    throw;
-                }
+                throw;
             }
         }
     }

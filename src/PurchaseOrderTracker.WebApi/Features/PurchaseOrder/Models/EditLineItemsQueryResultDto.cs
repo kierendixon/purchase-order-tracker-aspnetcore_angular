@@ -1,40 +1,39 @@
 ﻿using System.Collections.Generic;
 
-namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder.Models
+namespace PurchaseOrderTracker.WebApi.Features.PurchaseOrder.Models;
+
+public class EditLineItemsQueryResultDto
 {
-    public class EditLineItemsQueryResultDto
+    public EditLineItemsQueryResultDto(int purchaseOrderId, string purchaseOrderOrderNo,
+        List<PurchaseOrderLineDto> lineItems, Dictionary<int, string> productOptions)
     {
-        public EditLineItemsQueryResultDto(int purchaseOrderId, string purchaseOrderOrderNo,
-            List<PurchaseOrderLineDto> lineItems, Dictionary<int, string> productOptions)
+        PurchaseOrderId = purchaseOrderId;
+        PurchaseOrderOrderNo = purchaseOrderOrderNo;
+        LineItems = lineItems;
+        ProductOptions = productOptions;
+    }
+
+    public int PurchaseOrderId { get; }
+    public string PurchaseOrderOrderNo { get; }
+    public List<PurchaseOrderLineDto> LineItems { get; }
+
+    // TODO review suppression
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "<Pending>")]
+    public Dictionary<int, string> ProductOptions { get; set; }
+
+    public class PurchaseOrderLineDto
+    {
+        public PurchaseOrderLineDto(int id, int productId, decimal purchasePrice, int purchaseQty)
         {
-            PurchaseOrderId = purchaseOrderId;
-            PurchaseOrderOrderNo = purchaseOrderOrderNo;
-            LineItems = lineItems;
-            ProductOptions = productOptions;
+            Id = id;
+            ProductId = productId;
+            PurchasePrice = purchasePrice;
+            PurchaseQty = purchaseQty;
         }
 
-        public int PurchaseOrderId { get; }
-        public string PurchaseOrderOrderNo { get; }
-        public List<PurchaseOrderLineDto> LineItems { get; }
-
-        // TODO review suppression
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "<Pending>")]
-        public Dictionary<int, string> ProductOptions { get; set; }
-
-        public class PurchaseOrderLineDto
-        {
-            public PurchaseOrderLineDto(int id, int productId, decimal purchasePrice, int purchaseQty)
-            {
-                Id = id;
-                ProductId = productId;
-                PurchasePrice = purchasePrice;
-                PurchaseQty = purchaseQty;
-            }
-
-            public int Id { get; }
-            public int ProductId { get; }
-            public decimal PurchasePrice { get; }
-            public int PurchaseQty { get; }
-        }
+        public int Id { get; }
+        public int ProductId { get; }
+        public decimal PurchasePrice { get; }
+        public int PurchaseQty { get; }
     }
 }

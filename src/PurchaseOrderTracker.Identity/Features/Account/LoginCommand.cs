@@ -9,93 +9,92 @@ using Microsoft.AspNetCore.Identity;
 using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
 using static PurchaseOrderTracker.Identity.Features.Account.LoginCommand;
 
-namespace PurchaseOrderTracker.Identity.Features.Account
+namespace PurchaseOrderTracker.Identity.Features.Account;
+
+public class LoginCommand : IRequest<Result>
 {
-    public class LoginCommand : IRequest<Result>
+    public LoginCommand(string userName, string password)
     {
-        public LoginCommand(string userName, string password)
+        UserName = userName ?? throw new ArgumentNullException(nameof(userName));
+        Password = password ?? throw new ArgumentNullException(nameof(password));
+    }
+
+    public string UserName { get; }
+    public string Password { get; }
+
+    public class Result
+    {
+        public Result(bool succeeded)
         {
-            UserName = userName ?? throw new ArgumentNullException(nameof(userName));
-            Password = password ?? throw new ArgumentNullException(nameof(password));
+            Succeeded = succeeded;
         }
 
-        public string UserName { get; }
-        public string Password { get; }
+        public bool Succeeded { get; }
+    }
 
-        public class Result
+    public class Handler : IRequestHandler<LoginCommand, Result>
+    {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public Handler(UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
-            public Result(bool succeeded)
-            {
-                Succeeded = succeeded;
-            }
-
-            public bool Succeeded { get; }
+            _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public class Handler : IRequestHandler<LoginCommand, Result>
+        public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            private readonly UserManager<ApplicationUser> _userManager;
-            private readonly IHttpContextAccessor _httpContextAccessor;
+            var user = await _userManager.FindByNameAsync(request.UserName);
 
-            public Handler(UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
+            if (user != null && !IsUserAccountLocked(user))
             {
-                _userManager = userManager;
-                _httpContextAccessor = httpContextAccessor;
-            }
-
-            public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
-            {
-                var user = await _userManager.FindByNameAsync(request.UserName);
-
-                if (user != null && !IsUserAccountLocked(user))
+                if (await _userManager.CheckPasswordAsync(user, request.Password))
                 {
-                    if (await _userManager.CheckPasswordAsync(user, request.Password))
-                    {
-                        var resetAccessFailedTask = _userManager.ResetAccessFailedCountAsync(user);
+                    var resetAccessFailedTask = _userManager.ResetAccessFailedCountAsync(user);
 
-                        await _httpContextAccessor.HttpContext.SignInAsync(
-                            IdentityServiceCollectionExtensions.Scheme,
-                            new ClaimsPrincipal(GenerateClaims(user)));
+                    await _httpContextAccessor.HttpContext.SignInAsync(
+                        IdentityServiceCollectionExtensions.Scheme,
+                        new ClaimsPrincipal(GenerateClaims(user)));
 
-                        await resetAccessFailedTask;
+                    await resetAccessFailedTask;
 
-                        return new Result(true);
-                    }
-                    else
-                    {
-                        await _userManager.AccessFailedAsync(user);
-                    }
+                    return new Result(true);
                 }
-
-                return new Result(false);
+                else
+                {
+                    await _userManager.AccessFailedAsync(user);
+                }
             }
 
-            private static bool IsUserAccountLocked(ApplicationUser user)
-            {
-                // TODO user.LockoutEnd.DateTime ??
-                return user.LockoutEnabled
-                    && user.LockoutEnd?.LocalDateTime > DateTime.Now;
-            }
+            return new Result(false);
+        }
 
-            private ClaimsIdentity GenerateClaims(ApplicationUser user)
-            {
-                //var userId = await _userManager.GetUserIdAsync(user);
-                //var userName = await _userManager.GetUserNameAsync(user);
+        private static bool IsUserAccountLocked(ApplicationUser user)
+        {
+            // TODO user.LockoutEnd.DateTime ??
+            return user.LockoutEnabled
+                && user.LockoutEnd?.LocalDateTime > DateTime.Now;
+        }
 
-                var id = new ClaimsIdentity(IdentityServiceCollectionExtensions.Scheme);
-                id.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
-                id.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
-                id.AddClaim(new Claim(ClaimTypes.Role, user.IsAdmin ? "admin" : "user"));
+        private ClaimsIdentity GenerateClaims(ApplicationUser user)
+        {
+            //var userId = await _userManager.GetUserIdAsync(user);
+            //var userName = await _userManager.GetUserNameAsync(user);
 
-                // TODO
-                //if (_userManager.SupportsUserSecurityStamp)
-                //{
-                //    id.AddClaim(new Claim("AspNet.Identity.SecurityStamp",
-                //        await _userManager.GetSecurityStampAsync(user)));
-                //}
+            var id = new ClaimsIdentity(IdentityServiceCollectionExtensions.Scheme);
+            id.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
+            id.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
+            id.AddClaim(new Claim(ClaimTypes.Role, user.IsAdmin ? "admin" : "user"));
 
-                return id;
-            }
+            // TODO
+            //if (_userManager.SupportsUserSecurityStamp)
+            //{
+            //    id.AddClaim(new Claim("AspNet.Identity.SecurityStamp",
+            //        await _userManager.GetSecurityStampAsync(user)));
+            //}
+
+            return id;
         }
     }
 }

@@ -449,7 +449,7 @@ csharp_preserve_single_line_blocks = true
 # Using directive options
 csharp_using_directive_placement = outside_namespace
 # Namespace options
-csharp_style_namespace_declarations = block_scoped
+csharp_style_namespace_declarations = file_scoped
 
 ## Naming rules ##
 ##################

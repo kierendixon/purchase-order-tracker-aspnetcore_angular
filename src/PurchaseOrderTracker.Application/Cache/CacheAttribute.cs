@@ -1,16 +1,15 @@
 ﻿using System;
 
-namespace PurchaseOrderTracker.Application.Cache
-{
-    // TODO: Make cache duration configurable
-    [AttributeUsage(AttributeTargets.Class)]
-    public class CacheAttribute : Attribute
-    {
-        public CacheAttribute(string cacheKey)
-        {
-            CacheKey = cacheKey;
-        }
+namespace PurchaseOrderTracker.Application.Cache;
 
-        public string CacheKey { get; }
+// TODO: Make cache duration configurable
+[AttributeUsage(AttributeTargets.Class)]
+public class CacheAttribute : Attribute
+{
+    public CacheAttribute(string cacheKey)
+    {
+        CacheKey = cacheKey;
     }
+
+    public string CacheKey { get; }
 }
