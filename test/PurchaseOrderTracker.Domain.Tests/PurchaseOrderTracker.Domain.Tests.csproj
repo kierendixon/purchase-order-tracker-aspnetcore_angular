@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>    
-    <TargetFramework>net6.0</TargetFramework>    
-    <AssemblyName>PurchaseOrderTracker.Domain.Tests</AssemblyName>    
-    <RootNamespace>PurchaseOrderTracker.Domain.Tests</RootNamespace>
+    <TargetFramework>net6.0</TargetFramework>
+    <IsPackable>false</IsPackable>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 

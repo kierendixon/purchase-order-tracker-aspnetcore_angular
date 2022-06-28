@@ -8,3 +8,4 @@ docker-compose*.yml
 **/bin/
 **/obj/
 **/node_modules/
+azure-pipelines*.yml
