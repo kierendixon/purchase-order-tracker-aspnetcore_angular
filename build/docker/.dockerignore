@@ -3,9 +3,9 @@
 .gitignore
 .vs
 .vscode
-docker-compose*.yml
+envoy.debug.yaml
+build/
 *.md
 **/bin/
 **/obj/
 **/node_modules/
-azure-pipelines*.yml

@@ -1,0 +1,964 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "0.0.0.1",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources"
+            }
+        },
+        "sqlServerName": {
+            "type": "string",
+            "defaultValue": "[format('purchase-order-tracker-sql-server-{0}', uniqueString(resourceGroup().id))]"
+        },
+        "appServiceName": {
+            "type": "string",
+            "defaultValue": "purchase-order-tracker",
+            "minLength": 2,
+            "metadata": {
+                "description": "Included in resource name for: VNet, App Service Plan, App Services, App Gateway"
+            }
+        },
+        "sqlServerAdminLogin": {
+            "type": "string"
+
+        },
+        "sqlServerAdminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "does not contain account name; at least 8 chars; 3 of 4 categories: upper, lower, number, symbol"
+            }
+        },
+        "vmssAdminUsername": {
+            "type": "string"
+        },
+        "vmssAdminPassword": {
+            "type": "secureString"
+        }
+    },
+    "functions": [],
+    "variables": {
+        "vNetName": "[format('vnet-{0}', parameters('appServiceName'))]",
+        "vNetSubnetAppGwName": "app-gateway",
+        "vNetSubnetAppServicesOutboundDelegatedName": "app-services-outbound-delegated",
+        "vNetSubnetAzurePrivateEndpointsName": "azure-private-endpoints",
+        "vNetSubnetDevOpsAgentsName": "devops-agents",
+
+        "networkSecGroupBlockOutboundInternetName": "nsg-block-outbound-internet",
+
+        "privateDnsZoneWebAppsName": "privatelink.azurewebsites.net",
+        "privateDnsZoneSqlServerName": "privatelink.database.windows.net",
+
+        "privateEndpointAppServiceWebUiAngularName": "privendp-webui-angular",
+        "privateEndpointAppServiceWebUiAdminName": "privendp-webui-admin",
+        "privateEndpointappServiceWebApiName": "privendp-webapi",
+        "privateEndpointappServiceIdentityName": "privendp-identity",
+        "privateEndpointSqlServerName": "privendp-sql-server",
+
+        "appServicePlanName": "[format('asp-{0}', parameters('appServiceName'))]",
+        "appServiceIdentityName": "[format('{0}-identity-{1}', parameters('appServiceName'), uniqueString(resourceGroup().id))]",
+        "appServiceWebUiAngularName": "[format('{0}-webui-angular-{1}', parameters('appServiceName'), uniqueString(resourceGroup().id))]",
+        "appServiceWebUiAdminName": "[format('{0}-webui-admin-{1}', parameters('appServiceName'), uniqueString(resourceGroup().id))]",
+        "appServiceWebApiName": "[format('{0}-webapi-{1}', parameters('appServiceName'), uniqueString(resourceGroup().id))]",
+        "appServiceHealthCheckPath": "/health",
+
+        "appGatewayName": "[format('apgw-{0}', parameters('appServiceName'))]",
+        "appGatewayListenerName": "http-80",
+        "appGatewayPublicIpName": "agpw-public-ip",
+        "appGatewayBackendSettingsName": "http-80-no-affinity",
+        "appGatewayHealthProbeName": "http-healthcheck",
+
+        "sqlServerIdentityDbName": "PurchaseOrderTrackerIdentity_Angular",
+        "sqlServerAngularDbName": "PurchaseOrderTracker_Angular",
+
+		"vmScaleSetName": "vmss-devops-agent",
+		"vmName": "vmss-devops-agent"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2021-08-01",
+            "name": "[variables('vNetName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [ "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecGroupBlockOutboundInternetName'))]" ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('vNetSubnetAzurePrivateEndpointsName')]",
+                        "properties": {
+                            "addressPrefix": "10.0.1.0/24"
+                        }
+                    },
+                    {
+                        "name": "[variables('vNetSubnetAppServicesOutboundDelegatedName')]",
+                        "properties": {
+                            "addressPrefix": "10.0.2.0/24",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecGroupBlockOutboundInternetName'))]"
+                            },
+                            "delegations": [
+                                {
+                                    "name": "Microsoft.Web.serverFarms",
+                                    "properties": {
+                                        "serviceName": "Microsoft.Web/serverFarms"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "[variables('vNetSubnetAppGwName')]",
+                        "properties": {
+                            "addressPrefix": "10.0.3.0/26"
+                        }
+                    },
+                    {
+                        "name": "[variables('vNetSubnetDevOpsAgentsName')]",
+                        "properties": {
+                            "addressPrefix": "10.0.4.0/24"
+                        }
+                    }
+                ],
+                "enableDdosProtection": false,
+                "enableVmProtection": false
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2021-08-01",
+            "name": "[variables('networkSecGroupBlockOutboundInternetName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "Deny_Outbound_Internet",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "Internet",
+                            "access": "Allow",
+                            "priority": 110,
+                            "direction": "Outbound"
+                        }
+                    }
+                ]
+            },
+            "resources": [
+                {
+                    "type": "securityRules",
+                    "apiVersion": "2021-08-01",
+                    "name": "Deny_Outbound_Internet",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecGroupBlockOutboundInternetName'))]"
+                    ],
+                    "properties": {
+                        "protocol": "*",
+                        "sourcePortRange": "*",
+                        "destinationPortRange": "*",
+                        "sourceAddressPrefix": "*",
+                        "destinationAddressPrefix": "Internet",
+                        "access": "Allow",
+                        "priority": 110,
+                        "direction": "Outbound"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('privateDnsZoneWebAppsName')]",
+            "location": "global",
+            "resources": [
+                {
+                    "type": "virtualNetworkLinks",
+                    "apiVersion": "2020-06-01",
+                    "name": "[concat(variables('privateDnsZoneWebAppsName'), '-vlink')]",
+                    "location": "global",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsZoneWebAppsName'))]",
+                        "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+                    ],
+                    "properties": {
+                        "registrationEnabled": false,
+                        "virtualNetwork": {
+                            "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2021-05-01",
+            "name": "[variables('privateEndpointAppServiceWebUiAngularName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('appServiceWebUiAngularName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+            ],
+            "properties": {
+                "subnet": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('vNetSubnetAzurePrivateEndpointsName'))]"
+
+                },
+                "customNetworkInterfaceName": "[concat(variables('privateEndpointAppServiceWebUiAngularName'), '-nic')]",
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[concat(variables('privateEndpointAppServiceWebUiAngularName'), '-link')]",
+                        "properties": {
+                            "privateLinkServiceId": "[resourceId('Microsoft.Web/sites', variables('appServiceWebUiAngularName'))]",
+                            "groupIds": [ "sites" ]
+                        }
+                    }
+                ]
+            },
+            "resources": [
+                {
+                    "type": "privateDnsZoneGroups",
+                    "apiVersion": "2020-11-01",
+                    "name": "dnsgroupname",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Network/privateEndpoints', variables('privateEndpointAppServiceWebUiAngularName'))]"
+                    ],
+                    "properties": {
+                        "privateDnsZoneConfigs": [
+                            {
+                                "name": "[concat(variables('privateDnsZoneWebAppsName'), '-dns-zgroup')]",
+                                "properties": {
+                                    "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsZoneWebAppsName'))]"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2021-05-01",
+            "name": "[variables('privateEndpointAppServiceWebUiAdminName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('appServiceWebUiAdminName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+            ],
+            "properties": {
+                "subnet": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('vNetSubnetAzurePrivateEndpointsName'))]"
+
+                },
+                "customNetworkInterfaceName": "[concat(variables('privateEndpointAppServiceWebUiAdminName'), '-nic')]",
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[concat(variables('privateEndpointAppServiceWebUiAdminName'), '-link')]",
+                        "properties": {
+                            "privateLinkServiceId": "[resourceId('Microsoft.Web/sites', variables('appServiceWebUiAdminName'))]",
+                            "groupIds": [ "sites" ]
+                        }
+                    }
+                ]
+            },
+            "resources": [
+                {
+                    "type": "privateDnsZoneGroups",
+                    "apiVersion": "2020-11-01",
+                    "name": "dnsgroupname",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Network/privateEndpoints', variables('privateEndpointAppServiceWebUiAdminName'))]"
+                    ],
+                    "properties": {
+                        "privateDnsZoneConfigs": [
+                            {
+                                "name": "[concat(variables('privateDnsZoneWebAppsName'), '-dns-zgroup')]",
+                                "properties": {
+                                    "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsZoneWebAppsName'))]"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2021-05-01",
+            "name": "[variables('privateEndpointappServiceIdentityName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('appServiceIdentityName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+            ],
+            "properties": {
+                "subnet": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('vNetSubnetAzurePrivateEndpointsName'))]"
+                },
+                "customNetworkInterfaceName": "[concat(variables('privateEndpointappServiceIdentityName'), '-nic')]",
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[concat(variables('privateEndpointappServiceIdentityName'), '-link')]",
+                        "properties": {
+                            "privateLinkServiceId": "[resourceId('Microsoft.Web/sites', variables('appServiceIdentityName'))]",
+                            "groupIds": [ "sites" ]
+                        }
+                    }
+                ]
+            },
+            "resources": [
+                {
+                    "type": "privateDnsZoneGroups",
+                    "apiVersion": "2020-11-01",
+                    "name": "dnsgroupname",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Network/privateEndpoints', variables('privateEndpointappServiceIdentityName'))]"
+                    ],
+                    "properties": {
+                        "privateDnsZoneConfigs": [
+                            {
+                                "name": "[concat(variables('privateDnsZoneWebAppsName'), '-dns-zgroup')]",
+                                "properties": {
+                                    "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsZoneWebAppsName'))]"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2021-05-01",
+            "name": "[variables('privateEndpointappServiceWebApiName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('appServiceWebApiName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+            ],
+            "properties": {
+                "subnet": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('vNetSubnetAzurePrivateEndpointsName'))]"
+                },
+                "customNetworkInterfaceName": "[concat(variables('privateEndpointappServiceWebApiName'), '-nic')]",
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[concat(variables('privateEndpointappServiceWebApiName'), '-link')]",
+                        "properties": {
+                            "privateLinkServiceId": "[resourceId('Microsoft.Web/sites', variables('appServiceWebApiName'))]",
+                            "groupIds": [ "sites" ]
+                        }
+                    }
+                ]
+            },
+            "resources": [
+                {
+                    "type": "privateDnsZoneGroups",
+                    "apiVersion": "2020-11-01",
+                    "name": "dnsgroupname",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Network/privateEndpoints', variables('privateEndpointappServiceWebApiName'))]"
+                    ],
+                    "properties": {
+                        "privateDnsZoneConfigs": [
+                            {
+                                "name": "[concat(variables('privateDnsZoneWebAppsName'), '-dns-zgroup')]",
+                                "properties": {
+                                    "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsZoneWebAppsName'))]"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('privateDnsZoneSqlServerName')]",
+            "location": "global",
+            "resources": [
+                {
+                    "type": "virtualNetworkLinks",
+                    "apiVersion": "2020-06-01",
+                    "name": "[concat(variables('privateDnsZoneSqlServerName'), '-vlink')]",
+                    "location": "global",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsZoneSqlServerName'))]",
+                        "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+                    ],
+                    "properties": {
+                        "registrationEnabled": false,
+                        "virtualNetwork": {
+                            "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2021-05-01",
+            "name": "[variables('privateEndpointSqlServerName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+            ],
+            "properties": {
+                "subnet": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('vNetSubnetAzurePrivateEndpointsName'))]"
+                },
+                "customNetworkInterfaceName": "[concat(variables('privateEndpointSqlServerName'), '-nic')]",
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[concat(variables('privateEndpointSqlServerName'), '-link')]",
+                        "properties": {
+                            "privateLinkServiceId": "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]",
+                            "groupIds": [ "sqlServer" ]
+                        }
+                    }
+                ]
+            },
+            "resources": [
+                {
+                    "type": "privateDnsZoneGroups",
+                    "apiVersion": "2020-11-01",
+                    "name": "dnsgroupname",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Network/privateEndpoints', variables('privateEndpointSqlServerName'))]"
+                    ],
+                    "properties": {
+                        "privateDnsZoneConfigs": [
+                            {
+                                "name": "[concat(variables('privateDnsZoneSqlServerName'), '-dns-zgroup')]",
+                                "properties": {
+                                    "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsZoneSqlServerName'))]"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Network/applicationGateways",
+            "apiVersion": "2021-08-01",
+            "name": "[variables('appGatewayName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('appGatewayPublicIpName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vNetName'))]"
+            ],
+            "properties": {
+                "sku": {
+                    "name": "Standard_v2",
+                    "tier": "Standard_v2",
+                    "capacity": "1"
+                },
+                "gatewayIPConfigurations": [
+                    {
+                        "name": "appGatewayIpConfig",
+                        "properties": {
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('vNetSubnetAppGwName'))]"
+                            }
+                        }
+                    }
+                ],
+                "frontendIPConfigurations": [
+                    {
+                        "name": "appGwPublicFrontendIp",
+                        "properties": {
+                            "PublicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('appGatewayPublicIpName'))]"
+                            }
+                        }
+                    }
+                ],
+                "frontendPorts": [
+                    {
+                        "name": "port_80",
+                        "properties": {
+                            "Port": 80
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "webui-angular-pool",
+                        "properties": {
+                            "backendAddresses": [
+                                {
+                                    "fqdn": "[reference(resourceId('Microsoft.Web/sites', variables('appServiceWebUiAngularName'))).hostNames[0]]"
+                                }
+
+                            ]
+                        }
+                    },
+                    {
+                        "name": "webui-admin-pool",
+                        "properties": {
+                            "backendAddresses": [
+                                {
+                                    "fqdn": "[reference(resourceId('Microsoft.Web/sites', variables('appServiceWebUiAdminName'))).hostNames[0]]"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "identity-pool",
+                        "properties": {
+                            "backendAddresses": [
+                                {
+                                    "fqdn": "[reference(resourceId('Microsoft.Web/sites', variables('appServiceIdentityName'))).hostNames[0]]"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "webapi-pool",
+                        "properties": {
+                            "backendAddresses": [
+                                {
+                                    "fqdn": "[reference(resourceId('Microsoft.Web/sites', variables('appServiceWebApiName'))).hostNames[0]]"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "backendHttpSettingsCollection": [
+                    {
+                        "name": "[variables('appGatewayBackendSettingsName')]",
+                        "properties": {
+                            "Port": 80,
+                            "Protocol": "Http",
+                            "cookieBasedAffinity": "Disabled",
+                            "pickHostNameFromBackendAddress": true,
+                            "requestTimeout": 20,
+                            "path": "/",
+                            "probe": {
+                                "id": "[resourceId('Microsoft.Network/applicationGateways/probes', variables('appGatewayName'), variables('appGatewayHealthProbeName'))]"
+                            }
+                        }
+                    }
+                ],
+                "httpListeners": [
+                    {
+                        "name": "[variables('appGatewayListenerName')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', variables('appGatewayName'), 'appGwPublicFrontendIp')]"
+                            },
+                            "frontendPort": {
+                                "id": "[resourceId('Microsoft.Network/applicationGateways/frontendPorts', variables('appGatewayName'), 'port_80')]"
+                            },
+                            "protocol": "Http"
+                        }
+                    }
+                ],
+                "requestRoutingRules": [
+                    {
+                        "name": "path-based-routing",
+                        "properties": {
+                            "ruleType": "PathBasedRouting",
+                            "httpListener": {
+                                "id": "[resourceId('Microsoft.Network/applicationGateways/httpListeners', variables('appGatewayName'), variables('appGatewayListenerName'))]"
+                            },
+                            "urlPathMap": {
+                                "id": "[resourceId('Microsoft.Network/applicationGateways/urlPathMaps', variables('appGatewayName'), 'path-based-routing')]"
+                            },
+                            "priority": 100
+                        }
+                    }
+                ],
+                "enableHttp2": false,
+                "urlPathMaps": [
+                    {
+                        "name": "path-based-routing",
+                        "properties": {
+                            "pathRules": [
+                                {
+                                    "name": "webui-angular",
+                                    "properties": {
+                                        "paths": [
+                                            "/*"
+                                        ],
+                                        "backendAddressPool": {
+                                            "id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools', variables('appGatewayName'), 'webui-angular-pool')]"
+                                        },
+                                        "backendHttpSettings": {
+                                            "id": "[resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', variables('appGatewayName'), variables('appGatewayBackendSettingsName'))]"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "webui-admin",
+                                    "properties": {
+                                        "paths": [
+                                            "/admin/*"
+                                        ],
+                                        "backendAddressPool": {
+                                            "id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools', variables('appGatewayName'), 'webui-admin-pool')]"
+                                        },
+                                        "backendHttpSettings": {
+                                            "id": "[resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', variables('appGatewayName'), variables('appGatewayBackendSettingsName'))]"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "identity",
+                                    "properties": {
+                                        "paths": [
+                                            "/identity/*"
+                                        ],
+                                        "backendAddressPool": {
+                                            "id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools', variables('appGatewayName'), 'identity-pool')]"
+                                        },
+                                        "backendHttpSettings": {
+                                            "id": "[resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', variables('appGatewayName'), variables('appGatewayBackendSettingsName'))]"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "webapi",
+                                    "properties": {
+                                        "paths": [
+                                            "/api/*"
+                                        ],
+                                        "backendAddressPool": {
+                                            "id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools', variables('appGatewayName'), 'webapi-pool')]"
+                                        },
+                                        "backendHttpSettings": {
+                                            "id": "[resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', variables('appGatewayName'), variables('appGatewayBackendSettingsName'))]"
+                                        }
+                                    }
+                                }
+                            ],
+                            "defaultBackendAddressPool": {
+                                "id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools', variables('appGatewayName'), 'webui-angular-pool')]"
+                            },
+                            "defaultBackendHttpSettings": {
+                                "id": "[resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', variables('appGatewayName'), variables('appGatewayBackendSettingsName'))]"
+                            }
+                        }
+                    }
+                ],
+                "probes": [
+                    {
+                        "name": "[variables('appGatewayHealthProbeName')]",
+                        "properties": {
+                            "protocol": "Http",
+                            "host": "127.0.0.1",
+                            "path": "[variables('appServiceHealthCheckPath')]",
+                            "interval": 30,
+                            "timeout": 30,
+                            "unhealthyThreshold": 2
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2021-08-01",
+            "name": "[variables('appGatewayPublicIpName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Standard",
+                "tier": "Regional"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": "4",
+                "publicIpAddressVersion": "IPv4",
+                "dnsSettings": {
+                    "domainNameLabel": "[variables('appGatewayName')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Sql/servers",
+            "apiVersion": "2021-11-01-preview",
+            "name": "[parameters('sqlServerName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "administratorLogin": "[parameters('sqlServerAdminLogin')]",
+                "administratorLoginPassword": "[parameters('sqlServerAdminPassword')]",
+                "version": "12.0",
+                "publicNetworkAccess": "Enabled",
+                "comments": "only enable publicNetworkAccess for testing purposes"
+            },
+            "resources": [
+                {
+                    "type": "firewallRules",
+                    "apiVersion": "2021-11-01-preview",
+                    "name": "AllowAllWindowsAzureIps",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+                    ],
+                    "properties": {
+                        "startIpAddress": "0.0.0.0",
+                        "endIpAddress": "0.0.0.0"
+                    },
+                    "comments": "only allow for testing purposes"
+                },
+                {
+                    "type": "databases",
+                    "apiVersion": "2021-11-01-preview",
+                    "name": "[variables('sqlServerAngularDbName')]",
+                    "location": "[parameters('location')]",
+                    "sku": {
+                        "name": "Standard",
+                        "tier": "Standard"
+                    },
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+                    ]
+                },
+                {
+                    "type": "databases",
+                    "apiVersion": "2021-11-01-preview",
+                    "name": "[variables('sqlServerIdentityDbName')]",
+                    "location": "[parameters('location')]",
+                    "sku": {
+                        "name": "Standard",
+                        "tier": "Standard"
+                    },
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2021-03-01",
+            "name": "[variables('appServicePlanName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "B1"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2021-03-01",
+            "name": "[variables('appServiceWebUiAngularName')]",
+            "location": "[parameters('location')]",
+            "kind": "app",
+            "tags": {
+                "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('appServicePlanName'))]": "Resource"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+            ],
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('vNetSubnetAppServicesOutboundDelegatedName'))]",
+                "siteConfig": {
+                    "ftpsState": "Disabled",
+                    "healthCheckPath": "[variables('appServiceHealthCheckPath')]",
+                    "netFrameworkVersion": "v6.0",
+                    "vnetRouteAllEnabled": true,
+                    "alwaysOn": true,
+                    "appSettings": [
+                        {
+                            "name": "WEBSITE_RUN_FROM_PACKAGE",
+                            "value": "1"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2021-03-01",
+            "name": "[variables('appServiceWebUiAdminName')]",
+            "location": "[parameters('location')]",
+            "kind": "app",
+            "tags": {
+                "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('appServicePlanName'))]": "Resource"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+            ],
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('vNetSubnetAppServicesOutboundDelegatedName'))]",
+                "siteConfig": {
+                    "ftpsState": "Disabled",
+                    "healthCheckPath": "[variables('appServiceHealthCheckPath')]",
+                    "netFrameworkVersion": "v6.0",
+                    "vnetRouteAllEnabled": true,
+                    "alwaysOn": true,
+                    "appSettings": [
+                        {
+                            "name": "WEBSITE_RUN_FROM_PACKAGE",
+                            "value": "1"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2021-03-01",
+            "name": "[variables('appServiceWebApiName')]",
+            "location": "[parameters('location')]",
+            "kind": "app",
+            "tags": {
+                "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('appServicePlanName'))]": "Resource"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+            ],
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('vNetSubnetAppServicesOutboundDelegatedName'))]",
+                "siteConfig": {
+                    "ftpsState": "Disabled",
+                    "healthCheckPath": "[variables('appServiceHealthCheckPath')]",
+                    "netFrameworkVersion": "v6.0",
+                    "vnetRouteAllEnabled": true,
+                    "alwaysOn": true,
+                    "appSettings": [
+                        {
+                            "name": "WEBSITE_RUN_FROM_PACKAGE",
+                            "value": "1"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2021-03-01",
+            "name": "[variables('appServiceIdentityName')]",
+            "location": "[parameters('location')]",
+            "kind": "app",
+            "tags": {
+                "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('appServicePlanName'))]": "Resource"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+            ],
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('vNetSubnetAppServicesOutboundDelegatedName'))]",
+                "siteConfig": {
+                    "connectionStrings": [
+                        {
+                            "name": "IdentityDatabase",
+                            "connectionString": "[concat('Data Source=tcp:', reference(resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))).fullyQualifiedDomainName, ',1433;Database=', variables('sqlServerIdentityDbName'), ';User Id=', parameters('sqlServerAdminLogin'), '@', parameters('sqlServerName'), ';Password=', parameters('sqlServerAdminPassword'), ';')]",
+                            "type": "SQLServer"
+                        }
+                    ],
+                    "ftpsState": "Disabled",
+                    "healthCheckPath": "[variables('appServiceHealthCheckPath')]",
+                    "netFrameworkVersion": "v6.0",
+                    "vnetRouteAllEnabled": true,
+                    "alwaysOn": true,
+                    "appSettings": [
+                        {
+                            "name": "WEBSITE_RUN_FROM_PACKAGE",
+                            "value": "1"
+                        }
+                    ]
+                }
+            }
+        },
+
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "name": "[variables('vmScaleSetName')]",
+            "apiVersion": "2021-07-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+            ],
+            "properties": {
+                "singlePlacementGroup": "false",	
+                "virtualMachineProfile": {
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "fromImage",
+                            "caching": "ReadWrite",
+                            "managedDisk": {
+                                "storageAccountType": "StandardSSD_LRS"
+                            }
+                        },
+                        "imageReference": {
+                            "publisher": "MicrosoftWindowsServer",
+                            "offer": "WindowsServer",
+                            "sku": "2022-datacenter-azure-edition",
+                            "version": "latest"
+                        }
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+								"name": "[format('{0}-nic01', variables('vmName'))]",
+								"properties": {
+									"primary": true,
+									"ipConfigurations": [
+										{
+											"name": "[format('{0}-ipconfig', variables('vmName'))]",
+											"properties": {
+												"subnet": {
+                                                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('vNetSubnetDevOpsAgentsName'))]"
+												},
+												"primary": true
+											}
+										}
+									]
+                                }
+                            }
+                        ]
+                    },
+                    "osProfile": {
+                        "computerNamePrefix": "azdevops",
+                        "adminUsername": "[parameters('vmssAdminUsername')]",
+                        "adminPassword": "[parameters('vmssAdminPassword')]",
+                        "windowsConfiguration": {
+                            "provisionVmAgent": true
+                        }
+                    }
+                },
+                "orchestrationMode": "Uniform",
+                "scaleInPolicy": {
+					"rules": [
+						"Default"
+					]
+				},
+                "overprovision": "false",
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "platformFaultDomainCount": "1"
+            },
+            "sku": {
+                "name": "Standard_B2s",
+                "capacity": 2
+            }
+        }
+    ],
+    "outputs": {
+        "appGatewayUrl": {
+            "type": "string",
+            "value": "[concat('http://', reference(variables('appGatewayPublicIpName')).dnsSettings.fqdn, '/')]"
+        }
+    }
+}

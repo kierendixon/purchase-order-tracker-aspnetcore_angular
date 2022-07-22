@@ -1,0 +1,323 @@
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/key-pipelines-concepts?view=azure-devops
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/?view=azure-devops
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/?view=azure-pipelines
+
+variables:
+  - name: DotNet.BuildConfiguration
+    value: "Release"
+    # use environment variables to override nuget and npm cache directory
+    # https://docs.microsoft.com/en-us/azure/devops/pipelines/release/caching?view=azure-devops
+  - name: NUGET_PACKAGES
+    value: $(Pipeline.Workspace)/.nuget/packages
+  - name: NPM_CONFIG_CACHE
+    value: $(Pipeline.Workspace)/.npm
+  - group: azure-resource-names
+
+trigger:
+  - master
+
+pool:
+  name: Azure Pipelines
+  vmImage: "windows-latest"
+
+stages:
+  - stage: Build
+    # split builds into multiple jobs so that they can be executed in parallel. the slowest part of building is
+    # installing npm packages. using `npm ci` instead of `npm i` reduces install time by ~75% but depends on
+    # package-lock.json which is not cross-platform compatible. See https://github.com/npm/npm/issues/18202
+    jobs:
+      - job: Build_WebApp_WebUIAngular
+        variables:
+          WebUI.Angular.Dir: src/PurchaseOrderTracker.WebUI.Angular/ClientApp
+        steps:
+          - task: Cache@2
+            displayName: "Cache npm packages"
+            inputs:
+              # create a key using package.json instead of package-lock.json because package-lock is not cross-platform compatible
+              # see https://github.com/npm/npm/issues/18202
+              key: '"npm" | $(Agent.OS) | $(WebUI.Angular.Dir)/package.json'
+              path: $(NPM_CONFIG_CACHE)
+          - task: NodeTool@0
+            displayName: "Use Node 16.x"
+            inputs:
+              versionSpec: 16.x
+          - task: Npm@1
+            displayName: "npm install (WebUI.Angular)"
+            inputs:
+              command: install
+              workingDir: $(WebUI.Angular.Dir)
+          - task: Npm@1
+            displayName: "npm run test:single (WebUI.Angular)"
+            inputs:
+              command: custom
+              workingDir: $(WebUI.Angular.Dir)
+              customCommand: "run test:single"
+            enabled: false # TODO: fix broken tests
+          - powershell: "npm run lint:styles --silent -- -f json > stylelint-report.json"
+            displayName: "npm run lint:styles to file (WebUI.Angular)"
+            workingDirectory: $(WebUI.Angular.Dir)
+          - powershell: "npm run lint:ts --silent -- --format=json > tslint-report.json"
+            displayName: "npm run lint:ts to file (WebUI.Angular)"
+            workingDirectory: $(WebUI.Angular.Dir)
+          - task: Npm@1
+            displayName: "npm run build:prod (WebUI.Angular)"
+            inputs:
+              command: custom
+              workingDir: $(WebUI.Angular.Dir)
+              verbose: false
+              customCommand: "run build:prod"
+          - task: PublishPipelineArtifact@1
+            displayName: "Publish Artifact [WebUI.Angular]"
+            inputs:
+              targetPath: "src/PurchaseOrderTracker.WebUI.Angular/ClientApp/dist"
+              artifactName: PurchaseOrderTracker.WebUI.Angular-WebApp
+      - job: Build_WebApp_WebUIAdmin
+        variables:
+          WebUI.Admin.Dir: src/PurchaseOrderTracker.WebUI.Admin/ClientApp
+        steps:
+          - task: Cache@2
+            displayName: "Cache npm packages"
+            inputs:
+              # create a key using package.json instead of package-lock.json because package-lock is not cross-platform compatible
+              # see https://github.com/npm/npm/issues/18202
+              key: '"npm" | $(Agent.OS) | $(WebUI.Admin.Dir)/package.json'
+              path: $(NPM_CONFIG_CACHE)
+          - task: NodeTool@0
+            displayName: "Use Node 16.x"
+            inputs:
+              versionSpec: 16.x
+          - task: Npm@1
+            displayName: "npm install (WebUI.Admin)"
+            inputs:
+              # using `npm ci` instead of `npm i` reduces install time by ~75% but depends on package-lock.json which
+              # is not cross-platform compatible. See https://github.com/npm/npm/issues/18202
+              command: install
+              workingDir: $(WebUI.Admin.Dir)
+          - task: Npm@1
+            displayName: "npm run build (WebUI.Admin)"
+            inputs:
+              command: custom
+              workingDir: $(WebUI.Admin.Dir)
+              customCommand: "run build"
+          - task: Npm@1
+            displayName: "npm run test (WebUI.Admin)"
+            inputs:
+              command: custom
+              workingDir: $(WebUI.Admin.Dir)
+              customCommand: "run test"
+            enabled: false # TODO: fix broken tests
+          - task: PublishPipelineArtifact@1
+            displayName: "Publish Artifact [WebUI.Admin]"
+            inputs:
+              targetPath: "src/PurchaseOrderTracker.WebUI.Admin/ClientApp/build"
+              artifactName: PurchaseOrderTracker.WebUI.Admin-WebApp
+      - job: Build_DotNet_All
+        steps:
+          - task: UseDotNet@2
+            displayName: "Use .Net 6"
+            inputs:
+              version: 6.0.301
+          - task: Cache@2
+            displayName: "Cache .Net packages"
+            inputs:
+              # create a key using .csproj files instead of packages.lock.json because packages.lock.json is not
+              # cross-platform compatible. See https://github.com/NuGet/Home/issues/9195
+              key: 'nuget | "$(Agent.OS)" | **/*.csproj,!**/bin/**,!**/obj/**'
+              path: $(NUGET_PACKAGES)
+          - task: DotNetCoreCLI@2
+            displayName: "Restore .Net global tools"
+            inputs:
+              command: custom
+              custom: tool
+              arguments: restore
+          - task: DotNetCoreCLI@2
+            # even if nuget packages are restored from cache, dont add --no-restore argument because restore
+            # always needs to be excecuted in order to create project.assets.json files
+            displayName: "Build .Net solution"
+            inputs:
+              arguments: "-c $(DotNet.BuildConfiguration)"
+          - task: DotNetCoreCLI@2
+            displayName: "Execute .Net tests [Domain.Tests]"
+            inputs:
+              command: custom
+              custom: dotcover
+              arguments: "test --no-build -c $(DotNet.BuildConfiguration) --dcReportType=HTML --dcOutput=dotCover.html"
+              workingDirectory: test/PurchaseOrderTracker.Domain.Tests
+          - task: DotNetCoreCLI@2
+            displayName: "Execute .Net tests [Application.Tests]"
+            inputs:
+              command: custom
+              custom: dotcover
+              arguments: "test --no-build -c $(DotNet.BuildConfiguration) --dcReportType=HTML --dcOutput=dotCover.html"
+              workingDirectory: test/PurchaseOrderTracker.Application.Tests
+          - task: DotNetCoreCLI@2
+            displayName: ".Net Publish [WebUI.Angular]"
+            inputs:
+              command: publish
+              publishWebProjects: false
+              projects: "**/PurchaseOrderTracker.WebUI.Angular.csproj"
+              arguments: "--no-build -c $(DotNet.BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
+          - task: DotNetCoreCLI@2
+            displayName: ".Net Publish [WebUI.Admin]"
+            inputs:
+              command: publish
+              publishWebProjects: false
+              projects: "**/PurchaseOrderTracker.WebUI.Admin.csproj"
+              arguments: "--no-build -c $(DotNet.BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
+          - task: DotNetCoreCLI@2
+            displayName: ".Net Publish [Identity]"
+            inputs:
+              command: publish
+              publishWebProjects: false
+              projects: "**/PurchaseOrderTracker.Identity.csproj"
+              arguments: "--no-build -c $(DotNet.BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
+          - task: DotNetCoreCLI@2
+            displayName: ".Net Publish [WebApi]"
+            inputs:
+              command: publish
+              publishWebProjects: false
+              projects: "**/PurchaseOrderTracker.WebApi.csproj"
+              arguments: "--no-build -c $(DotNet.BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
+          - task: PowerShell@2
+            inputs:
+              targetType: Inline
+              script: 'get-childitem $(Build.ArtifactStagingDirectory) -Recurse'
+          - task: PublishPipelineArtifact@1
+            displayName: "Publish Artifact [WebUI.Angular]"
+            inputs:
+              targetPath: "$(Build.ArtifactStagingDirectory)/PurchaseOrderTracker.WebUI.Angular.zip"
+              artifactName: PurchaseOrderTracker.WebUI.Angular
+          - task: PublishPipelineArtifact@1
+            displayName: "Publish Artifact [WebUI.Admin]"
+            inputs:
+              targetPath: "$(Build.ArtifactStagingDirectory)/PurchaseOrderTracker.WebUI.Admin.zip"
+              artifactName: PurchaseOrderTracker.WebUI.Admin
+          - task: PublishPipelineArtifact@1
+            displayName: "Publish Artifact [Identity]"
+            inputs:
+              targetPath: "$(Build.ArtifactStagingDirectory)/PurchaseOrderTracker.Identity.zip"
+              artifactName: PurchaseOrderTracker.Identity
+          - task: PublishPipelineArtifact@1
+            displayName: "Publish Artifact [WebApi]"
+            inputs:
+              targetPath: "$(Build.ArtifactStagingDirectory)/PurchaseOrderTracker.WebApi.zip"
+              artifactName: PurchaseOrderTracker.WebApi
+  - stage: Deploy
+    jobs:
+      - job: Check_Environment
+        # because this application is used for learning purposes only, to avoid costs, most of the time the
+        # Azure Resource Group and App Services will not exist. check and deploy only if they do
+        steps:
+          - task: AzurePowerShell@5
+            name: "CheckIfAzureWebAppsExist"
+            displayName: "Check if Azure Web Apps exist"
+            inputs:
+              azureSubscription: "VSP Subscription"
+              scriptType: InlineScript
+              Inline: |
+                try{
+                  $webApps = Get-AzWebApp -ResourceGroupName "$(ResourceGroupName)"
+                } catch{
+                  Write-Warning "Resource group not found: $(ResourceGroupName)"
+                }
+
+                if($webApps){
+                  $webAppNames = $webApps | Select -ExpandProperty Name
+                  $webUiAngularExists = $webAppNames.Contains("$(AppServiceNameWebUiAngular)")
+                  $webUiAdminExists = $webAppNames.Contains("$(AppServiceNameWebUiAdmin)")
+                  $identityExists = $webAppNames.Contains("$(AppServiceNameIdentity)")
+                  $webApiExists = $webAppNames.Contains("$(AppServiceNameWebApi)")
+                  $allExists = $webUiAngularExists -and $webUiAdminExists -and $identityExists -and $webApiExists
+                  
+                  Write-Host "WebUi.Angular exists - $webUiAngularExists"
+                  Write-Host "WebUi.Admin exists - $webUiAdminExists"
+                  Write-Host "Identity exists - $identityExists"
+                  Write-Host "WebApi exists - $webApiExists"
+                  
+                  if($allExists){
+                    Write-Host "All Web Apps exist"
+                    Write-Host "##vso[task.setvariable variable=azureWebAppsExist;isreadonly=true;isOutput=true]true"
+                  } else{
+                    Write-Warning "All Web Apps do not exist"
+                  }
+                }
+              azurePowerShellVersion: "LatestVersion"
+      - deployment: Deploy_WebApps
+        displayName: "Deploy Azure Development Env"
+        dependsOn: Check_Environment
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(dependencies.Check_Environment.outputs['CheckIfAzureWebAppsExist.azureWebAppsExist'], 'true'))
+        environment: Development
+        # to deploy to app services that use private endpoints, it is mandatory to use self-hosted agents that have
+        # access to the virtual network the app services are connected to
+        pool: azure-vmss
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadPipelineArtifact@2
+                  displayName: "Download all pipeline artifacts"
+                  inputs:
+                    targetPath: "$(System.DefaultWorkingDirectory)"
+                - task: ArchiveFiles@2
+                  displayName: "Prepare Identity package - Archive Files"
+                  inputs:
+                    rootFolderOrFile: "$(Pipeline.Workspace)/PurchaseOrderTracker.Identity"
+                    archiveFile: $(Pipeline.Workspace)/PurchaseOrderTracker.Identity.zip
+                    includeRootFolder: false
+                - task: ArchiveFiles@2
+                  displayName: "Prepare WebApi package - Archive Files"
+                  inputs:
+                    rootFolderOrFile: "$(Pipeline.Workspace)/PurchaseOrderTracker.WebApi"
+                    archiveFile: $(Pipeline.Workspace)/PurchaseOrderTracker.WebApi.zip
+                    includeRootFolder: false
+                - task: CopyFiles@2
+                  displayName: "Prepare WebUI.Angular package - Copy Files"
+                  inputs:
+                    sourceFolder: "$(Pipeline.Workspace)/PurchaseOrderTracker.WebUI.Angular-WebApp"
+                    targetFolder: "$(Pipeline.Workspace)/PurchaseOrderTracker.WebUI.Angular/wwwroot"
+                - task: ArchiveFiles@2
+                  displayName: "Prepare WebUI.Angular package - Archive Files"
+                  inputs:
+                    rootFolderOrFile: "$(Pipeline.Workspace)/PurchaseOrderTracker.WebUI.Angular"
+                    archiveFile: $(Pipeline.Workspace)/PurchaseOrderTracker.WebUI.Angular.zip
+                    includeRootFolder: false
+                - task: CopyFiles@2
+                  displayName: "Prepare WebUI.Admin package - Copy Files"
+                  inputs:
+                    sourceFolder: "$(Pipeline.Workspace)/PurchaseOrderTracker.WebUI.Admin-WebApp"
+                    targetFolder: "$(Pipeline.Workspace)/PurchaseOrderTracker.WebUI.Admin/wwwroot"
+                - task: ArchiveFiles@2
+                  displayName: "Prepare WebUI.Admin package - Archive Files"
+                  inputs:
+                    rootFolderOrFile: "$(Pipeline.Workspace)/PurchaseOrderTracker.WebUI.Admin"
+                    archiveFile: $(Pipeline.Workspace)/PurchaseOrderTracker.WebUI.Admin.zip
+                    includeRootFolder: false
+                - task: AzureRmWebAppDeployment@4
+                  displayName: "Deploy WebApp [Identity]"
+                  inputs:
+                    appType: webApp
+                    webAppName: "$(AppServiceNameIdentity)"
+                    azureSubscription: "VSP Subscription"
+                    package: $(Pipeline.Workspace)/PurchaseOrderTracker.Identity.zip
+                - task: AzureRmWebAppDeployment@4
+                  displayName: "Deploy WebApp [WebApi]"
+                  inputs:
+                    appType: webApp
+                    webAppName: "$(AppServiceNameWebApi)"
+                    azureSubscription: "VSP Subscription"
+                    package: $(Pipeline.Workspace)/PurchaseOrderTracker.WebApi.zip
+                - task: AzureRmWebAppDeployment@4
+                  displayName: "Deploy WebApp [WebUi.Angular]"
+                  inputs:
+                    appType: webApp
+                    webAppName: "$(AppServiceNameWebUiAngular)"
+                    azureSubscription: "VSP Subscription"
+                    package: $(Pipeline.Workspace)/PurchaseOrderTracker.WebUI.Angular.zip
+                - task: AzureRmWebAppDeployment@4
+                  displayName: "Deploy WebApp [WebUi.Admin]"
+                  inputs:
+                    appType: webApp
+                    webAppName: "$(AppServiceNameWebUiAdmin)"
+                    azureSubscription: "VSP Subscription"
+                    package: $(Pipeline.Workspace)/PurchaseOrderTracker.WebUI.Admin.zip

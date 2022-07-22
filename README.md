@@ -1,5 +1,5 @@
-[![Build status](https://dev.azure.com/purchase-order-tracker/Purchase%20Order%20Tracker%20-%20Angular/_apis/build/status/Purchase%20Order%20Tracker%20-%20Angular%20.NET%20Core)](https://dev.azure.com/purchase-order-tracker/Purchase%20Order%20Tracker%20-%20Angular/_build/latest?definitionId=2)
-<a href="https://sonarcloud.io/dashboard?id=purchase-order-tracker-aspnetcore_angular"><img src="https://sonarcloud.io/images/project_badges/sonarcloud-white.svg" height="24" width="102" ></a>
+[![Build Status](https://dev.azure.com/purchase-order-tracker/Purchase%20Order%20Tracker%20-%20Angular/_apis/build/status/Purchase%20Order%20Tracker)](https://dev.azure.com/purchase-order-tracker/Purchase%20Order%20Tracker%20-%20Angular/_build/latest?definitionId=4)
+[![Build Status](https://dev.azure.com/purchase-order-tracker/Purchase%20Order%20Tracker%20-%20Angular/_apis/build/status/Purchase%20Order%20Tracker%20-%20Docker%20Images)](https://dev.azure.com/purchase-order-tracker/Purchase%20Order%20Tracker%20-%20Angular/_build/latest?definitionId=6)
 
 # Purchase Order Tracker
 
@@ -21,7 +21,7 @@ Execute the following commands:
 1. `docker-compose build`
 1. `docker-compose up`
 
-Once the containers are started you can access the application at http://localhost:4890  
+Once the containers are started, you can access the application at http://localhost:4890  
 Login with non-admin account basic/basic or admin account super/super.
 
 # Technical Details
@@ -57,6 +57,7 @@ The core technologies used include:
    1. [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
    1. [stylelint](https://marketplace.visualstudio.com/items?itemName=shinnn.stylelint)
    1. [TSlint](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-tslint-plugin)
+   1. [Azure Resource Manager Tools](https://marketplace.visualstudio.com/items?itemName=msazurermtools.azurerm-vscode-tools)
 1. Install Chrome extensions:
    1. [Angular DevTools](https://chrome.google.com/webstore/detail/angular-devtools/ienfalfjdbdpebioblfackkekamfmbnh?hl=en)
    1. [React DevTools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en)
@@ -113,3 +114,18 @@ The SPAs are located at:
 
 1. PurchaseOrderTracker.WebUI.Angular/ClientApp
 1. PurchaseOrderTracker.WebUI.Admin/ClientApp
+
+# Build
+
+Source code is built using [Azure DevOps Pipelines](https://dev.azure.com/purchase-order-tracker/Purchase%20Order%20Tracker%20-%20Angular/_build). Pipeline definitions are stored in the [build/azure-devops](build/azure-devops) folder.
+
+# Deploy
+
+Purchase Order Tracker can be deployed to Azure using Azure Pipelines. Some setup is required.
+
+1. In Azure:
+   - Create the deployment environment resources using the [all-resources.json](deploy/azure) ARM template
+1. In Azure DevOps:
+   - Use the Virtual Machine Scale Set (VMSS) created by `all-resources.json` to [create an agent pool](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/scale-set-agents?view=azure-devops) named _azure-vmss_. This is required to deploy to App Services configured with private endpoints
+   - Update Azure Pipeline's [variable group](https://dev.azure.com/purchase-order-tracker/Purchase%20Order%20Tracker%20-%20Angular/_library?itemType=VariableGroups) with the name of the Azure App Services that were created by `all-resources.json`
+   - Execute a new build in Azure Pipelines
