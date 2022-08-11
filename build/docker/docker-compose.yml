@@ -16,6 +16,7 @@ services:
     expose:
       - "80"
     environment:
+      - ASPNETCORE_ENVIRONMENT:LocalDocker
       - Logging:LogLevel:Default=Debug
       - DataProtection:KeysDirectory=/data
   website-admin:
@@ -34,6 +35,7 @@ services:
     expose:
       - "80"
     environment:
+      - ASPNETCORE_ENVIRONMENT:LocalDocker
       - Logging:LogLevel:Default=Debug
       - DataProtection:KeysDirectory=/data
   webapi:
@@ -48,6 +50,7 @@ services:
     expose:
       - "80"
     environment:
+      - ASPNETCORE_ENVIRONMENT:LocalDocker
       - ConnectionStrings:PoTrackerDatabase=Server=db,1433;Database=PurchaseOrderTracker_Angular;User id=sa;Password=PoTracker001
       - ConnectionStrings:IdentityDatabase=Server=db,1433;Database=PurchaseOrderTrackerIdentity_Angular;User id=sa;Password=PoTracker001
       - Logging:LogLevel:Default=Debug
@@ -68,6 +71,7 @@ services:
     expose:
       - "80"
     environment:
+      - ASPNETCORE_ENVIRONMENT:LocalDocker
       - Logging:LogLevel:Default=Debug
       - ConnectionStrings:IdentityDatabase=Server=db,1433;Database=PurchaseOrderTrackerIdentity_Angular;User id=sa;Password=PoTracker001
       - DataProtection:KeysDirectory=/data

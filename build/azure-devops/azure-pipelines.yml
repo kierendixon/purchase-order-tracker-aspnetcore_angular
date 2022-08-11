@@ -156,6 +156,7 @@ stages:
             inputs:
               command: publish
               publishWebProjects: false
+              zipAfterPublish: false
               projects: "**/PurchaseOrderTracker.WebUI.Angular.csproj"
               arguments: "--no-build -c $(DotNet.BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
           - task: DotNetCoreCLI@2
@@ -163,6 +164,7 @@ stages:
             inputs:
               command: publish
               publishWebProjects: false
+              zipAfterPublish: false
               projects: "**/PurchaseOrderTracker.WebUI.Admin.csproj"
               arguments: "--no-build -c $(DotNet.BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
           - task: DotNetCoreCLI@2

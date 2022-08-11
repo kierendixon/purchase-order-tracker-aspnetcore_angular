@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text.Json;
@@ -10,7 +9,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -24,6 +22,7 @@ using Microsoft.OpenApi.Models;
 using PurchaseOrderTracker.Application.Cache;
 using PurchaseOrderTracker.Application.Features.Supplier.Commands;
 using PurchaseOrderTracker.Application.Logging;
+using PurchaseOrderTracker.AspNet.Common.DataProtection;
 using PurchaseOrderTracker.AspNet.Common.HealthChecks;
 using PurchaseOrderTracker.Cache;
 using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
@@ -125,14 +124,9 @@ public class Program
             opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // this is the default in ASP.Net Identity
         });
 
-        var dataProtection = services.AddDataProtection()
-            .SetApplicationName("PurchaseOrderTrackerApp");
-
-        if (!env.IsDevelopment())
-        {
-            // not secure - keys will be saved to file system unencrypted
-            dataProtection.PersistKeysToFileSystem(new DirectoryInfo(config["DataProtection:KeysDirectory"]));
-        }
+        services.AddCustomDataProtection(
+            env,
+            config.GetSection(DataProtectionOptions.Position).Get<DataProtectionOptions>());
     }
 
     private static void ConfigureApp(WebApplication app)
@@ -325,6 +319,6 @@ public static class IdentityServiceCollectionExtensions
     private static bool IsAjaxRequest(HttpRequest request)
     {
         return !(request.Headers.TryGetValue("accept", out var acceptValues)
-            && acceptValues.Contains("text/html", StringComparer.InvariantCultureIgnoreCase));
+            && acceptValues.Contains("text/html", StringComparer.OrdinalIgnoreCase));
     }
 }

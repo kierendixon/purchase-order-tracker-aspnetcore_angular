@@ -1,18 +1,17 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PurchaseOrderTracker.AspNet.Common.DataProtection;
 using PurchaseOrderTracker.AspNet.Common.HealthChecks;
 
 namespace PurchaseOrderTracker.WebUI.Angular;
@@ -36,7 +35,9 @@ public class Program
         services.AddControllersWithViews();
         services.AddCustomAuthentication();
         services.AddCustomAuthorization();
-        services.UseCustomDataProtection(config, env);
+        services.AddCustomDataProtection(
+            env,
+            config.GetSection(DataProtectionOptions.Position).Get<DataProtectionOptions>());
         services.UseCustomHealthChecks(config);
     }
 
@@ -62,18 +63,6 @@ public static class ServiceCollectionExtensions
         {
             opt.RootDirectory = "/Features";
         });
-    }
-
-    public static void UseCustomDataProtection(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
-    {
-        var dataProtection = services.AddDataProtection()
-            .SetApplicationName("PurchaseOrderTrackerApp");
-
-        if (!env.IsDevelopment())
-        {
-            // not secure - keys will be saved to file system unencrypted
-            dataProtection.PersistKeysToFileSystem(new DirectoryInfo(configuration["DataProtection:KeysDirectory"]));
-        }
     }
 
     public static void UseCustomHealthChecks(this IServiceCollection services, IConfiguration configuration)
