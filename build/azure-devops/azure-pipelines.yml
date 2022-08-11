@@ -171,14 +171,12 @@ stages:
             displayName: ".Net Publish [Identity]"
             inputs:
               command: publish
-              publishWebProjects: false
               projects: "**/PurchaseOrderTracker.Identity.csproj"
               arguments: "--no-build -c $(DotNet.BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
           - task: DotNetCoreCLI@2
             displayName: ".Net Publish [WebApi]"
             inputs:
               command: publish
-              publishWebProjects: false
               projects: "**/PurchaseOrderTracker.WebApi.csproj"
               arguments: "--no-build -c $(DotNet.BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
           - task: PowerShell@2
@@ -188,12 +186,12 @@ stages:
           - task: PublishPipelineArtifact@1
             displayName: "Publish Artifact [WebUI.Angular]"
             inputs:
-              targetPath: "$(Build.ArtifactStagingDirectory)/PurchaseOrderTracker.WebUI.Angular.zip"
+              targetPath: "$(Build.ArtifactStagingDirectory)/PurchaseOrderTracker.WebUI.Angular"
               artifactName: PurchaseOrderTracker.WebUI.Angular
           - task: PublishPipelineArtifact@1
             displayName: "Publish Artifact [WebUI.Admin]"
             inputs:
-              targetPath: "$(Build.ArtifactStagingDirectory)/PurchaseOrderTracker.WebUI.Admin.zip"
+              targetPath: "$(Build.ArtifactStagingDirectory)/PurchaseOrderTracker.WebUI.Admin"
               artifactName: PurchaseOrderTracker.WebUI.Admin
           - task: PublishPipelineArtifact@1
             displayName: "Publish Artifact [Identity]"
@@ -261,18 +259,6 @@ stages:
                   displayName: "Download all pipeline artifacts"
                   inputs:
                     targetPath: "$(System.DefaultWorkingDirectory)"
-                - task: ArchiveFiles@2
-                  displayName: "Prepare Identity package - Archive Files"
-                  inputs:
-                    rootFolderOrFile: "$(Pipeline.Workspace)/PurchaseOrderTracker.Identity"
-                    archiveFile: $(Pipeline.Workspace)/PurchaseOrderTracker.Identity.zip
-                    includeRootFolder: false
-                - task: ArchiveFiles@2
-                  displayName: "Prepare WebApi package - Archive Files"
-                  inputs:
-                    rootFolderOrFile: "$(Pipeline.Workspace)/PurchaseOrderTracker.WebApi"
-                    archiveFile: $(Pipeline.Workspace)/PurchaseOrderTracker.WebApi.zip
-                    includeRootFolder: false
                 - task: CopyFiles@2
                   displayName: "Prepare WebUI.Angular package - Copy Files"
                   inputs:
