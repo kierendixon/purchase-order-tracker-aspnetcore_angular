@@ -2,7 +2,7 @@
 
 A line-of-business system that tracks the delivery of purchase orders.
 
-Maintain suppliers and their products, create purchase orders with line items, and assign orders to shipments for delivery.
+Maintain suppliers and their products, create purchase orders with line items, and assign orders to shipments.
 
 _this is a pet project for the purpose of learning about software design and development._
 
