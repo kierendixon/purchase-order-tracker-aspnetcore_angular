@@ -14,6 +14,6 @@ public static class IWebHostEnvironmentExtensions
     // identifies the Azure test environment
     public static bool IsTestAzure(this IWebHostEnvironment env)
     {
-        return env.EnvironmentName.Equals("Test", StringComparison.OrdinalIgnoreCase);
+        return env.EnvironmentName.Equals("TestAzure", StringComparison.OrdinalIgnoreCase);
     }
 }

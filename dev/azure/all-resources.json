@@ -1065,7 +1065,7 @@
                         },
                         {
                             "name": "ASPNETCORE_ENVIRONMENT",
-                            "value": "Test"
+                            "value": "TestAzure"
                         },
                         {
                             "name": "WebApi.Url",
@@ -1115,7 +1115,7 @@
                         },
                         {
                             "name": "ASPNETCORE_ENVIRONMENT",
-                            "value": "Test"
+                            "value": "TestAzure"
                         },
                         {
                             "name": "WebApi.Url",
@@ -1157,7 +1157,7 @@
                         },
                         {
                             "name": "ASPNETCORE_ENVIRONMENT",
-                            "value": "Test"
+                            "value": "TestAzure"
                         }
                     ]
                 }
@@ -1203,7 +1203,7 @@
                         },
                         {
                             "name": "ASPNETCORE_ENVIRONMENT",
-                            "value": "Test"
+                            "value": "TestAzure"
                         }
                     ]
                 }

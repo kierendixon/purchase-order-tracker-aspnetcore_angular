@@ -3,7 +3,7 @@ services:
   website-main:
     image: "purchase-order-tracker-angular"
     build:
-      context: .
+      context: ../../../
       dockerfile: src/PurchaseOrderTracker.WebUI.Angular/Dockerfile
     entrypoint: ["dotnet", "PurchaseOrderTracker.WebUI.Angular.dll"]
     working_dir: "/app"
@@ -22,7 +22,7 @@ services:
   website-admin:
     image: "purchase-order-tracker-admin"
     build:
-      context: .
+      context: ../../../
       dockerfile: src/PurchaseOrderTracker.WebUI.Admin/Dockerfile
     entrypoint: ["dotnet", "PurchaseOrderTracker.WebUI.Admin.dll"]
     working_dir: "/app"
@@ -41,7 +41,7 @@ services:
   webapi:
     image: "purchase-order-tracker-webapi"
     build:
-      context: .
+      context: ../../../
       dockerfile: src/PurchaseOrderTracker.WebAPI/Dockerfile
     entrypoint: ["dotnet", "PurchaseOrderTracker.WebApi.dll"]
     working_dir: "/app"
@@ -62,7 +62,7 @@ services:
   identity:
     image: "purchase-order-tracker-identity"
     build:
-      context: .
+      context: ../../../
       dockerfile: src/PurchaseOrderTracker.Identity/Dockerfile
     entrypoint: ["dotnet", "PurchaseOrderTracker.Identity.dll"]
     working_dir: "/app"
