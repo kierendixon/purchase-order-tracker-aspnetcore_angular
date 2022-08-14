@@ -28,6 +28,7 @@ stages:
     # package-lock.json which is not cross-platform compatible. See https://github.com/npm/npm/issues/18202
     jobs:
       - job: Build_WebApp_WebUIAngular
+        condition: False
         variables:
           WebUI.Angular.Dir: src/PurchaseOrderTracker.WebUI.Angular/ClientApp
         steps:
@@ -73,6 +74,7 @@ stages:
               targetPath: "src/PurchaseOrderTracker.WebUI.Angular/ClientApp/dist"
               artifactName: PurchaseOrderTracker.WebUI.Angular-WebApp
       - job: Build_WebApp_WebUIAdmin
+        condition: False
         variables:
           WebUI.Admin.Dir: src/PurchaseOrderTracker.WebUI.Admin/ClientApp
         steps:
@@ -153,6 +155,7 @@ stages:
               workingDirectory: test/PurchaseOrderTracker.Application.Tests
           - task: DotNetCoreCLI@2
             displayName: ".Net Publish [WebUI.Angular]"
+            condition: False
             inputs:
               command: publish
               publishWebProjects: false
@@ -161,6 +164,7 @@ stages:
               arguments: "--no-build -c $(DotNet.BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
           - task: DotNetCoreCLI@2
             displayName: ".Net Publish [WebUI.Admin]"
+            condition: False
             inputs:
               command: publish
               publishWebProjects: false
@@ -180,13 +184,20 @@ stages:
               projects: "**/PurchaseOrderTracker.WebApi.csproj"
               arguments: "--no-build -c $(DotNet.BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
           - task: PowerShell@2
+            displayName: "ps ArtifactStagingDirectory"
             inputs:
               targetType: Inline
               script: 'get-childitem $(Build.ArtifactStagingDirectory) -Recurse'
           - task: PowerShell@2
+            displayName: "ps BuildDirectory"
             inputs:
-              targetType: 'inline'
-              script: 'Get-ChildItem -Path $(Build.ArtifactStagingDirectory) -Recurse'
+              targetType: Inline
+              script: 'get-childitem $(Agent.BuildDirectory) -Recurse'
+          - task: PowerShell@2
+            displayName: "ps WorkFolder"
+            inputs:
+              targetType: Inline
+              script: 'get-childitem $(Agent.WorkFolder) -Recurse'
           - task: PublishPipelineArtifact@1
             displayName: "Publish Artifact [WebUI.Angular]"
             inputs:
