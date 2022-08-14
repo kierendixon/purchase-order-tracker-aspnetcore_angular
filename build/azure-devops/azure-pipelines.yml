@@ -276,30 +276,20 @@ stages:
                     rootFolderOrFile: "$(Pipeline.Workspace)/PurchaseOrderTracker.WebUI.Admin"
                     archiveFile: $(Pipeline.Workspace)/PurchaseOrderTracker.WebUI.Admin.zip
                     includeRootFolder: false
-                - task: PowerShell@2
-                  displayName: "ps DefaultWorkingDirectory"
-                  inputs:
-                    targetType: 'inline'
-                    script: 'Get-ChildItem -Path $(System.DefaultWorkingDirectory) -recurse'
-                - task: PowerShell@2
-                  displayName: "ps plws"
-                  inputs:
-                    targetType: 'inline'
-                    script: 'Get-ChildItem -Path $(Pipeline.Workspace) -recurse'
                 - task: AzureRmWebAppDeployment@4
                   displayName: "Deploy WebApp [Identity]"
                   inputs:
                     appType: webApp
                     webAppName: "$(AppServiceNameIdentity)"
                     azureSubscription: "VSP Subscription"
-                    package: $(System.DefaultWorkingDirectory)/PurchaseOrderTracker.Identity.zip
+                    package: $(System.DefaultWorkingDirectory)/PurchaseOrderTracker.Identity/PurchaseOrderTracker.Identity.zip
                 - task: AzureRmWebAppDeployment@4
                   displayName: "Deploy WebApp [WebApi]"
                   inputs:
                     appType: webApp
                     webAppName: "$(AppServiceNameWebApi)"
                     azureSubscription: "VSP Subscription"
-                    package: $(System.DefaultWorkingDirectory)/PurchaseOrderTracker.WebApi.zip
+                    package: $(System.DefaultWorkingDirectory)/PurchaseOrderTracker.WebApi/PurchaseOrderTracker.WebApi.zip
                 - task: AzureRmWebAppDeployment@4
                   displayName: "Deploy WebApp [WebUi.Angular]"
                   inputs:
