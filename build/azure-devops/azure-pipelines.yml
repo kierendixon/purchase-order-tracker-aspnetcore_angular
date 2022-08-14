@@ -14,9 +14,6 @@ variables:
     value: $(Pipeline.Workspace)/.npm
   - group: azure-resource-names
 
-trigger:
-  - master
-
 pool:
   name: Azure Pipelines
   vmImage: "windows-latest"
@@ -28,7 +25,6 @@ stages:
     # package-lock.json which is not cross-platform compatible. See https://github.com/npm/npm/issues/18202
     jobs:
       - job: Build_WebApp_WebUIAngular
-        condition: False
         variables:
           WebUI.Angular.Dir: src/PurchaseOrderTracker.WebUI.Angular/ClientApp
         steps:
@@ -74,7 +70,6 @@ stages:
               targetPath: "src/PurchaseOrderTracker.WebUI.Angular/ClientApp/dist"
               artifactName: PurchaseOrderTracker.WebUI.Angular-WebApp
       - job: Build_WebApp_WebUIAdmin
-        condition: False
         variables:
           WebUI.Admin.Dir: src/PurchaseOrderTracker.WebUI.Admin/ClientApp
         steps:
@@ -183,11 +178,6 @@ stages:
               publishWebProjects: false
               projects: "**/PurchaseOrderTracker.WebApi.csproj"
               arguments: "--no-build -c $(DotNet.BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
-          - task: PowerShell@2
-            displayName: "ps ArtifactStagingDirectory"
-            inputs:
-              targetType: Inline
-              script: 'get-childitem $(Build.ArtifactStagingDirectory) -Recurse'
           - task: PublishPipelineArtifact@1
             displayName: "Publish Artifact [WebUI.Angular]"
             inputs:
@@ -209,6 +199,7 @@ stages:
               targetPath: "$(Build.ArtifactStagingDirectory)/PurchaseOrderTracker.WebApi.zip"
               artifactName: PurchaseOrderTracker.WebApi
   - stage: Deploy
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     jobs:
       - job: Check_Environment
         # because this application is used for learning purposes only, to avoid costs, most of the time the
@@ -251,7 +242,7 @@ stages:
       - deployment: Deploy_WebApps
         displayName: "Deploy Azure Development Env"
         dependsOn: Check_Environment
-        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(dependencies.Check_Environment.outputs['CheckIfAzureWebAppsExist.azureWebAppsExist'], 'true'))
+        condition: and(succeeded(), eq(dependencies.Check_Environment.outputs['CheckIfAzureWebAppsExist.azureWebAppsExist'], 'true'))
         environment: Development
         # to deploy to app services that use private endpoints, it is mandatory to use self-hosted agents that have
         # access to the virtual network the app services are connected to
