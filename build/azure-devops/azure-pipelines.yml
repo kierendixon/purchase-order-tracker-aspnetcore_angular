@@ -175,12 +175,14 @@ stages:
             displayName: ".Net Publish [Identity]"
             inputs:
               command: publish
+              publishWebProjects: false
               projects: "**/PurchaseOrderTracker.Identity.csproj"
               arguments: "--no-build -c $(DotNet.BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
           - task: DotNetCoreCLI@2
             displayName: ".Net Publish [WebApi]"
             inputs:
               command: publish
+              publishWebProjects: false
               projects: "**/PurchaseOrderTracker.WebApi.csproj"
               arguments: "--no-build -c $(DotNet.BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
           - task: PowerShell@2
@@ -188,16 +190,6 @@ stages:
             inputs:
               targetType: Inline
               script: 'get-childitem $(Build.ArtifactStagingDirectory) -Recurse'
-          - task: PowerShell@2
-            displayName: "ps BuildDirectory"
-            inputs:
-              targetType: Inline
-              script: 'get-childitem $(Agent.BuildDirectory) -Recurse'
-          - task: PowerShell@2
-            displayName: "ps WorkFolder"
-            inputs:
-              targetType: Inline
-              script: 'get-childitem $(Agent.WorkFolder) -Recurse'
           - task: PublishPipelineArtifact@1
             displayName: "Publish Artifact [WebUI.Angular]"
             inputs:
