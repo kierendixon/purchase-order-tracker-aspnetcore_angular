@@ -282,14 +282,14 @@ stages:
                     appType: webApp
                     webAppName: "$(AppServiceNameIdentity)"
                     azureSubscription: "VSP Subscription"
-                    package: $(Pipeline.Workspace)/PurchaseOrderTracker.Identity.zip
+                    package: $(System.DefaultWorkingDirectory)/PurchaseOrderTracker.Identity.zip
                 - task: AzureRmWebAppDeployment@4
                   displayName: "Deploy WebApp [WebApi]"
                   inputs:
                     appType: webApp
                     webAppName: "$(AppServiceNameWebApi)"
                     azureSubscription: "VSP Subscription"
-                    package: $(Pipeline.Workspace)/PurchaseOrderTracker.WebApi.zip
+                    package: $(System.DefaultWorkingDirectory)/PurchaseOrderTracker.WebApi.zip
                 - task: AzureRmWebAppDeployment@4
                   displayName: "Deploy WebApp [WebUi.Angular]"
                   inputs:
