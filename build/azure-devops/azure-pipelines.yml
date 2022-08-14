@@ -155,7 +155,6 @@ stages:
               workingDirectory: test/PurchaseOrderTracker.Application.Tests
           - task: DotNetCoreCLI@2
             displayName: ".Net Publish [WebUI.Angular]"
-            condition: False
             inputs:
               command: publish
               publishWebProjects: false
@@ -164,7 +163,6 @@ stages:
               arguments: "--no-build -c $(DotNet.BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
           - task: DotNetCoreCLI@2
             displayName: ".Net Publish [WebUI.Admin]"
-            condition: False
             inputs:
               command: publish
               publishWebProjects: false
