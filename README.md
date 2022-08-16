@@ -146,7 +146,7 @@ If you use a different SQL Server port or want to use a locally running instance
 ### Envoy Proxy
 
 Use Docker to create an Envoy Proxy container. From the `dev\local` folder run:  
-`docker run --rm -p 4891:80 -v ${PWD}:/etc/envoy envoyproxy/envoy:v1.14.4 envoy -c /etc/envoy/envoy.debug.yaml`
+`docker run --rm -p 4891:80 -v ${PWD}\dev\local:/etc/envoy envoyproxy/envoy:v1.14.4 envoy -c /etc/envoy/envoy.debug.yaml`
 
 ### ASP.NET Applications
 

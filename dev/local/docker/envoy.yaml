@@ -32,11 +32,13 @@ static_resources:
                 route:
                   cluster: webapi
                   auto_host_rewrite: true
+                  prefix_rewrite: "/"
               - match:
                   prefix: "/identity/"
                 route:
                   cluster: identity
                   auto_host_rewrite: true
+                  prefix_rewrite: "/"
               - match:
                   prefix: "/admin"
                 route:

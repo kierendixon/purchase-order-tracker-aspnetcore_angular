@@ -199,7 +199,7 @@ stages:
               targetPath: "$(Build.ArtifactStagingDirectory)/PurchaseOrderTracker.WebApi.zip"
               artifactName: PurchaseOrderTracker.WebApi
   - stage: Deploy
-  add back master condition
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     jobs:
       - job: Check_Environment
         # because this application is used for learning purposes only, to avoid costs, most of the time the
