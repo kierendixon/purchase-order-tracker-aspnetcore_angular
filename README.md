@@ -77,10 +77,10 @@ The continuous integration pipeline will deploy *master* branch builds to the Az
 To setup continuous deployments:
 
 1. In Azure:
-   - Create the deployment environment using the [all-resources.json](dev/azure) Azure Resource Manager (ARM) template
+   - Create a deployment environment by following the instructions in the [dev/azure](dev/azure) folder
 1. In Azure DevOps:
-   - Use the Virtual Machine Scale Set (VMSS) created by `all-resources.json` to [create an agent pool](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/scale-set-agents?view=azure-devops) named _azure-vmss_. This is required to deploy to App Services configured with [private endpoints](https://docs.microsoft.com/en-us/azure/app-service/networking/private-endpoint)
-   - Update the _azure-resource-names_ variable group in [Azure Pipelines](https://dev.azure.com/purchase-order-tracker/Purchase%20Order%20Tracker%20-%20Angular/_library?itemType=VariableGroups) with the name of the Azure App Services that were created by `all-resources.json`
+   - Use the Virtual Machine Scale Set (VMSS) created by the previous step to [create an agent pool](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/scale-set-agents?view=azure-devops) named _azure-vmss_. This is required to deploy to App Services configured with [private endpoints](https://docs.microsoft.com/en-us/azure/app-service/networking/private-endpoint)
+   - Update the _azure-resource-names_ variable group in [Azure Pipelines](https://dev.azure.com/purchase-order-tracker/Purchase%20Order%20Tracker%20-%20Angular/_library?itemType=VariableGroups) with the name of the Azure App Services that were created
    - Execute a new build
 
 **Troubleshooting**
