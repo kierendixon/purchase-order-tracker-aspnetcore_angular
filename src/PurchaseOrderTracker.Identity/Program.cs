@@ -179,6 +179,6 @@ public static class WebApplicationExtensions
         app.MapHealthChecks("/health", new HealthCheckOptions()
         {
             ResponseWriter = HealthCheckResponseWriter.WriteDetailedJsonResponse
-        });
+        }).AllowAnonymous();
     }
 }
