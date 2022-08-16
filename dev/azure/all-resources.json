@@ -66,7 +66,7 @@
 
         "storageAccountName": "[format('st{0}', uniqueString(parameters('appServiceName')))]",
         "storageAccountContainerName": "aspnet-dataprotection",
-        "storageAccountContainerBlobDataProtectionName": "keyRing",
+        "storageAccountContainerBlobDataProtectionName": "keyring",
 
         "appServicePlanName": "[format('asp-{0}', parameters('appServiceName'))]",
         "appServiceIdentityName": "[format('{0}-identity-{1}', parameters('appServiceName'), uniqueString(resourceGroup().id))]",
@@ -1073,10 +1073,10 @@
                         },
                         {
                             "name": "DataProtection:StorageBlobUri",
-                            "value": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))).primaryEndpoints.blob, variables('storageAccountContainerName'), variables('storageAccountContainerBlobDataProtectionName'))]"
+                            "value": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))).primaryEndpoints.blob, variables('storageAccountContainerName'), '/', variables('storageAccountContainerBlobDataProtectionName'))]"
                         },
                         {
-                            "name": "DataProtection:KeyIdentifier",
+                            "name": "DataProtection:KeyVaultKeyIdentifier",
                             "value": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', variables('keyVaultName'), variables('dataProtectionKeyName'))).keyUri]"
                         }
                     ]
@@ -1120,6 +1120,14 @@
                         {
                             "name": "WebApi.Url",
                             "value": "[reference(resourceId('Microsoft.Web/sites', variables('appServiceWebApiName'))).hostNames[0]]"
+                        },
+                        {
+                            "name": "DataProtection:StorageBlobUri",
+                            "value": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))).primaryEndpoints.blob, variables('storageAccountContainerName'), '/', variables('storageAccountContainerBlobDataProtectionName'))]"
+                        },
+                        {
+                            "name": "DataProtection:KeyVaultKeyIdentifier",
+                            "value": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', variables('keyVaultName'), variables('dataProtectionKeyName'))).keyUri]"
                         }
                     ]
                 }
@@ -1150,6 +1158,18 @@
                     "netFrameworkVersion": "v6.0",
                     "vnetRouteAllEnabled": true,
                     "alwaysOn": true,
+                    "connectionStrings": [
+                        {
+                            "name": "IdentityDatabase",
+                            "connectionString": "[concat('Data Source=tcp:', reference(resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))).fullyQualifiedDomainName, ',1433;Database=', variables('sqlServerIdentityDbName'), ';User Id=', parameters('sqlServerAdminLogin'), '@', parameters('sqlServerName'), ';Password=', parameters('sqlServerAdminPassword'), ';')]",
+                            "type": "SQLServer"
+                        },
+                        {
+                            "name": "PoTrackerDatabase",
+                            "connectionString": "[concat('Data Source=tcp:', reference(resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))).fullyQualifiedDomainName, ',1433;Database=', variables('sqlServerAngularDbName'), ';User Id=', parameters('sqlServerAdminLogin'), '@', parameters('sqlServerName'), ';Password=', parameters('sqlServerAdminPassword'), ';')]",
+                            "type": "SQLServer"
+                        }
+                    ],
                     "appSettings": [
                         {
                             "name": "WEBSITE_RUN_FROM_PACKAGE",
@@ -1158,6 +1178,14 @@
                         {
                             "name": "ASPNETCORE_ENVIRONMENT",
                             "value": "TestAzure"
+                        },
+                        {
+                            "name": "DataProtection:StorageBlobUri",
+                            "value": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))).primaryEndpoints.blob, variables('storageAccountContainerName'), '/', variables('storageAccountContainerBlobDataProtectionName'))]"
+                        },
+                        {
+                            "name": "DataProtection:KeyVaultKeyIdentifier",
+                            "value": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', variables('keyVaultName'), variables('dataProtectionKeyName'))).keyUri]"
                         }
                     ]
                 }
@@ -1204,6 +1232,14 @@
                         {
                             "name": "ASPNETCORE_ENVIRONMENT",
                             "value": "TestAzure"
+                        },
+                        {
+                            "name": "DataProtection:StorageBlobUri",
+                            "value": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))).primaryEndpoints.blob, variables('storageAccountContainerName'), '/', variables('storageAccountContainerBlobDataProtectionName'))]"
+                        },
+                        {
+                            "name": "DataProtection:KeyVaultKeyIdentifier",
+                            "value": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', variables('keyVaultName'), variables('dataProtectionKeyName'))).keyUri]"
                         }
                     ]
                 }
