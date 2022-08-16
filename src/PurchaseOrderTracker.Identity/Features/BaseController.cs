@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace PurchaseOrderTracker.Identity.Features;
 
-[Route("[controller]")]
+[Route("[controller]/[action]")]
 [ApiController]
 public abstract class BaseController : ControllerBase
 {

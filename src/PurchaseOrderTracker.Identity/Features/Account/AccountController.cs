@@ -8,7 +8,6 @@ using PurchaseOrderTracker.Identity.Features.Account.Models;
 
 namespace PurchaseOrderTracker.Identity.Features.Account;
 
-[Route("identity/[controller]/[action]")] // TODO shouldnt need identity prefix. Set this in basecontroller?
 public class AccountController : BaseController
 {
     public AccountController(IMediator mediator, IMapper mapper)

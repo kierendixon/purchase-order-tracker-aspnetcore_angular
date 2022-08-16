@@ -31,10 +31,12 @@ static_resources:
                             prefix: "/api/"
                           route:
                             cluster: webapi
+                            prefix_rewrite: "/"
                         - match:
                             prefix: "/identity/"
                           route:
                             cluster: identity
+                            prefix_rewrite: "/"
                         - match:
                             prefix: "/admin"
                           route:

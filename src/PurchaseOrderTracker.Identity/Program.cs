@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -7,7 +6,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -15,7 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using PurchaseOrderTracker.AspNet.Common.DataProtection;
 using PurchaseOrderTracker.AspNet.Common.HealthChecks;
 using PurchaseOrderTracker.Domain.Models.IdentityAggregate;
 using PurchaseOrderTracker.Identity.Identity;
@@ -162,14 +160,9 @@ public static class IdentityServiceCollectionExtensions
             });
         });
 
-        var dataProtection = services.AddDataProtection()
-            .SetApplicationName("PurchaseOrderTrackerApp");
-
-        if (!environment.IsDevelopment())
-        {
-            // not secure - keys will be saved to file system unencrypted
-            dataProtection.PersistKeysToFileSystem(new DirectoryInfo(configuration["DataProtection:KeysDirectory"]));
-        }
+        services.AddCustomDataProtection(
+            environment,
+            configuration.GetSection(DataProtectionOptions.Position).Get<DataProtectionOptions>());
 
         return services;
     }
@@ -186,6 +179,6 @@ public static class WebApplicationExtensions
         app.MapHealthChecks("/health", new HealthCheckOptions()
         {
             ResponseWriter = HealthCheckResponseWriter.WriteDetailedJsonResponse
-        });
+        }).AllowAnonymous();
     }
 }

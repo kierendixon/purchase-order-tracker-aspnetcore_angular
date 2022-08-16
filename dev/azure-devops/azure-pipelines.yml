@@ -14,9 +14,6 @@ variables:
     value: $(Pipeline.Workspace)/.npm
   - group: azure-resource-names
 
-trigger:
-  - master
-
 pool:
   name: Azure Pipelines
   vmImage: "windows-latest"
@@ -156,6 +153,7 @@ stages:
             inputs:
               command: publish
               publishWebProjects: false
+              zipAfterPublish: false
               projects: "**/PurchaseOrderTracker.WebUI.Angular.csproj"
               arguments: "--no-build -c $(DotNet.BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
           - task: DotNetCoreCLI@2
@@ -163,6 +161,7 @@ stages:
             inputs:
               command: publish
               publishWebProjects: false
+              zipAfterPublish: false
               projects: "**/PurchaseOrderTracker.WebUI.Admin.csproj"
               arguments: "--no-build -c $(DotNet.BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
           - task: DotNetCoreCLI@2
@@ -179,19 +178,15 @@ stages:
               publishWebProjects: false
               projects: "**/PurchaseOrderTracker.WebApi.csproj"
               arguments: "--no-build -c $(DotNet.BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
-          - task: PowerShell@2
-            inputs:
-              targetType: Inline
-              script: 'get-childitem $(Build.ArtifactStagingDirectory) -Recurse'
           - task: PublishPipelineArtifact@1
             displayName: "Publish Artifact [WebUI.Angular]"
             inputs:
-              targetPath: "$(Build.ArtifactStagingDirectory)/PurchaseOrderTracker.WebUI.Angular.zip"
+              targetPath: "$(Build.ArtifactStagingDirectory)/PurchaseOrderTracker.WebUI.Angular"
               artifactName: PurchaseOrderTracker.WebUI.Angular
           - task: PublishPipelineArtifact@1
             displayName: "Publish Artifact [WebUI.Admin]"
             inputs:
-              targetPath: "$(Build.ArtifactStagingDirectory)/PurchaseOrderTracker.WebUI.Admin.zip"
+              targetPath: "$(Build.ArtifactStagingDirectory)/PurchaseOrderTracker.WebUI.Admin"
               artifactName: PurchaseOrderTracker.WebUI.Admin
           - task: PublishPipelineArtifact@1
             displayName: "Publish Artifact [Identity]"
@@ -204,6 +199,7 @@ stages:
               targetPath: "$(Build.ArtifactStagingDirectory)/PurchaseOrderTracker.WebApi.zip"
               artifactName: PurchaseOrderTracker.WebApi
   - stage: Deploy
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     jobs:
       - job: Check_Environment
         # because this application is used for learning purposes only, to avoid costs, most of the time the
@@ -246,7 +242,7 @@ stages:
       - deployment: Deploy_WebApps
         displayName: "Deploy Azure Development Env"
         dependsOn: Check_Environment
-        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(dependencies.Check_Environment.outputs['CheckIfAzureWebAppsExist.azureWebAppsExist'], 'true'))
+        condition: and(succeeded(), eq(dependencies.Check_Environment.outputs['CheckIfAzureWebAppsExist.azureWebAppsExist'], 'true'))
         environment: Development
         # to deploy to app services that use private endpoints, it is mandatory to use self-hosted agents that have
         # access to the virtual network the app services are connected to
@@ -259,18 +255,6 @@ stages:
                   displayName: "Download all pipeline artifacts"
                   inputs:
                     targetPath: "$(System.DefaultWorkingDirectory)"
-                - task: ArchiveFiles@2
-                  displayName: "Prepare Identity package - Archive Files"
-                  inputs:
-                    rootFolderOrFile: "$(Pipeline.Workspace)/PurchaseOrderTracker.Identity"
-                    archiveFile: $(Pipeline.Workspace)/PurchaseOrderTracker.Identity.zip
-                    includeRootFolder: false
-                - task: ArchiveFiles@2
-                  displayName: "Prepare WebApi package - Archive Files"
-                  inputs:
-                    rootFolderOrFile: "$(Pipeline.Workspace)/PurchaseOrderTracker.WebApi"
-                    archiveFile: $(Pipeline.Workspace)/PurchaseOrderTracker.WebApi.zip
-                    includeRootFolder: false
                 - task: CopyFiles@2
                   displayName: "Prepare WebUI.Angular package - Copy Files"
                   inputs:
@@ -299,14 +283,14 @@ stages:
                     appType: webApp
                     webAppName: "$(AppServiceNameIdentity)"
                     azureSubscription: "VSP Subscription"
-                    package: $(Pipeline.Workspace)/PurchaseOrderTracker.Identity.zip
+                    package: $(System.DefaultWorkingDirectory)/PurchaseOrderTracker.Identity/PurchaseOrderTracker.Identity.zip
                 - task: AzureRmWebAppDeployment@4
                   displayName: "Deploy WebApp [WebApi]"
                   inputs:
                     appType: webApp
                     webAppName: "$(AppServiceNameWebApi)"
                     azureSubscription: "VSP Subscription"
-                    package: $(Pipeline.Workspace)/PurchaseOrderTracker.WebApi.zip
+                    package: $(System.DefaultWorkingDirectory)/PurchaseOrderTracker.WebApi/PurchaseOrderTracker.WebApi.zip
                 - task: AzureRmWebAppDeployment@4
                   displayName: "Deploy WebApp [WebUi.Angular]"
                   inputs:

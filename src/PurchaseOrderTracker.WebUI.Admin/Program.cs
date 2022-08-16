@@ -1,12 +1,10 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
+using PurchaseOrderTracker.AspNet.Common.DataProtection;
 using PurchaseOrderTracker.AspNet.Common.HealthChecks;
 
 namespace PurchaseOrderTracker.WebUI.Admin;
@@ -40,7 +39,9 @@ public class Program
         //services.AddCustomHttpClients();
         services.AddCustomAuthentication();
         services.AddCustomAuthorization();
-        services.AddCustomDataProtection(config, env);
+        services.AddCustomDataProtection(
+            env,
+            config.GetSection(DataProtectionOptions.Position).Get<DataProtectionOptions>());
         services.AddCustomHealthChecks(config);
     }
 
@@ -108,18 +109,6 @@ public static class ServiceCollectionExtensions
             // TODO get guid from Activity class instead?
             opt.Headers.Add("X-Correlation-ID", ctx => new StringValues(Guid.NewGuid().ToString()));
         });
-    }
-
-    public static void AddCustomDataProtection(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
-    {
-        var dataProtection = services.AddDataProtection()
-            .SetApplicationName("PurchaseOrderTrackerApp");
-
-        if (!env.IsDevelopment())
-        {
-            // not secure - keys will be saved to file system unencrypted
-            dataProtection.PersistKeysToFileSystem(new DirectoryInfo(configuration["DataProtection:KeysDirectory"]));
-        }
     }
 
     //public static void AddCustomHttpClients(this IServiceCollection services)
@@ -250,6 +239,6 @@ public static class WebApplicationExtensions
         app.MapHealthChecks("/health", new HealthCheckOptions()
         {
             ResponseWriter = HealthCheckResponseWriter.WriteDetailedJsonResponse
-        });
+        }).AllowAnonymous();
     }
 }
